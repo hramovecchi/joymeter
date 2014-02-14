@@ -1,3 +1,6 @@
+dev/.project
+dev/.settings/
+dev/target/
 dev/joymeter-webapi/*.log
 dev/joymeter-webapi/target
 dev/joymeter-webapi/.classpath
