@@ -1,5 +1,4 @@
-git status
--webapi/*.log
+dev/joymeter-webapi/*.log
 dev/joymeter-webapi/target
 dev/joymeter-webapi/.classpath
 dev/joymeter-webapi/.project
