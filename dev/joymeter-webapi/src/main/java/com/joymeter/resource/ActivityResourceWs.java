@@ -163,7 +163,7 @@ public class ActivityResourceWs implements ActivityResource {
 				activity.setClassified(Boolean.valueOf(classified));
 				
 				activityService.update(activity);
-				return Response.ok("").build();
+				return Response.ok("User updated").build();
 			} else {
 				return Response.status(Status.BAD_REQUEST).entity("Activity not found with the given id").build();
 			}
