@@ -117,8 +117,8 @@
 			<list>
 				<bean class="com.joymeter.entity.Activity">		
 					<property name="type" value="Recreacion" />
-					<property name="summary" value="Pezca" />
-					<property name="description" value="Sali a pezcar con mis amigos el fin de semana" />
+					<property name="summary" value="Pesca" />
+					<property name="description" value="Sali a pescar con mis amigos el fin de semana" />
 					<property name="levelOfJoy" value="5" />
 					<property name="startDate" value="3123124121231" />
 					<property name="endDate" value="3123124121231" />
