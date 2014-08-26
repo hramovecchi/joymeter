@@ -25,9 +25,10 @@ public class UserServiceJpa implements UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User getById(int id) {
+	public User getById(long id) {
 		return entityManager.find(User.class, id);
 	}
+	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<User> getAll() {
@@ -36,17 +37,38 @@ public class UserServiceJpa implements UserService {
 		users = query.getResultList();
 		return users;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public User getByFacebookAccessToken(String facebookAccessToken) {
+		Query query = entityManager.createNamedQuery("User.findByFacebookAccessToken");
+		query.setParameter("facebookAccessToken", facebookAccessToken);
+		List<User> users = null;
+		users = query.getResultList();
+		return users.isEmpty()?null:users.get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public User getByEmail(String email) {
+		Query query = entityManager.createNamedQuery("User.findByEmail");
+		query.setParameter("email", email);
+		List<User> users = null;
+		users = query.getResultList();
+		return users.isEmpty()?null:users.get(0);
+	}
 
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean save(User user) {
-		log.info("Saving: "+user.getId());
-		entityManager.persist(user);
+		log.info("Saving: "+user.toString());
+		entityManager.merge(user);
 		entityManager.flush();
 		return true;
 	}
 
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean update(User user) {
+		log.info("Updating: "+user.toString());
 		entityManager.merge(user);
 		entityManager.flush();
 		return true;
@@ -61,5 +83,4 @@ public class UserServiceJpa implements UserService {
 		entityManager.flush();
 		return true;
 	}
-	
 }

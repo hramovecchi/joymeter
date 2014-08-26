@@ -5,6 +5,8 @@
 
 	<persistence-unit name="testa" transaction-type="RESOURCE_LOCAL">
         <class>com.joymeter.entity.User</class>
+        <class>com.joymeter.entity.Activity</class>
+        <class>com.joymeter.entity.Session</class>
     </persistence-unit>
 
 </persistence>
