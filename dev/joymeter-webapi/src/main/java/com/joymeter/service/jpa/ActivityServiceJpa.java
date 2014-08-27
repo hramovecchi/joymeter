@@ -27,22 +27,22 @@ public class ActivityServiceJpa implements ActivityService {
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean save(Activity activity) {
 		log.info("Saving: "+activity.getId());
-		entityManager.persist(activity);
+		entityManager.merge(activity);
 		entityManager.flush();
 		return true;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<Activity> getAll(int userId) {
+	public List<Activity> getByUserId(long userID) {
 		Query queryFindPerson = entityManager.createNamedQuery("Activity.findAllByUser");
-		queryFindPerson.setParameter("userId", userId);
+		queryFindPerson.setParameter("userID", userID);
 		List<Activity> activities = queryFindPerson.getResultList();
 		return activities;
 	}
 
 	@Transactional(readOnly = true)
-	public Activity getById(int id) {
+	public Activity getById(long id) {
 		return entityManager.find(Activity.class, id);
 	}
 

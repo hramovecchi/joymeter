@@ -10,12 +10,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.joymeter.entity.User;
+import com.joymeter.entity.Users;
+import com.joymeter.entity.dto.UserDTO;
 import com.joymeter.service.UserService;
 
 @Component
@@ -31,8 +30,7 @@ import com.joymeter.service.UserService;
 public class UserResourceWs implements UserResource {
 	@Autowired
 	UserService userService;
-	@Context 
-	UriInfo ui;
+
 	private Logger log = Logger.getLogger(this.getClass());
 
 	/*
@@ -41,21 +39,9 @@ public class UserResourceWs implements UserResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUsers() {
 		log.info("getUsers entered");
-
-		StringBuffer jsonBuffer = new StringBuffer("{ \"users\": [");
 		List<User> users = userService.getAll();
-		boolean first = true;
-		for (User user : users) {
-			if (first)
-				first = false;
-			else
-				jsonBuffer.append(",");
-			jsonBuffer.append(getJsonUserObject(user));
-		}
-		jsonBuffer.append("]}");
-		log.info("Sending: \n\n" + jsonBuffer.toString() + "\n\n");
 		
-		return Response.ok(jsonBuffer.toString()).build();
+		return Response.ok(new Users(users)).build();
 	}
 
 	/*
@@ -68,9 +54,8 @@ public class UserResourceWs implements UserResource {
 		log.info("Hit getUser");
 		User user = userService.getById(Integer.parseInt(id));
 		if (user!= null){
-			String result = (String) getJsonUserObject(user);
-			log.info("Sending: \n\n" + result + "\n\n");
-			return Response.ok(result.toString()).build();
+			log.info("Sending: \n\n" + user + "\n\n");
+			return Response.ok(user).build();
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("User not found with the given id").build();
 		}
@@ -79,37 +64,25 @@ public class UserResourceWs implements UserResource {
 	/*
 	 */
 	@PUT
-	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateUser(@PathParam("id") String id,
-			@QueryParam("name") String name, @QueryParam("email") String email,
-			@QueryParam("facebook_account") String facebookAccount, @QueryParam("sesion_token") String sesionToken,
-			@QueryParam("creation_date") String creationDate) {
+	public Response updateUser(UserDTO userDTO) {
 		log.info("updateUser entered");
-		log.info("name: " + name);
-		log.info("email: " + email);
-		log.info("facebook_account: " + facebookAccount);
-		log.info("sesion_token : " + sesionToken);
-		log.info("creation_date : " + creationDate);
-		log.info("id : " + id);
+		User storedUser = userService.getByEmail(userDTO.getEmail());
 
-		if (id!=null){
-			User user = userService.getById(Integer.parseInt(id));
-			if (user != null) {
-				log.info("It has an ID");
-				log.info("We found the user with that id");
-				user.setName(name);
-				user.setEmail(email);
-				user.setFacebookAccount(facebookAccount);
-				user.setSesionToken(sesionToken);
-				user.setCreationDate(Long.valueOf(creationDate));
-				userService.update(user);
-				return Response.ok("").build();
-			} else {
-				return Response.status(Status.BAD_REQUEST).entity("User not found with the given id").build();
-			}
+		if (storedUser != null){
+				log.info("Existing user from the DB, updating...");
+				log.info("full_name: " + userDTO.getFullName());
+				log.info("email: " + userDTO.getEmail());
+				log.info("facebook_access_token: " + userDTO.getFacebookAccessToken());
+				log.info("creation_date : " + userDTO.getCreationDate());
+				storedUser.setFullName(userDTO.getFullName());
+				storedUser.setEmail(userDTO.getEmail());
+				storedUser.setFacebookAccessToken(userDTO.getFacebookAccessToken());
+				storedUser.setCreationDate(userDTO.getCreationDate());
+				userService.update(storedUser);
+				return Response.ok(userDTO).build();
 		} else {
-			return Response.status(Status.BAD_REQUEST).entity("id not given").build();
+			return Response.status(Status.BAD_REQUEST).entity("user don't exist").build();
 		}
 
 		
@@ -119,23 +92,19 @@ public class UserResourceWs implements UserResource {
 	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addUser(@QueryParam("name") String name, @QueryParam("email") String email, 
-			@QueryParam("facebook_account") String facebookAccount, @QueryParam("sesion_token") String sesionToken,
-			@QueryParam("creation_date") String creationDate){
+	public Response addUser(UserDTO userDTO){
 		log.info("addUser entered");
 
-		log.info("name: " + name);
-		log.info("email: " + email);
-		log.info("facebook_account: " + facebookAccount);
-		log.info("sesion_token : " + sesionToken);
-		log.info("creation_date : " + creationDate);
+		log.info("full_name: " + userDTO.getFullName());
+		log.info("email: " + userDTO.getEmail());
+		log.info("facebook_access_token: " + userDTO.getFacebookAccessToken());
+		log.info("creation_date : " + userDTO.getCreationDate());
 
 		User user = new User();
-		user.setName(name);
-		user.setEmail(email);
-		user.setFacebookAccount(facebookAccount);
-		user.setSesionToken(sesionToken);
-		user.setCreationDate(Long.valueOf(creationDate));
+		user.setFullName(userDTO.getFullName());
+		user.setEmail(userDTO.getEmail());
+		user.setFacebookAccessToken(userDTO.getFacebookAccessToken());
+		user.setCreationDate(userDTO.getCreationDate());
 		userService.save(user);
 		
 		return Response.ok("").build();
@@ -155,15 +124,6 @@ public class UserResourceWs implements UserResource {
 			deleteUserById(id);
 		}
 		
-		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-		List<String> ids = queryParams.get("id");
-		if(ids == null) {
-			log.info("\n\nThe ids is null");
-		} else {
-			for (String currentid : ids) {
-				deleteUserById(currentid);
-			}
-		}
 		return Response.ok("").build();
 	}
 
@@ -177,14 +137,4 @@ public class UserResourceWs implements UserResource {
 		}
 	}
 
-	private Object getJsonUserObject(User user) {
-		StringBuffer buffer = new StringBuffer("{\"id\": \"" + user.getId());
-		buffer.append("\",\"name\": \"").append(user.getName());
-		buffer.append("\",\"email\": \"").append(user.getEmail());
-		buffer.append("\",\"facebook_account\": \"").append(user.getFacebookAccount());
-		buffer.append("\",\"sesion_token\": \"").append(user.getSesionToken());
-		buffer.append("\",\"creation_date\": \"").append(user.getCreationDate());
-		buffer.append("\"}");
-		return buffer.toString();
-	}
 }

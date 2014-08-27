@@ -2,6 +2,7 @@ package com.joymeter.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,31 +13,34 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "USER")
-@NamedQueries( { @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
+@NamedQueries({ 
+		@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+		@NamedQuery(name = "User.findByFacebookAccessToken", query = "SELECT u FROM User u WHERE u.facebook_access_token=:facebookAccessToken"),
+		@NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email=:email")})
 public class User implements Serializable{
 	
 	private static final long serialVersionUID = -1776298606636882629L;
 	
-	@Id 
+	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-	private String name;
-	private String email;
-	private String facebookAccount;
-	private String sesionToken;
-	private long creationDate;
+	private long id;
 	
-	public int getId() {
+	private String full_name;
+	private String email;
+	private String facebook_access_token;
+	private long creation_date;
+	
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
+	public String getFullName() {
+		return full_name;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setFullName(String fullName) {
+		this.full_name = fullName;
 	}
 	public String getEmail() {
 		return email;
@@ -44,23 +48,16 @@ public class User implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getFacebookAccount() {
-		return facebookAccount;
+	public String getFacebookAccessToken() {
+		return facebook_access_token;
 	}
-	public void setFacebookAccount(String facebookAccount) {
-		this.facebookAccount = facebookAccount;
-	}
-	public String getSesionToken() {
-		return sesionToken;
-	}
-	public void setSesionToken(String sesionToken) {
-		this.sesionToken = sesionToken;
+	public void setFacebookAccessToken(String facebookAccessToken) {
+		this.facebook_access_token = facebookAccessToken;
 	}
 	public long getCreationDate() {
-		return creationDate;
+		return creation_date;
 	}
 	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
+		this.creation_date = creationDate;
 	}
-	
 }

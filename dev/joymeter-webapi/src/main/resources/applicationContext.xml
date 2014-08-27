@@ -68,54 +68,49 @@
 		<property name="users">
 			<list>
 				<bean class="com.joymeter.entity.User">
-					<property name="name" value="Frank Zappa" />
+					<property name="fullName" value="Frank Zappa" />
 					<property name="email" value="frank@email.com" />
-					<property name="facebookAccount" value="Frank.FacebookAccount" />
-					<property name="sesionToken" value="Frank.sesionToken" />
+					<property name="facebookAccessToken" value="Frank.facebookAccessToken" />
 					<property name="creationDate" value="3123124121231" />
 				</bean>
 				<bean class="com.joymeter.entity.User">
-					<property name="name" value="John Abercrombie" />
+					<property name="fullName" value="John Abercrombie" />
 					<property name="email" value="john@email.com" />
-					<property name="facebookAccount" value="John.FacebookAccount" />
-					<property name="sesionToken" value="John.sesionToken" />
+					<property name="facebookAccessToken" value="John.facebookAccessToken" />
 					<property name="creationDate" value="3123124121231" />
 				</bean>
 				<bean class="com.joymeter.entity.User">
-					<property name="name" value="Keith Jarrett" />
+					<property name="fullName" value="Keith Jarrett" />
 					<property name="email" value="keith@email.com" />
-					<property name="facebookAccount" value="Keith.FacebookAccount" />
-					<property name="sesionToken" value="Keith.sesionToken" />
+					<property name="facebookAccessToken" value="Keith.facebookAccessToken" />
 					<property name="creationDate" value="3123124121231" />
 				</bean>
 				<bean class="com.joymeter.entity.User">
-					<property name="name" value="Freddy Hubbard" />
+					<property name="fullName" value="Freddy Hubbard" />
 					<property name="email" value="freddy@email.com" />
-					<property name="facebookAccount" value="Freddy.FacebookAccount" />
-					<property name="sesionToken" value="Freddy.sesionToken" />
+					<property name="facebookAccessToken" value="Freddy.facebookAccessToken" />
 					<property name="creationDate" value="3123124121231" />
 				</bean>
 				<bean class="com.joymeter.entity.User">
-					<property name="name" value="Ray Charles" />
+					<property name="fullName" value="Ray Charles" />
 					<property name="email" value="ray@email.com" />
-					<property name="facebookAccount" value="Ray.FacebookAccount" />
-					<property name="sesionToken" value="Ray.sesionToken" />
+					<property name="facebookAccessToken" value="Ray.facebookAccessToken" />
 					<property name="creationDate" value="3123124121231" />
 				</bean>
 				<bean class="com.joymeter.entity.User">
-					<property name="name" value="Dave Holland" />
+					<property name="fullName" value="Dave Holland" />
 					<property name="email" value="dave@email.com" />
-					<property name="facebookAccount" value="Dave.FacebookAccount" />
-					<property name="sesionToken" value="Dave.sesionToken" />
+					<property name="facebookAccessToken" value="Dave.facebookAccessToken" />
 					<property name="creationDate" value="3123124121231" />
 				</bean>
 			</list>
 		</property>
 	</bean>
+	
 	<bean id="activityDataLoader" class="com.joymeter.entity.util.ActivityDataLoader" init-method="init">
 		<property  name="activitys">
 			<list>
-				<bean class="com.joymeter.entity.Activity">		
+				<bean class="com.joymeter.entity.util.ActivityDBRow">		
 					<property name="type" value="Recreacion" />
 					<property name="summary" value="Pezca" />
 					<property name="description" value="Sali a pezcar con mis amigos el fin de semana" />
@@ -125,7 +120,7 @@
 					<property name="userId" value="1" />
 					<property name="classified" value="false" />
 				</bean>
-				<bean class="com.joymeter.entity.Activity">		
+				<bean class="com.joymeter.entity.util.ActivityDBRow">		
 					<property name="type" value="Recreacion" />
 					<property name="summary" value="Sexo" />
 					<property name="description" value="Tuve una noche agitada con una loca en un bar" />
@@ -135,7 +130,7 @@
 					<property name="userId" value="1" />
 					<property name="classified" value="true" />
 				</bean>
-				<bean class="com.joymeter.entity.Activity">		
+				<bean class="com.joymeter.entity.util.ActivityDBRow">		
 					<property name="type" value="Responsabilidad" />
 					<property name="summary" value="Trabajo" />
 					<property name="description" value="Estuve en la oficina 10 horas corridas" />
@@ -145,7 +140,7 @@
 					<property name="userId" value="2" />
 					<property name="classified" value="false" />
 				</bean>
-				<bean class="com.joymeter.entity.Activity">		
+				<bean class="com.joymeter.entity.util.ActivityDBRow">		
 					<property name="type" value="Responsabilidad" />
 					<property name="summary" value="Limpieza" />
 					<property name="description" value="Me toco lavar el auto" />
@@ -158,5 +153,6 @@
 			</list>
 		</property>
 	</bean>
+	
 </beans>
 
