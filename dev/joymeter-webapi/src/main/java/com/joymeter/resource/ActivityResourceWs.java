@@ -19,8 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.joymeter.entity.Activities;
 import com.joymeter.entity.Activity;
+import com.joymeter.entity.User;
+import com.joymeter.entity.dto.ActivityDTO;
 import com.joymeter.service.ActivityService;
+import com.joymeter.service.UserService;
+import com.mysql.jdbc.StringUtils;
 
 @Component
 @Path("/activities")
@@ -30,6 +35,9 @@ public class ActivityResourceWs implements ActivityResource {
 	@Autowired
 	ActivityService activityService;
 	
+	@Autowired
+	UserService userService;
+	
 	private Logger log = Logger.getLogger(this.getClass());
 
 	/*
@@ -37,55 +45,28 @@ public class ActivityResourceWs implements ActivityResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getActivities(@QueryParam("user_id") String userId) {
-		log.info("getActivities entered");
-		log.info("userId: "+userId);
-		
-		StringBuffer jsonBuffer = new StringBuffer("{ \"activities\": [");
-		List<Activity> activities = activityService.getAll(Integer.parseInt(userId));
-		boolean first = true;
-		for (Activity activity : activities) {
-			if (first)
-				first = false;
-			else
-				jsonBuffer.append(",");
-			jsonBuffer.append(getJsonActivityObject(activity));
+		if (!StringUtils.isNullOrEmpty(userId)){
+			log.info("getActivities entered");
+			log.info("userId: "+userId);
+			
+			List<Activity> activities = activityService.getByUserId(Long.parseLong(userId));
+			
+			return Response.ok(new Activities(activities)).build();
 		}
-		jsonBuffer.append("]}");
-		log.info("Sending: \n\n" + jsonBuffer.toString() + "\n\n");
+		return Response.status(Status.BAD_REQUEST).build();
 		
-		return Response.ok(jsonBuffer.toString()).build();
 	}
 
 	/*
 	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addActivity(@QueryParam("type") String type, @QueryParam("summary") String summary, 
-			@QueryParam("description") String description, @QueryParam("level_of_joy") String levelOfJoy,
-			@QueryParam("start_date") String startDate, @QueryParam("end_date") String endDate, @QueryParam("user_id") String userId,
-			@QueryParam("classified") String classified) {
-
+	public Response addActivity(ActivityDTO activityDTO) {
 		log.info("addActivity entered");
 
-		log.info("type: " + type);
-		log.info("summary: " + summary);
-		log.info("description: " + description);
-		log.info("level_of_joy : " + levelOfJoy);
-		log.info("start_date : " + startDate);
-		log.info("end_date: " + endDate);
-		log.info("user_id : " + userId);
-		log.info("classified : " + classified);
-
-		Activity activity = new Activity();
-		
-		activity.setType(type);
-		activity.setSummary(summary);
-		activity.setDescription(description);
-		activity.setLevelOfJoy(Integer.valueOf(levelOfJoy));
-		activity.setStartDate(Long.valueOf(startDate));
-		activity.setEndDate(Long.valueOf(endDate));
-		activity.setUserId(Integer.valueOf(userId));
-		activity.setClassified(Boolean.valueOf(classified));
+		Activity activity = activityDTO.mappedToActivity();
+		User owner = userService.getById(Long.parseLong(activityDTO.getUserId()));
+		activity.setUser(owner);
 		
 		activityService.save(activity);
 		
@@ -100,11 +81,10 @@ public class ActivityResourceWs implements ActivityResource {
 		log.info("Hit getActivity");
 		Activity activity = activityService.getById(Integer.parseInt(id));
 		if (activity!= null){
-			String result = (String) getJsonActivityObject(activity);
-			log.info("Sending: \n\n" + result + "\n\n");
-			return Response.ok(result.toString()).build();
+//			log.info("Sending: \n\n" + activity.toString() + "\n\n");
+			return Response.ok(activity).build();
 		} else {
-			return Response.status(Status.BAD_REQUEST).entity("Activity not found with the given id").build();
+			return Response.status(Status.BAD_REQUEST).build();
 		}
 	}
 
@@ -112,18 +92,18 @@ public class ActivityResourceWs implements ActivityResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteActivity(@PathParam("id") String id) {
-		if(id!=null) {
+		if( id != null) {
 			log.info("Delete Activity Id: " + id);
 			Activity activity = activityService.getById(Integer.parseInt(id));
 			if (activity == null) {
 				log.info("Null was returned for ID: " + id);
-				return Response.status(Status.BAD_REQUEST).entity("Activity not found with the given id").build();
+				return Response.status(Status.BAD_REQUEST).build();
 			} else {
 				activityService.delete(activity);
 				return Response.ok("").build();
 			}
 		}
-		return Response.status(Status.BAD_REQUEST).entity("id is null").build();
+		return Response.status(Status.BAD_REQUEST).build();
 	}
 
 	/*
@@ -131,59 +111,18 @@ public class ActivityResourceWs implements ActivityResource {
 	@PUT
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateActivity(@PathParam("id") String id, @QueryParam("type") String type, @QueryParam("summary") String summary, 
-			@QueryParam("description") String description, @QueryParam("level_of_joy") String levelOfJoy,
-			@QueryParam("start_date") String startDate, @QueryParam("end_date") String endDate, @QueryParam("user_id") String userId,
-			@QueryParam("classified") String classified) {
-		
-		log.info("updateActivity entered");
-
-		log.info("type: " + type);
-		log.info("summary: " + summary);
-		log.info("description: " + description);
-		log.info("level_of_joy : " + levelOfJoy);
-		log.info("start_date : " + startDate);
-		log.info("end_date: " + endDate);
-		log.info("user_id : " + userId);
-		log.info("classified : " + classified);
-		
-		if (id!=null){
-			Activity activity = activityService.getById(Integer.parseInt(id));
-			if (activity != null) {
-				log.info("It has an ID");
-				log.info("We found the activity with that id");
-				
-				activity.setType(type);
-				activity.setSummary(summary);
-				activity.setDescription(description);
-				activity.setLevelOfJoy(Integer.valueOf(levelOfJoy));
-				activity.setStartDate(Long.valueOf(startDate));
-				activity.setEndDate(Long.valueOf(endDate));
-				activity.setUserId(Integer.valueOf(userId));
-				activity.setClassified(Boolean.valueOf(classified));
-				
-				activityService.update(activity);
-				return Response.ok("").build();
-			} else {
-				return Response.status(Status.BAD_REQUEST).entity("Activity not found with the given id").build();
-			}
+	public Response updateActivity(@PathParam("id") String id, ActivityDTO activityDTO) {
+		if (activityDTO != null){
+			
+			Activity updatedActivity = activityDTO.mappedToActivity();
+			updatedActivity.setUser(userService.getById(Long.parseLong(activityDTO.getUserId())));
+			updatedActivity.setId(Long.parseLong(id));
+			
+			activityService.update(updatedActivity);
+			
+			return Response.status(Status.OK).build();
 		} else {
-			return Response.status(Status.BAD_REQUEST).entity("id not given").build();
+			return Response.status(Status.BAD_REQUEST).build();
 		}
 	}
-	
-	private Object getJsonActivityObject(Activity activity) {
-		StringBuffer buffer = new StringBuffer("{\"id\": \"" + activity.getId());
-		buffer.append("\",\"type\": \"").append(activity.getType());
-		buffer.append("\",\"summary\": \"").append(activity.getSummary());
-		buffer.append("\",\"description\": \"").append(activity.getDescription());
-		buffer.append("\",\"level_of_joy\": \"").append(activity.getLevelOfJoy());
-		buffer.append("\",\"start_date\": \"").append(activity.getStartDate());
-		buffer.append("\",\"end_date\": \"").append(activity.getEndDate());
-		buffer.append("\",\"user_id\": \"").append(activity.getUserId());
-		buffer.append("\",\"classified\": \"").append(activity.isClassified());
-		buffer.append("\"}");
-		return buffer.toString();
-	}
-
 }

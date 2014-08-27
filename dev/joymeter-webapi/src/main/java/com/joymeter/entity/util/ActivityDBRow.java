@@ -1,31 +1,12 @@
-package com.joymeter.entity;
+package com.joymeter.entity.util;
 
-import java.io.Serializable;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-@Entity
-@Table(name = "ACTIVITY")
-@NamedQueries( { @NamedQuery(name = "Activity.findAllByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID")})
-public class Activity implements Serializable{
+/**
+ * Simple class that represents the Activity table on the DB for data loading purpose on
+ * applicationContext file 
+ * 
+ */
+public class ActivityDBRow{
 	
-	private static final long serialVersionUID = -3597156974325366320L;
-	
-	@Id 
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String type;
 	private String summary;
@@ -33,11 +14,7 @@ public class Activity implements Serializable{
 	private int level_of_joy;
 	private long start_date;
 	private long end_date;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id")
-	private User user;
-	
+	private long user_id;
 	private boolean classified;
 	
 	
@@ -83,11 +60,11 @@ public class Activity implements Serializable{
 	public void setEndDate(long endDate) {
 		this.end_date = endDate;
 	}
-	public User getUser() {
-		return user;
+	public long getUserId() {
+		return user_id;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(long user_id) {
+		this.user_id = user_id;
 	}
 	public boolean isClassified() {
 		return classified;
