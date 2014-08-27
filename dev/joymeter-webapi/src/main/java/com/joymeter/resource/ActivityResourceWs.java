@@ -70,7 +70,7 @@ public class ActivityResourceWs implements ActivityResource {
 		
 		activityService.save(activity);
 		
-		return Response.ok("").build();
+		return Response.status(Status.OK).build();
 	}
 
 	@GET
@@ -81,7 +81,6 @@ public class ActivityResourceWs implements ActivityResource {
 		log.info("Hit getActivity");
 		Activity activity = activityService.getById(Integer.parseInt(id));
 		if (activity!= null){
-//			log.info("Sending: \n\n" + activity.toString() + "\n\n");
 			return Response.ok(activity).build();
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -100,7 +99,7 @@ public class ActivityResourceWs implements ActivityResource {
 				return Response.status(Status.BAD_REQUEST).build();
 			} else {
 				activityService.delete(activity);
-				return Response.ok("").build();
+				return Response.status(Status.OK).build();
 			}
 		}
 		return Response.status(Status.BAD_REQUEST).build();

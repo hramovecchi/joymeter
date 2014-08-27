@@ -2,13 +2,11 @@ package com.joymeter.resource;
 
 import java.util.Date;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -23,7 +21,6 @@ import com.joymeter.entity.dto.SignUpRequestDTO;
 import com.joymeter.service.SessionService;
 import com.joymeter.service.UserService;
 import com.mysql.jdbc.StringUtils;
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Single;
 
 @Component
 @Path("/sessions")
