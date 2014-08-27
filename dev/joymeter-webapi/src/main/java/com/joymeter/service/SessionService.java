@@ -3,6 +3,7 @@ package com.joymeter.service;
 import java.util.List;
 
 import com.joymeter.entity.Session;
+import com.joymeter.entity.User;
 
 public interface SessionService {
 	boolean save(Session session);
@@ -12,5 +13,5 @@ public interface SessionService {
 	boolean delete(Session session);
 	boolean update(Session session);
 	
-	boolean deleteByUserId(long userID);
+	boolean deleteByUserId(User user);
 }

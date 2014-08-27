@@ -106,7 +106,7 @@ public class UserResourceWs implements UserResource {
 		user.setCreationDate(userDTO.getCreationDate());
 		userService.save(user);
 		
-		return Response.ok("").build();
+		return Response.status(Status.OK).build();
 	}
 
 	/*

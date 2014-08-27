@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.joymeter.entity.Session;
+import com.joymeter.entity.User;
 import com.joymeter.service.SessionService;
 
 
@@ -47,11 +48,11 @@ public class SessionServiceJpa implements SessionService {
 	
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean delete(Session session) {
-//		session = entityManager.getReference(Session.class, session.getId());
-//		if (session == null)
-//			return false;
-//		entityManager.remove(session);
-//		entityManager.flush();
+		session = entityManager.getReference(Session.class, session.getId());
+		if (session == null)
+			return false;
+		entityManager.remove(session);
+		entityManager.flush();
 		return true;
 	}
 	
@@ -73,8 +74,11 @@ public class SessionServiceJpa implements SessionService {
 		return (sessions.isEmpty()? null: sessions.get(0));
 	}
 
-	public boolean deleteByUserId(long userID) {
-		// TODO Auto-generated method stub
+	public boolean deleteByUserId(User user) {
+		for (Session session:this.getByUserId(user.getId())){
+			this.delete(session);
+			return true;
+		}
 		return false;
 	}
 }
