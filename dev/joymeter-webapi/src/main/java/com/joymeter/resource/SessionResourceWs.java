@@ -2,19 +2,19 @@ package com.joymeter.resource;
 
 import java.util.Date;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.social.facebook.api.FacebookProfile;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.stereotype.Component;
 
 import com.joymeter.entity.Session;
@@ -23,7 +23,6 @@ import com.joymeter.entity.dto.SignUpRequestDTO;
 import com.joymeter.service.SessionService;
 import com.joymeter.service.UserService;
 import com.mysql.jdbc.StringUtils;
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader.Single;
 
 @Component
 @Path("/sessions")
@@ -56,18 +55,24 @@ public class SessionResourceWs implements SessionResource {
 			log.info("Entering on singUp mode");
 			//get the user from facebook with {facebookAccessToken} and add it to the database if not exists yet
 			
-			User user = userService.getByFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
+			FacebookTemplate facebook = new FacebookTemplate(signUpRequestDTO.getFacebookAccessToken());
+			FacebookProfile fbProfile = facebook.userOperations().getUserProfile();
+			//TODO: confirm that email never comes with null value.
+			User user = userService.getByFacebookAccessToken(fbProfile.getEmail());
 			
 			if (user == null){	//it is a new user
-				System.out.println("EL USUARIO NO EXISTE EN LA BASE DE DATOS");
+				log.info("EL USUARIO NO EXISTE EN LA BASE DE DATOS");
 				//TODO obtain the user details from facebook
 				user = new User();
 				user.setCreationDate(new Date().getTime());
-				user.setEmail(signUpRequestDTO.getFacebookAccessToken()+"@mail.com");
+				user.setEmail(fbProfile.getEmail());
 				user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
-				user.setFullName("full Name");
+				user.setFullName(String.format(fbProfile.getFirstName()," ",fbProfile.getLastName()));
+				userService.save(user);
 			} else {
-				System.out.println("EL USUARIO EXISTE EN LA BASE DE DATOS");
+				user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
+				userService.update(user);
+				log.info("EL USUARIO EXISTE EN LA BASE DE DATOS");
 			}
 			
 			Session sessionToStore = new Session();
