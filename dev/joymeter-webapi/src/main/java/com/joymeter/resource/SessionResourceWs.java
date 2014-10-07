@@ -58,7 +58,7 @@ public class SessionResourceWs implements SessionResource {
 			FacebookTemplate facebook = new FacebookTemplate(signUpRequestDTO.getFacebookAccessToken());
 			FacebookProfile fbProfile = facebook.userOperations().getUserProfile();
 			//TODO: confirm that email never comes with null value.
-			User user = userService.getByFacebookAccessToken(fbProfile.getEmail());
+			User user = userService.getByEmail(fbProfile.getEmail());
 			
 			if (user == null){	//it is a new user
 				log.info("EL USUARIO NO EXISTE EN LA BASE DE DATOS");
@@ -67,7 +67,7 @@ public class SessionResourceWs implements SessionResource {
 				user.setCreationDate(new Date().getTime());
 				user.setEmail(fbProfile.getEmail());
 				user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
-				user.setFullName(String.format(fbProfile.getFirstName()," ",fbProfile.getLastName()));
+				user.setFullName(getFullName(fbProfile.getFirstName(),fbProfile.getMiddleName(),fbProfile.getLastName()));
 				userService.save(user);
 			} else {
 				user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
@@ -86,5 +86,22 @@ public class SessionResourceWs implements SessionResource {
 		}
 		
 		return Response.noContent().build();
+	}
+	
+	private String getFullName(final String first, final String middle, final String last) {
+		String fullName = new String();
+		if(first != null && !first.isEmpty()){
+			fullName = String.format("%s", first);
+		}
+		if(middle != null && !middle.isEmpty()){
+			fullName = String.format("%s %s",fullName, middle);
+		}
+		if(last != null && !last.isEmpty()){
+			fullName = String.format("%s %s",fullName, last);
+		}
+		if (!fullName.isEmpty()){
+			return fullName;
+		}
+		return null;
 	}
 }
