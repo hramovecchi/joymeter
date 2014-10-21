@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.SignUpRequestDTO;
+import com.joymeter.entity.util.SessionUtils;
 import com.joymeter.service.SessionService;
 import com.joymeter.service.UserService;
 import com.mysql.jdbc.StringUtils;
@@ -56,33 +58,40 @@ public class SessionResourceWs implements SessionResource {
 			//get the user from facebook with {facebookAccessToken} and add it to the database if not exists yet
 			
 			FacebookTemplate facebook = new FacebookTemplate(signUpRequestDTO.getFacebookAccessToken());
-			FacebookProfile fbProfile = facebook.userOperations().getUserProfile();
-			//TODO: confirm that email never comes with null value.
+			FacebookProfile fbProfile;
+			
+			try {
+				fbProfile = facebook.userOperations().getUserProfile();
+			} catch (Exception e){
+				log.error(String.format("Invalid Facebook Access Token: %s.",signUpRequestDTO.getFacebookAccessToken()));
+				//TODO: need an error dto
+				return Response.status(Status.BAD_REQUEST).entity("{'errorCode':'100','errorMesage':'Invalid Facebook Access Token.'}").build();
+			}
+			
 			User user = userService.getByEmail(fbProfile.getEmail());
 			
 			if (user == null){	//it is a new user
-				log.info("EL USUARIO NO EXISTE EN LA BASE DE DATOS");
-				//TODO obtain the user details from facebook
+				log.info(String.format("The user with email: %s doesn't exist.",fbProfile.getEmail()));
 				user = new User();
 				user.setCreationDate(new Date().getTime());
 				user.setEmail(fbProfile.getEmail());
-				user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
 				user.setFullName(getFullName(fbProfile.getFirstName(),fbProfile.getMiddleName(),fbProfile.getLastName()));
-				userService.save(user);
 			} else {
-				user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
-				userService.update(user);
-				log.info("EL USUARIO EXISTE EN LA BASE DE DATOS");
+				//TODO: falta el codigo del delete X GCM
+				sessionService.deleteByUserId(user.getId(),signUpRequestDTO.getGcmToken());
 			}
+			//update facebook access token
+			user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
 			
 			Session sessionToStore = new Session();
-			sessionToStore.setUser(user);
-			sessionToStore.setSessionToken(signUpRequestDTO.getFacebookAccessToken()+"_SESSION_TOKEN");
-			sessionToStore.setGcmToken(signUpRequestDTO.getFacebookAccessToken()+"_GCM_TOKEN");
+			sessionToStore.setUser(user);			
+			sessionToStore.setSessionToken(SessionUtils.generateSessionId());
+			sessionToStore.setGcmToken(signUpRequestDTO.getGcmToken());
 			
 			sessionService.save(sessionToStore);
+			Session savedSession = sessionService.getBySessionToken(sessionToStore.getSessionToken());
 			
-			return Response.ok(sessionToStore).build();
+			return Response.ok(savedSession).build();
 		}
 		
 		return Response.noContent().build();

@@ -47,11 +47,11 @@ public class SessionServiceJpa implements SessionService {
 	
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean delete(Session session) {
-//		session = entityManager.getReference(Session.class, session.getId());
-//		if (session == null)
-//			return false;
-//		entityManager.remove(session);
-//		entityManager.flush();
+		session = entityManager.getReference(Session.class, session.getId());
+		if (session == null)
+			return false;
+		entityManager.remove(session);
+		entityManager.flush();
 		return true;
 	}
 	
@@ -68,13 +68,22 @@ public class SessionServiceJpa implements SessionService {
 	@Transactional(readOnly = true)
 	public Session getBySessionToken(String sessionToken) {
 		Query queryFindSession = entityManager.createNamedQuery("Session.findSessionBySessionToken");
-		queryFindSession.setParameter(sessionToken, sessionToken);
+		queryFindSession.setParameter("sessionToken", sessionToken);
 		List<Session> sessions = queryFindSession.getResultList();
 		return (sessions.isEmpty()? null: sessions.get(0));
 	}
 
-	public boolean deleteByUserId(long userID) {
-		// TODO Auto-generated method stub
+	@SuppressWarnings("unchecked")
+	public boolean deleteByUserId(long userID, String gcmToken) {
+		
+		Query queryFindSessions = entityManager.createNamedQuery("Session.findAllByUser");
+		queryFindSessions.setParameter("userID", userID);
+		List<Session> sessions = queryFindSessions.getResultList();
+		for(Session session : sessions){
+			if(gcmToken.equals(session.getGcmToken())) {
+				return delete(session);
+			}
+		}
 		return false;
 	}
 }
