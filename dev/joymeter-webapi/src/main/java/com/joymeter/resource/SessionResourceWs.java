@@ -14,12 +14,15 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.social.InvalidAuthorizationException;
 import org.springframework.social.facebook.api.FacebookProfile;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.stereotype.Component;
 
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
+import com.joymeter.entity.dto.ErrorCode;
+import com.joymeter.entity.dto.ErrorDTO;
 import com.joymeter.entity.dto.SignUpRequestDTO;
 import com.joymeter.entity.util.FacebookUtils;
 import com.joymeter.entity.util.SessionUtils;
@@ -63,10 +66,14 @@ public class SessionResourceWs implements SessionResource {
 			
 			try {
 				fbProfile = facebook.userOperations().getUserProfile();
-			} catch (Exception e){
-				log.error(String.format("Invalid Facebook Access Token: %s.",signUpRequestDTO.getFacebookAccessToken()));
-				//TODO: need an error dto
-				return Response.status(Status.BAD_REQUEST).entity("{'errorCode':'100','errorMesage':'Invalid Facebook Access Token.'}").build();
+			} catch (InvalidAuthorizationException e){
+				if(e.getMessage().contains("expire")){
+					log.error(String.format("Expired Facebook Access Token: %s.",signUpRequestDTO.getFacebookAccessToken()));
+					return Response.status(Status.BAD_REQUEST).entity(new ErrorDTO(ErrorCode.EXPIRED_FACEBOOK_TOKEN)).build();
+				} else {
+					log.error(String.format("Invalid Facebook Access Token: %s.",signUpRequestDTO.getFacebookAccessToken()));
+					return Response.status(Status.BAD_REQUEST).entity(new ErrorDTO(ErrorCode.INVALID_FACEBOOK_TOKEN)).build();
+				}				
 			}
 			
 			User user = userService.getByEmail(fbProfile.getEmail());
@@ -80,7 +87,6 @@ public class SessionResourceWs implements SessionResource {
 						fbProfile.getFirstName(), fbProfile.getMiddleName(),
 						fbProfile.getLastName()));
 			} else {
-				//TODO: falta el codigo del delete X GCM
 				sessionService.deleteByUserId(user.getId(),signUpRequestDTO.getGcmToken());
 			}
 			//update facebook access token
