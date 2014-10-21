@@ -73,17 +73,15 @@ public class SessionServiceJpa implements SessionService {
 		return (sessions.isEmpty()? null: sessions.get(0));
 	}
 
-	@SuppressWarnings("unchecked")
+	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean deleteByUserId(long userID, String gcmToken) {
 		
-		Query queryFindSessions = entityManager.createNamedQuery("Session.findAllByUser");
-		queryFindSessions.setParameter("userID", userID);
-		List<Session> sessions = queryFindSessions.getResultList();
-		for(Session session : sessions){
-			if(gcmToken.equals(session.getGcmToken())) {
-				return delete(session);
-			}
-		}
-		return false;
+		Query queryDeleteSession = entityManager.createNamedQuery("Session.deleteSessionByUserIdAndGcm");
+		queryDeleteSession.setParameter("userID", userID);
+		queryDeleteSession.setParameter("gcmToken", gcmToken);
+		
+		int result = queryDeleteSession.executeUpdate();
+		
+		return result > 0;
 	}
 }

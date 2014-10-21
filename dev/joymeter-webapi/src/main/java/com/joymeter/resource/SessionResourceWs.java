@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.SignUpRequestDTO;
+import com.joymeter.entity.util.FacebookUtils;
 import com.joymeter.entity.util.SessionUtils;
 import com.joymeter.service.SessionService;
 import com.joymeter.service.UserService;
@@ -75,7 +76,9 @@ public class SessionResourceWs implements SessionResource {
 				user = new User();
 				user.setCreationDate(new Date().getTime());
 				user.setEmail(fbProfile.getEmail());
-				user.setFullName(getFullName(fbProfile.getFirstName(),fbProfile.getMiddleName(),fbProfile.getLastName()));
+				user.setFullName(FacebookUtils.getFullName(
+						fbProfile.getFirstName(), fbProfile.getMiddleName(),
+						fbProfile.getLastName()));
 			} else {
 				//TODO: falta el codigo del delete X GCM
 				sessionService.deleteByUserId(user.getId(),signUpRequestDTO.getGcmToken());
@@ -95,22 +98,5 @@ public class SessionResourceWs implements SessionResource {
 		}
 		
 		return Response.noContent().build();
-	}
-	
-	private String getFullName(final String first, final String middle, final String last) {
-		String fullName = new String();
-		if(first != null && !first.isEmpty()){
-			fullName = String.format("%s", first);
-		}
-		if(middle != null && !middle.isEmpty()){
-			fullName = String.format("%s %s",fullName, middle);
-		}
-		if(last != null && !last.isEmpty()){
-			fullName = String.format("%s %s",fullName, last);
-		}
-		if (!fullName.isEmpty()){
-			return fullName;
-		}
-		return null;
 	}
 }
