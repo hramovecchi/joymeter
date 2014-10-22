@@ -21,11 +21,11 @@ import org.springframework.stereotype.Component;
 
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
-import com.joymeter.entity.dto.ErrorCode;
-import com.joymeter.entity.dto.ErrorDTO;
 import com.joymeter.entity.dto.SignUpRequestDTO;
 import com.joymeter.entity.util.FacebookUtils;
 import com.joymeter.entity.util.SessionUtils;
+import com.joymeter.exception.ErrorCode;
+import com.joymeter.exception.ErrorDTO;
 import com.joymeter.service.SessionService;
 import com.joymeter.service.UserService;
 import com.mysql.jdbc.StringUtils;
