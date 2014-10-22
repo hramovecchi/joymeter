@@ -4,6 +4,7 @@
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:social="http://www.springframework.org/schema/social"
 	xsi:schemaLocation="
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -11,6 +12,7 @@
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
 			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+			http://www.springframework.org/schema/social http://www.springframework.org/schema/social/spring-social.xsd
 			">
 	<!--  Scan for both Jersey Rest Annotations a -->
 	<context:component-scan
@@ -153,6 +155,16 @@
 			</list>
 		</property>
 	</bean>
-	
+                 
+    <bean id="connectionFactoryLocator" class="org.springframework.social.connect.support.ConnectionFactoryRegistry">
+    <property name="connectionFactories">
+        <list>
+            <bean class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
+                <constructor-arg value="${facebook.clientId}" />
+                <constructor-arg value="${facebook.clientSecret}" />				
+            </bean>
+        </list>
+    </property>
+</bean>
 </beans>
 

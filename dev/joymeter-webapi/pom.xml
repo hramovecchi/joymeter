@@ -19,6 +19,14 @@
 			<url>http://download.java.net/maven/1</url>
 			<layout>legacy</layout>
 		</repository>
+		<repository>
+	        <id>spring-milestones</id>
+	        <name>Spring Milestones</name>
+	        <url>http://repo.spring.io/milestone</url>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	    </repository>
 	</repositories>
 	<build>
 		<finalName>joymeter-webapi</finalName>
@@ -41,7 +49,8 @@
 	</build>
 	<properties>
 		<spring.version>2.5.5</spring.version>
-		<hibernate.version>3.3.2.GA</hibernate.version>
+		<spring.social.version>1.1.0.RELEASE</spring.social.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
 		<commons-dbcp.version>1.2.2</commons-dbcp.version>
 		<commons-logging.version>1.0.4</commons-logging.version>
 		<jersey-version>1.9</jersey-version>
@@ -56,20 +65,30 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
+			<artifactId>spring-tx</artifactId>
+			<version>4.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
+			<artifactId>spring-orm</artifactId>
+			<version>4.1.0.RELEASE</version>
+		</dependency>		
 		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-web</artifactId>
+			<version>1.1.0.RELEASE</version>
+		</dependency>
+		<!-- Spring Social Facebook -->
+		<dependency>
+		  <groupId>org.springframework.social</groupId>
+		  <artifactId>spring-social-facebook</artifactId>
+		  <version>2.0.0.M1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<version>1.0.0.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -116,6 +135,24 @@
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
 			<version>${jersey-version}</version>
+			<exclusions>
+			    <exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -132,18 +169,6 @@
 	      <artifactId>jms-api</artifactId>
 	      <version>1.1-rev-1</version>
 	    </dependency>
-	    
-		<dependency>
-	        <groupId>com.fasterxml.jackson.core</groupId>
-	        <artifactId>jackson-databind</artifactId>
-	        <version>2.3.0</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-	        <artifactId>jackson-jaxrs-json-provider</artifactId>
-	        <version>2.3.0</version>
-	    </dependency>
-
 	</dependencies>
 </project>
 

@@ -18,7 +18,8 @@ import javax.persistence.Table;
 @Table(name = "SESSION")
 @NamedQueries( { 
 	@NamedQuery(name = "Session.findAllByUser", query = "SELECT s FROM Session s WHERE s.user.id=:userID"),
-	@NamedQuery(name = "Session.findSessionBySessionToken", query = "SELECT s FROM Session s WHERE s.session_token=:sessionToken")})
+	@NamedQuery(name = "Session.findSessionBySessionToken", query = "SELECT s FROM Session s WHERE s.session_token=:sessionToken"),
+	@NamedQuery(name = "Session.deleteSessionByUserIdAndGcm", query = "DELETE FROM Session s WHERE s.user.id =:userID AND s.gcm_token=:gcmToken")})
 public class Session implements Serializable{
 	
 	private static final long serialVersionUID = 7753016265168879373L;
@@ -28,7 +29,7 @@ public class Session implements Serializable{
 	private long id;
 	
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private User user;
 	

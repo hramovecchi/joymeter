@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.joymeter.entity.Session;
-import com.joymeter.entity.User;
 import com.joymeter.service.SessionService;
 
 
@@ -69,16 +68,20 @@ public class SessionServiceJpa implements SessionService {
 	@Transactional(readOnly = true)
 	public Session getBySessionToken(String sessionToken) {
 		Query queryFindSession = entityManager.createNamedQuery("Session.findSessionBySessionToken");
-		queryFindSession.setParameter(sessionToken, sessionToken);
+		queryFindSession.setParameter("sessionToken", sessionToken);
 		List<Session> sessions = queryFindSession.getResultList();
 		return (sessions.isEmpty()? null: sessions.get(0));
 	}
 
-	public boolean deleteByUserId(User user) {
-		for (Session session:this.getByUserId(user.getId())){
-			this.delete(session);
-			return true;
-		}
-		return false;
+	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
+	public boolean deleteByUserId(long userID, String gcmToken) {
+		
+		Query queryDeleteSession = entityManager.createNamedQuery("Session.deleteSessionByUserIdAndGcm");
+		queryDeleteSession.setParameter("userID", userID);
+		queryDeleteSession.setParameter("gcmToken", gcmToken);
+		
+		int result = queryDeleteSession.executeUpdate();
+		
+		return result > 0;
 	}
 }
