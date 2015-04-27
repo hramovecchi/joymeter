@@ -14,6 +14,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
 @Entity
 @Table(name = "ACTIVITY")
 @NamedQueries( { @NamedQuery(name = "Activity.findAllByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID")})
@@ -33,6 +37,7 @@ public class Activity implements Serializable{
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
+	@JsonIgnore
 	private User user;
 	
 	private boolean classified;

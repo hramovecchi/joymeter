@@ -2,9 +2,6 @@ package com.joymeter.entity.dto;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SignUpRequestDTO  implements Serializable{
 	
 	/**
