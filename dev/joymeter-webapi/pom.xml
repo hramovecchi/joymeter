@@ -53,8 +53,9 @@
 		<hibernate.version>4.3.6.Final</hibernate.version>
 		<commons-dbcp.version>1.2.2</commons-dbcp.version>
 		<commons-logging.version>1.0.4</commons-logging.version>
-		<jersey-version>1.9</jersey-version>
+		<jersey-version>1.18</jersey-version>
 		<log4j.version>1.2.16</log4j.version>
+		<aspectj.version>1.7.4</aspectj.version>
 	</properties>
 	<dependencies>
 		<!-- Adding in JPA With It's Requirements -->
@@ -62,6 +63,16 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${commons-logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.1.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>4.1.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -78,6 +89,20 @@
 			<artifactId>spring-social-web</artifactId>
 			<version>1.1.0.RELEASE</version>
 		</dependency>
+		
+		<!-- AspectJ dependencies -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjtools</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+		
 		<!-- Spring Social Facebook -->
 		<dependency>
 		  <groupId>org.springframework.social</groupId>
@@ -164,11 +189,6 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		<dependency>
-	      <groupId>javax.jms</groupId>
-	      <artifactId>jms-api</artifactId>
-	      <version>1.1-rev-1</version>
-	    </dependency>
 	</dependencies>
 </project>
 

@@ -18,7 +18,11 @@
 	<context:component-scan
 		base-package="com.joymeter.resource,com.joymeter.service,com.joymeter.service.jpa,com.joymeter.entity.util" />
 	<context:annotation-config />
-	<tx:annotation-driven />
+	<tx:annotation-driven/>
+	
+	<!-- Enable AspectJ style of Spring AOP -->
+	<aop:aspectj-autoproxy />
+
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
 		p:driverClassName="${jdbc.driver}" p:url="${jdbc.url}" p:username="${jdbc.username}"
@@ -165,6 +169,16 @@
             </bean>
         </list>
     </property>
-</bean>
+	</bean>
+	
+	<bean name="securityInterceptor" class="com.joymeter.security.JoymeterSecurityInterceptor" />
+	<!-- Spring AOP XML Configuration -->
+	<aop:config>
+	    <aop:aspect ref="securityInterceptor" id="securityInterceptorID" order="1">
+	        <aop:pointcut expression="@annotation(com.joymeter.security.RequiresAuthentication)" id="securedMethods"/>
+	        <aop:around method="checkAccess" pointcut-ref="securedMethods" arg-names="proceedingJoinPoint"/>
+	    </aop:aspect>
+	</aop:config>
+	
 </beans>
 

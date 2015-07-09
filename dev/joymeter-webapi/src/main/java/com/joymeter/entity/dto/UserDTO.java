@@ -2,17 +2,17 @@ package com.joymeter.entity.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2964592194473859991L;
 	
 	private String email;
 	private String facebookAccessToken;
 	private String fullName;
-	private long creationDate;
+	private String creationDate;
 	
 	public String getEmail() {
 		return email;
@@ -32,10 +32,10 @@ public class UserDTO implements Serializable{
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
-	public long getCreationDate() {
+	public String getCreationDate() {
 		return creationDate;
 	}
-	public void setCreationDate(long creationDate) {
+	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
 	}
 }

@@ -1,8 +1,9 @@
 package com.joymeter.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.joymeter.entity.Activity;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ActivityDTO {
 	private String type;
 	private String summary; 
@@ -10,8 +11,7 @@ public class ActivityDTO {
 	private String levelOfJoy;
 	private String startDate;
 	private String endDate;
-	private boolean classified;
-	private String userId;
+	private Boolean classified;
 	
 	public String getType() {
 		return type;
@@ -49,29 +49,11 @@ public class ActivityDTO {
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
-	public boolean isClassified() {
+	
+	public Boolean getClassified() {
 		return classified;
 	}
-	public void setClassified(boolean classified) {
+	public void setClassified(Boolean classified) {
 		this.classified = classified;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	
-	public Activity mappedToActivity(){
-		Activity activity = new Activity();
-		activity.setClassified(this.isClassified());
-		activity.setDescription(this.getDescription());
-		activity.setEndDate(Long.parseLong(this.getEndDate()));
-		activity.setLevelOfJoy(Integer.parseInt(this.levelOfJoy));
-		activity.setStartDate(Long.parseLong(this.getStartDate()));
-		activity.setSummary(this.getSummary());
-		activity.setType(this.getType());
-		
-		return activity;
 	}
 }
