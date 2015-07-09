@@ -22,4 +22,10 @@ public class ResponseFactory {
 				.entity(new ErrorDTO(ErrorCode.UNAUTHORIZED))
 				.type(MediaType.APPLICATION_JSON).build();
 	}
+	
+	public static Response invalidSession(){
+		return Response.status(Status.BAD_REQUEST)
+				.entity(new ErrorDTO(ErrorCode.INVALID_SESSION))
+				.type(MediaType.APPLICATION_JSON).build();
+	}
 }

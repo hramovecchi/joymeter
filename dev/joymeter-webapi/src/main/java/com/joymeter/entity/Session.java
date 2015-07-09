@@ -14,6 +14,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "SESSION")
 @NamedQueries( { 
@@ -26,6 +28,7 @@ public class Session implements Serializable{
 	
 	@Id 
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonIgnore
 	private long id;
 	
 

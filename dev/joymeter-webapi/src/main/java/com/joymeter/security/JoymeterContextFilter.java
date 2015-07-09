@@ -2,11 +2,9 @@ package com.joymeter.security;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.joymeter.service.SessionService;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 
@@ -14,9 +12,6 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 public class JoymeterContextFilter implements ContainerRequestFilter{
 	
 	private static String AUTHORIZATION_DELIMITER = "Bearer";
-	
-	@Autowired
-	private SessionService sessionService;
 
 	public ContainerRequest filter(ContainerRequest request) {
 		

@@ -3,10 +3,7 @@ package com.joymeter.entity.dto;
 import java.io.Serializable;
 
 public class SignUpRequestDTO  implements Serializable{
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -5452100383034657287L;
 	
 	private String facebookAccessToken;

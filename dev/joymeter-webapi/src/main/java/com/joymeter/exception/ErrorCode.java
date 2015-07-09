@@ -1,7 +1,8 @@
 package com.joymeter.exception;
 
 public enum ErrorCode {
-
+	
+	INVALID_SESSION(98, "Invalid Session"),
 	UNAUTHORIZED(99, "Unauthorized"),
 	INVALID_FACEBOOK_TOKEN(100,"Invalid Facebook Access token"),
 	EXPIRED_FACEBOOK_TOKEN(101,"Expired Facebook Access token");

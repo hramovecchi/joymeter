@@ -4,12 +4,13 @@ import java.util.UUID;
 
 public class SessionUtils {
 
-	
-	public static String generateSessionId() {
-		String uuid = Long.toHexString(UUID.randomUUID()
+	public static String randomSessionToken() {
+		String part1 = Long.toHexString(UUID.randomUUID()
 				.getLeastSignificantBits());
-		String onlineId = String.format("s-%s", uuid);
-		return onlineId;
+		String part2 = Long.toHexString(UUID.randomUUID()
+				.getLeastSignificantBits());
+		
+		return String.format("%s-%s", part1, part2);
 	}
 
 
