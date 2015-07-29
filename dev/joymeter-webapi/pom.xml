@@ -161,6 +161,10 @@
 			<artifactId>jersey-spring</artifactId>
 			<version>${jersey-version}</version>
 			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-asm</artifactId>
+				</exclusion>
 			    <exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-core</artifactId>
