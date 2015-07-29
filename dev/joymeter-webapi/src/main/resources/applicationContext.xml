@@ -48,18 +48,9 @@
 		</property>
 		<property name="jpaProperties">
 			<value>
-				<!--
-					hibernate.ejb.naming_strategy=org.hibernate.cfg.ImprovedNamingStrategy
-				-->
 				hibernate.ejb.naming_strategy=org.hibernate.cfg.DefaultNamingStrategy
 				hibernate.dialect=${hibernate.dialect}
 				hibernate.hbm2ddl.auto=${hibernate.hbm2ddl.auto}
-<!--
-					hibernate.cache.provider_class=net.sf.ehcache.hibernate.SingletonEhCacheProvider
-					hibernate.cache.use_query_cache=true
-					hibernate.cache.use_second_level_cache=true
-					hibernate.cache.provider_configuration_file_resource_path=ehcache.xml
-				-->
 			</value>
 		</property>
 	</bean>
@@ -68,97 +59,6 @@
 	<bean id="jpaAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
 		p:database="MYSQL" p:showSql="true" />
-
-<!--  Some Test Data -->
-	<bean id="userDataLoader" class="com.joymeter.entity.util.UserDataLoader" init-method="init">
-		<property name="users">
-			<list>
-				<bean class="com.joymeter.entity.User">
-					<property name="fullName" value="Frank Zappa" />
-					<property name="email" value="frank@email.com" />
-					<property name="facebookAccessToken" value="Frank.facebookAccessToken" />
-					<property name="creationDate" value="3123124121231" />
-				</bean>
-				<bean class="com.joymeter.entity.User">
-					<property name="fullName" value="John Abercrombie" />
-					<property name="email" value="john@email.com" />
-					<property name="facebookAccessToken" value="John.facebookAccessToken" />
-					<property name="creationDate" value="3123124121231" />
-				</bean>
-				<bean class="com.joymeter.entity.User">
-					<property name="fullName" value="Keith Jarrett" />
-					<property name="email" value="keith@email.com" />
-					<property name="facebookAccessToken" value="Keith.facebookAccessToken" />
-					<property name="creationDate" value="3123124121231" />
-				</bean>
-				<bean class="com.joymeter.entity.User">
-					<property name="fullName" value="Freddy Hubbard" />
-					<property name="email" value="freddy@email.com" />
-					<property name="facebookAccessToken" value="Freddy.facebookAccessToken" />
-					<property name="creationDate" value="3123124121231" />
-				</bean>
-				<bean class="com.joymeter.entity.User">
-					<property name="fullName" value="Ray Charles" />
-					<property name="email" value="ray@email.com" />
-					<property name="facebookAccessToken" value="Ray.facebookAccessToken" />
-					<property name="creationDate" value="3123124121231" />
-				</bean>
-				<bean class="com.joymeter.entity.User">
-					<property name="fullName" value="Dave Holland" />
-					<property name="email" value="dave@email.com" />
-					<property name="facebookAccessToken" value="Dave.facebookAccessToken" />
-					<property name="creationDate" value="3123124121231" />
-				</bean>
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="activityDataLoader" class="com.joymeter.entity.util.ActivityDataLoader" init-method="init">
-		<property  name="activitys">
-			<list>
-				<bean class="com.joymeter.entity.util.ActivityDBRow">		
-					<property name="type" value="Recreacion" />
-					<property name="summary" value="Pezca" />
-					<property name="description" value="Sali a pezcar con mis amigos el fin de semana" />
-					<property name="levelOfJoy" value="5" />
-					<property name="startDate" value="3123124121231" />
-					<property name="endDate" value="3123124121231" />
-					<property name="userId" value="1" />
-					<property name="classified" value="false" />
-				</bean>
-				<bean class="com.joymeter.entity.util.ActivityDBRow">		
-					<property name="type" value="Recreacion" />
-					<property name="summary" value="Sexo" />
-					<property name="description" value="Tuve una noche agitada con una loca en un bar" />
-					<property name="levelOfJoy" value="5" />
-					<property name="startDate" value="3123124121231" />
-					<property name="endDate" value="3123124121231" />
-					<property name="userId" value="1" />
-					<property name="classified" value="true" />
-				</bean>
-				<bean class="com.joymeter.entity.util.ActivityDBRow">		
-					<property name="type" value="Responsabilidad" />
-					<property name="summary" value="Trabajo" />
-					<property name="description" value="Estuve en la oficina 10 horas corridas" />
-					<property name="levelOfJoy" value="1" />
-					<property name="startDate" value="3123124121231" />
-					<property name="endDate" value="3123124121231" />
-					<property name="userId" value="2" />
-					<property name="classified" value="false" />
-				</bean>
-				<bean class="com.joymeter.entity.util.ActivityDBRow">		
-					<property name="type" value="Responsabilidad" />
-					<property name="summary" value="Limpieza" />
-					<property name="description" value="Me toco lavar el auto" />
-					<property name="levelOfJoy" value="3" />
-					<property name="startDate" value="3123124121231" />
-					<property name="endDate" value="3123124121231" />
-					<property name="userId" value="3" />
-					<property name="classified" value="false" />
-				</bean>
-			</list>
-		</property>
-	</bean>
                  
     <bean id="connectionFactoryLocator" class="org.springframework.social.connect.support.ConnectionFactoryRegistry">
     <property name="connectionFactories">
