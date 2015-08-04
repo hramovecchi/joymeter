@@ -2,9 +2,11 @@ package com.joymeter.entity.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class UserDTO implements Serializable{
 	
 	private static final long serialVersionUID = -2964592194473859991L;
