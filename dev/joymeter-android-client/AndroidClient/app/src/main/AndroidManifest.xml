@@ -19,7 +19,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".HistoryActivity" />
-        <activity android:name=".SingleActivity"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
