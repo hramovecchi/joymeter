@@ -46,7 +46,7 @@ public class LoginActivity extends FragmentActivity {
 
         String sessionToken = preferences.getString("sessionToken", null);
         if (sessionToken != null){
-            Intent intent =  new Intent(context, HistoryActivity.class);
+            Intent intent =  new Intent(context, SingleActivity.class);
             startActivity(intent);
             finish();
         } else {
