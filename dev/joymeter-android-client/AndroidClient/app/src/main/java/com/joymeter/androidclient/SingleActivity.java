@@ -4,6 +4,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.joymeter.dto.ActivityDTO;
+import com.joymeter.rest.ActivityService;
+import com.joymeter.rest.factory.ActivityServiceFactory;
+
+import retrofit.ResponseCallback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class SingleActivity extends FragmentActivity {
@@ -32,6 +41,24 @@ public class SingleActivity extends FragmentActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
+            SingleActivityFragment fragment = (SingleActivityFragment)getSupportFragmentManager().findFragmentById(R.id.single_joymeter_activity);
+            ActivityDTO activity = fragment.getActivityDTO();
+
+            ActivityService activityService = ActivityServiceFactory.getInstance();
+            activityService.addActivity(activity, new ResponseCallback() {
+                @Override
+                public void success(Response response) {
+                    Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
+            return true;
             return true;
         }
 

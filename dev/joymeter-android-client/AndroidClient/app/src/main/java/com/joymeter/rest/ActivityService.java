@@ -4,6 +4,7 @@ import com.joymeter.dto.Activities;
 import com.joymeter.dto.ActivityDTO;
 
 import retrofit.Callback;
+import retrofit.ResponseCallback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -26,7 +27,7 @@ public interface ActivityService {
     ActivityDTO getActivity(@Path("id") long id);
 
     @POST(activityPath)
-    void addActivity(@Body ActivityDTO activity);
+    void addActivity(@Body ActivityDTO activity, ResponseCallback callback);
 
     @PUT(activityPath + "/{id}")
     void updateActivity(@Body ActivityDTO activity);
