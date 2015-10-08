@@ -17,7 +17,7 @@ public class ActivityDTO {
     @Expose
     private Boolean classified;
     @Expose
-    private Long levelOfJoy;
+    private Integer levelOfJoy;
     @Expose
     private Long startDate;
     @Expose
@@ -118,7 +118,7 @@ public class ActivityDTO {
      * @return
      * The levelOfJoy
      */
-    public Long getLevelOfJoy() {
+    public Integer getLevelOfJoy() {
         return levelOfJoy;
     }
 
@@ -127,7 +127,7 @@ public class ActivityDTO {
      * @param levelOfJoy
      * The levelOfJoy
      */
-    public void setLevelOfJoy(Long levelOfJoy) {
+    public void setLevelOfJoy(Integer levelOfJoy) {
         this.levelOfJoy = levelOfJoy;
     }
 
