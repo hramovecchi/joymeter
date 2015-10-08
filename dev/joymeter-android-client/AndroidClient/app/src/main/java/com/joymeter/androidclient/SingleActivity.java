@@ -59,7 +59,6 @@ public class SingleActivity extends FragmentActivity {
                 }
             });
             return true;
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
