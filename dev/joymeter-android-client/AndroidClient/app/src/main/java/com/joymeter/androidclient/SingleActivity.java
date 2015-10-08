@@ -19,6 +19,7 @@ public class SingleActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_single, menu);
+        menu.getItem(0).setShowAsAction(1);
         return true;
     }
 

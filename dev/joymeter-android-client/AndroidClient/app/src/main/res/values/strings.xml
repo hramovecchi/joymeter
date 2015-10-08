@@ -3,7 +3,8 @@
     <string name="eula">By signin to joymeter, you are giving your soul to our savior "Mr Satan"</string>
 
     <string name="facebook_app_id">1460864510848745</string>
-    <string name="title_activity_single">SingleActivity</string>
+    <string name="title_activity_single">New</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_save">Save</string>
 </resources>
