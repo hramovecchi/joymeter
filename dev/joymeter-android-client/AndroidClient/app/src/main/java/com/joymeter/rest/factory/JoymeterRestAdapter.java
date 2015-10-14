@@ -18,6 +18,7 @@ public class JoymeterRestAdapter {
     public static RestAdapter getInstance(){
         if (restAdapter == null) {
             restAdapter = new RestAdapter.Builder()
+                    .setLogLevel(RestAdapter.LogLevel.FULL)
                     .setEndpoint(JOYMETER_BASEURI)
                     .setRequestInterceptor(new RequestInterceptor() {
                         @Override

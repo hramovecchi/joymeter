@@ -30,9 +30,9 @@ public interface ActivityService {
     void addActivity(@Body ActivityDTO activity, ResponseCallback callback);
 
     @PUT(activityPath + "/{id}")
-    void updateActivity(@Body ActivityDTO activity);
+    void updateActivity(@Path("id") long id, @Body ActivityDTO activity);
 
     @DELETE(activityPath + "/{id}")
-    void deleteActivity();
+    void deleteActivity(@Path("id") long id, ResponseCallback callback);
 
 }
