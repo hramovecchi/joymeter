@@ -109,4 +109,9 @@ public class ActivityListFragment extends ListFragment {
                 return super.onContextItemSelected(item);
         }
     }
+
+    public void addActivity(ActivityDTO activity){
+        activityArrayAdapter.add(activity);
+        activityArrayAdapter.notifyDataSetChanged();
+    }
 }
