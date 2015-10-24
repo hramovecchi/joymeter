@@ -85,7 +85,7 @@ public class ActivityResource {
 		
 		activityService.save(activity);
 		
-		return Response.status(Status.OK).build();
+		return Response.ok(activity).build();
 	}
 
 	@GET

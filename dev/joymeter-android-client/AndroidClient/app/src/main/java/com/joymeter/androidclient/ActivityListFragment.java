@@ -40,9 +40,10 @@ public class ActivityListFragment extends ListFragment {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        Long userId = preferences.getLong("userId", 0);
+        Long userIdNotFoung = 0L;
+        Long userId = preferences.getLong("userId", userIdNotFoung);
 
-        if (!userId.equals(0)) {
+        if (!userId.equals(userIdNotFoung)) {
             ActivityServiceFactory.getInstance().getActivities(userId, new Callback<Activities>() {
                 @Override
                 public void success(Activities activities, Response response) {
