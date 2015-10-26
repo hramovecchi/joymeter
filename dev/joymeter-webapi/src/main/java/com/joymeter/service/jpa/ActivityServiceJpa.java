@@ -25,11 +25,11 @@ public class ActivityServiceJpa implements ActivityService {
 	}
 	
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
-	public boolean save(Activity activity) {
+	public Activity save(Activity activity) {
 		log.info("Saving: "+activity.getId());
-		entityManager.merge(activity);
+		entityManager.persist(activity);
 		entityManager.flush();
-		return true;
+		return activity;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -58,10 +58,10 @@ public class ActivityServiceJpa implements ActivityService {
 	}
 
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
-	public boolean update(Activity activity) {
+	public Activity update(Activity activity) {
 		entityManager.merge(activity);
 		entityManager.flush();
-		return true;
+		return activity;
 	}
 
 }

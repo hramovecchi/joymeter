@@ -11,7 +11,7 @@ import com.joymeter.dto.ActivityDTO;
 import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.factory.ActivityServiceFactory;
 
-import retrofit.ResponseCallback;
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -45,12 +45,12 @@ public class SingleActivity extends FragmentActivity {
             final ActivityDTO activity = fragment.getActivityDTO();
 
             ActivityService activityService = ActivityServiceFactory.getInstance();
-            activityService.addActivity(activity, new ResponseCallback() {
+            activityService.addActivity(activity, new Callback<ActivityDTO>() {
                 @Override
-                public void success(Response response) {
+                public void success(ActivityDTO activityDTO, Response response) {
                     Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra("ACTIVITY_ADDED", activity);
+                    returnIntent.putExtra("ACTIVITY_ADDED", activityDTO);
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 }

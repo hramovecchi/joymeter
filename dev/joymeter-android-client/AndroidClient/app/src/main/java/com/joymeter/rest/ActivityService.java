@@ -27,7 +27,7 @@ public interface ActivityService {
     ActivityDTO getActivity(@Path("id") long id);
 
     @POST(activityPath)
-    void addActivity(@Body ActivityDTO activity, ResponseCallback callback);
+    void addActivity(@Body ActivityDTO activity, Callback<ActivityDTO> callback);
 
     @PUT(activityPath + "/{id}")
     void updateActivity(@Path("id") long id, @Body ActivityDTO activity);
