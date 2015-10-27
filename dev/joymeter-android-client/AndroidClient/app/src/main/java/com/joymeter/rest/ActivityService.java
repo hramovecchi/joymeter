@@ -24,15 +24,14 @@ public interface ActivityService {
     void getActivities(@Query("user_id") long userId, Callback<Activities> callback);
 
     @GET(activityPath + "/{id}")
-    ActivityDTO getActivity(@Path("id") long id);
+    void getActivity(@Path("id") long id, Callback<ActivityDTO> callback);
 
     @POST(activityPath)
     void addActivity(@Body ActivityDTO activity, Callback<ActivityDTO> callback);
 
     @PUT(activityPath + "/{id}")
-    void updateActivity(@Path("id") long id, @Body ActivityDTO activity);
+    void updateActivity(@Path("id") long id, @Body ActivityDTO activity, Callback<ActivityDTO> callback);
 
     @DELETE(activityPath + "/{id}")
     void deleteActivity(@Path("id") long id, ResponseCallback callback);
-
 }
