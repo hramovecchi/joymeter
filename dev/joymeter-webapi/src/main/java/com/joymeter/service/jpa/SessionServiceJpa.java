@@ -32,7 +32,7 @@ public class SessionServiceJpa implements SessionService {
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean save(Session session) {
 		log.info("Saving: "+ session.toString());
-		entityManager.merge(session);
+		entityManager.persist(session);
 		entityManager.flush();
 		return true;
 	}
