@@ -1,6 +1,8 @@
 package com.joymeter.androidclient;
 
+import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,6 +31,8 @@ import retrofit.client.Response;
  * Created by hramovecchi on 24/08/2015.
  */
 public class ActivityListFragment extends ListFragment {
+
+    private final int UPDATE_ACTIVITY = 2;
 
     private List<ActivityDTO> userActivities;
     private SharedPreferences preferences;
@@ -88,7 +92,11 @@ public class ActivityListFragment extends ListFragment {
         switch (item.getItemId()) {
 
             case R.id.edit:
-                Toast.makeText(getActivity(), "edit", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getActivity(), SingleActivity.class);
+                i.putExtra("joymeterActivity", activity);
+                i.putExtra("position", info.position);
+
+                startActivityForResult(i, UPDATE_ACTIVITY);
                 return true;
             case R.id.remove:
                 ActivityService activityService = ActivityServiceFactory.getInstance();
@@ -108,6 +116,24 @@ public class ActivityListFragment extends ListFragment {
                 return true;
             default:
                 return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == UPDATE_ACTIVITY){
+            if (resultCode == Activity.RESULT_OK){
+                int position = data.getIntExtra("position", -1);
+                ActivityDTO activity = (ActivityDTO)data.getSerializableExtra("ACTIVITY_UPDATED");
+                activityArrayAdapter.remove(activityArrayAdapter.getItem(position));
+                activityArrayAdapter.insert(activity, position);
+                activityArrayAdapter.notifyDataSetChanged();
+
+            }else if (resultCode == Activity.RESULT_CANCELED){
+
+            }
         }
     }
 

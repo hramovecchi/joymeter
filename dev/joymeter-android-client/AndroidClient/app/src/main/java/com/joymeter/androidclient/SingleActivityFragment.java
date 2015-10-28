@@ -39,6 +39,8 @@ public class SingleActivityFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
+
         summary = (EditText)view.findViewById(R.id.summaryInput);
         type = (EditText)view.findViewById(R.id.typeInput);
         initial = (EditText)view.findViewById(R.id.initialInput);

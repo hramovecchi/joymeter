@@ -18,10 +18,16 @@ import retrofit.client.Response;
 
 public class SingleActivity extends FragmentActivity {
 
+    private String saveAction = "add";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single);
+
+        if ((ActivityDTO)getIntent().getSerializableExtra("joymeterActivity")!= null){
+            saveAction = "update";
+        }
     }
 
 
@@ -45,24 +51,47 @@ public class SingleActivity extends FragmentActivity {
             final ActivityDTO activity = fragment.getActivityDTO();
 
             ActivityService activityService = ActivityServiceFactory.getInstance();
-            activityService.addActivity(activity, new Callback<ActivityDTO>() {
-                @Override
-                public void success(ActivityDTO activityDTO, Response response) {
-                    Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("ACTIVITY_ADDED", activityDTO);
-                    setResult(RESULT_OK, returnIntent);
-                    finish();
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
-                    Intent returnIntent = new Intent();
-                    setResult(RESULT_CANCELED, returnIntent);
-                    finish();
-                }
-            });
+            if (saveAction.equals("add")) {
+                activityService.addActivity(activity, new Callback<ActivityDTO>() {
+                    @Override
+                    public void success(ActivityDTO activityDTO, Response response) {
+                        Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("ACTIVITY_ADDED", activityDTO);
+                        setResult(RESULT_OK, returnIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                        Intent returnIntent = new Intent();
+                        setResult(RESULT_CANCELED, returnIntent);
+                        finish();
+                    }
+                });
+            } else if (saveAction.equals("update")){
+                activityService.updateActivity(activity.getId(), activity, new Callback<ActivityDTO>() {
+                    @Override
+                    public void success(ActivityDTO activityDTO, Response response) {
+                        Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("ACTIVITY_UPDATED", activityDTO);
+                        returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
+                        setResult(RESULT_OK, returnIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                        Intent returnIntent = new Intent();
+                        setResult(RESULT_CANCELED, returnIntent);
+                        finish();
+                    }
+                });
+            }
             return true;
         }
 
