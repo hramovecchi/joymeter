@@ -18,6 +18,8 @@ import java.util.Calendar;
  */
 public class SingleActivityFragment extends Fragment {
 
+    private Long id;
+
     private EditText summary;
     private EditText type;
     private EditText initial;
@@ -25,9 +27,6 @@ public class SingleActivityFragment extends Fragment {
     private EditText description;
     private RatingBar loj;
     private CheckBox share;
-
-    public SingleActivityFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,8 +38,6 @@ public class SingleActivityFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
-
         summary = (EditText)view.findViewById(R.id.summaryInput);
         type = (EditText)view.findViewById(R.id.typeInput);
         initial = (EditText)view.findViewById(R.id.initialInput);
@@ -48,6 +45,24 @@ public class SingleActivityFragment extends Fragment {
         description = (EditText)view.findViewById(R.id.descriptionInput);
         loj = (RatingBar)view.findViewById(R.id.levelOfJoyBar);
         share = (CheckBox)view.findViewById(R.id.shareCheckBox);
+
+        populateActivity();
+    }
+
+    private void populateActivity() {
+
+        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
+
+        if (activity != null){
+            summary.setText(activity.getSummary());
+            type.setText(activity.getType());
+            initial.setText(String.valueOf(activity.getStartDate()));
+            duration.setText(String.valueOf(activity.getEndDate()));
+            description.setText(activity.getDescription());
+            loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
+            share.setChecked(!activity.getClassified());
+            id = activity.getId();
+        }
     }
 
     public ActivityDTO getActivityDTO(){
@@ -63,6 +78,10 @@ public class SingleActivityFragment extends Fragment {
         activity.setDescription(description.getText().toString());
         activity.setLevelOfJoy(Math.round(loj.getRating()));
         activity.setClassified(!share.isChecked());
+
+        if (id != null){
+            activity.setId(id);
+        }
 
         return activity;
     }
