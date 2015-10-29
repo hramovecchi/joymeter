@@ -158,6 +158,6 @@ public class ActivityResource {
 		
 		activityService.update(activity);
 		
-		return Response.ok().build();
+		return Response.ok(activity).build();
 	}
 }
