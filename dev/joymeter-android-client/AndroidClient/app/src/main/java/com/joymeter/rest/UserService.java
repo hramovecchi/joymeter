@@ -2,6 +2,7 @@ package com.joymeter.rest;
 
 import com.joymeter.dto.UserDTO;
 
+import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.PUT;
@@ -15,9 +16,9 @@ public interface UserService {
     String userPath = "/api/users";
 
     @GET(userPath + "/{id}")
-    UserDTO getUser(@Path("id") long userId);
+    void getUser(@Path("id") long userId, Callback<UserDTO> callback);
 
     @PUT(userPath + "/{id}")
-    void updateUser(@Path("id") long userId, @Body UserDTO user);
+    void updateUser(@Path("id") long userId, @Body UserDTO user, Callback<UserDTO> callback);
 
 }

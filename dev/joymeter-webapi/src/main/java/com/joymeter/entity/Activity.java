@@ -35,7 +35,7 @@ public class Activity implements Serializable{
 	private long start_date;
 	private long end_date;
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
 	@JsonIgnore
 	private User user;

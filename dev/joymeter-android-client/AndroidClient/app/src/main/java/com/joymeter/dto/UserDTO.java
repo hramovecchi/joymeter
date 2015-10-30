@@ -2,10 +2,12 @@ package com.joymeter.dto;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
+
 /**
  * Created by hramovecchi on 10/08/2015.
  */
-public class UserDTO {
+public class UserDTO implements Serializable{
 
     @Expose
     private Long id;
