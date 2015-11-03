@@ -42,6 +42,12 @@ public class HistoryActivity extends FragmentActivity{
             return true;
         }
 
+        if (id == R.id.action_chart) {
+            Intent i = new Intent(getApplicationContext(), ChartActivity.class);
+            startActivity(i);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

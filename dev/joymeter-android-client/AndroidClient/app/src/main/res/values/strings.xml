@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JoyMeter AC</string>
+    <string name="app_name">JoyMeter</string>
     <string name="eula">By signin to joymeter, you are giving your soul to our savior "Mr Satan"</string>
 
     <string name="facebook_app_id">1460864510848745</string>
@@ -9,4 +9,7 @@
     <string name="action_add">Add</string>
     <string name="edit">Edit</string>
     <string name="remove">Remove</string>
+    <string name="action_chart">Chart</string>
+    <string name="title_activity_chart">Level of joy chart</string>
+    <string name="title_history_chart">History</string>
 </resources>
