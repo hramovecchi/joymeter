@@ -6,4 +6,9 @@
         android:title="@string/action_add"
         android:icon="@drawable/ic_add_black_24dp"
         android:showAsAction="ifRoom|withText"/>
+
+    <item android:id="@+id/action_chart"
+        android:title="@string/action_chart"
+        android:icon="@drawable/ic_assessment_black_24dp"
+        android:showAsAction="ifRoom|withText"/>
 </menu>

@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_jm_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light" >
         <activity
@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HistoryActivity" />
+        <activity android:name=".HistoryActivity"
+            android:label="@string/title_history_chart"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -32,6 +33,10 @@
         <activity
             android:name=".SingleActivity"
             android:label="@string/title_activity_single" >
+        </activity>
+        <activity
+            android:name=".ChartActivity"
+            android:label="@string/title_activity_chart" >
         </activity>
     </application>
 
