@@ -81,9 +81,8 @@ public class SessionResource {
 			sessionToStore.setGcmToken(signUpRequestDTO.getGcmToken());
 			
 			sessionService.save(sessionToStore);
-			Session savedSession = sessionService.getBySessionToken(sessionToStore.getSessionToken());
 			
-			return Response.ok(savedSession).build();
+			return Response.ok(sessionToStore).build();
 		}
 		
 		return Response.noContent().build();
