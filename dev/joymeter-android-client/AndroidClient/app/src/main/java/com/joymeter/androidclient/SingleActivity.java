@@ -48,7 +48,7 @@ public class SingleActivity extends FragmentActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
-            SingleActivityFragment fragment = (SingleActivityFragment)getSupportFragmentManager().findFragmentById(R.id.single_joymeter_activity);
+            SingleActivityFragment fragment = (SingleActivityFragment)getFragmentManager().findFragmentById(R.id.single_joymeter_activity);
             final ActivityDTO activity = fragment.getActivityDTO();
 
             ActivityService activityService = ActivityServiceFactory.getInstance();

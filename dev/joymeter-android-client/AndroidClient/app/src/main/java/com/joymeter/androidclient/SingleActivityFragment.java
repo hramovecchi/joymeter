@@ -1,6 +1,7 @@
 package com.joymeter.androidclient;
 
-import android.support.v4.app.Fragment;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
+import com.joymeter.androidclient.dialog.DatePickerFragment;
 import com.joymeter.dto.ActivityDTO;
 
 import java.util.Calendar;
@@ -17,6 +19,8 @@ import java.util.Calendar;
  * A placeholder fragment containing a simple view.
  */
 public class SingleActivityFragment extends Fragment {
+
+    private static final int PICK_DATE = 1;
 
     private Long id;
 
@@ -63,6 +67,15 @@ public class SingleActivityFragment extends Fragment {
             share.setChecked(!activity.getClassified());
             id = activity.getId();
         }
+
+        initial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dateFragment = new DatePickerFragment();
+                dateFragment.setTargetFragment(getTargetFragment(), PICK_DATE);
+                dateFragment.show(getActivity().getFragmentManager(), "datePicker");
+            }
+        });
     }
 
     public ActivityDTO getActivityDTO(){
