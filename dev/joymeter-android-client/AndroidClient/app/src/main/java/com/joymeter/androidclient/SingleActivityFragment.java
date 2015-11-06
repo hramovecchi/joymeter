@@ -1,7 +1,9 @@
 package com.joymeter.androidclient;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,5 +99,14 @@ public class SingleActivityFragment extends Fragment {
         }
 
         return activity;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_DATE) {
+            if (resultCode == Activity.RESULT_OK) {
+                initial.setText(data.getStringExtra("DATE_PICKED"));
+            }
+        }
     }
 }

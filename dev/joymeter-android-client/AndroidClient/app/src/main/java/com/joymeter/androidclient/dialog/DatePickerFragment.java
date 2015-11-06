@@ -1,8 +1,11 @@
 package com.joymeter.androidclient.dialog;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
@@ -32,6 +35,13 @@ public class DatePickerFragment extends DialogFragment
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         c.set(year, month, day);
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("DATE_PICKED", getFormatedDate());
+
+        Fragment f = getTargetFragment();
+
+        f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
     }
 
     public long getTimeInMillis(){
