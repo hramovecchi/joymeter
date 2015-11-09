@@ -74,7 +74,7 @@ public class SingleActivityFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DialogFragment dateFragment = new DatePickerFragment();
-                dateFragment.setTargetFragment(getTargetFragment(), PICK_DATE);
+                dateFragment.setTargetFragment(getSingleActivityFragment(), PICK_DATE);
                 dateFragment.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
@@ -108,5 +108,9 @@ public class SingleActivityFragment extends Fragment {
                 initial.setText(data.getStringExtra("DATE_PICKED"));
             }
         }
+    }
+
+    public Fragment getSingleActivityFragment(){
+        return this;
     }
 }

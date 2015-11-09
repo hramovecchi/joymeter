@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
+import com.joymeter.utils.DateUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -49,6 +51,6 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public String getFormatedDate(){
-        return new SimpleDateFormat("dd/MM/yyyy").format(c.getTime());
+        return DateUtils.getInstance().getFormatedDate(c.getTime());
     }
 }
