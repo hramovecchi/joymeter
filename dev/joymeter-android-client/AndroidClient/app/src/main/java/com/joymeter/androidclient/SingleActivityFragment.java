@@ -25,6 +25,7 @@ import java.util.Date;
 public class SingleActivityFragment extends Fragment {
 
     private static final int PICK_DATE = 1;
+    private Date initialDate = null;
 
     private Long id;
 
@@ -55,6 +56,10 @@ public class SingleActivityFragment extends Fragment {
         share = (CheckBox)view.findViewById(R.id.shareCheckBox);
 
         populateActivity();
+
+        if (initialDate == null){
+            initialDate = Calendar.getInstance().getTime();
+        }
     }
 
     private void populateActivity() {
@@ -62,9 +67,11 @@ public class SingleActivityFragment extends Fragment {
         ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
 
         if (activity != null){
+            DateUtils util = DateUtils.getInstance();
+
             summary.setText(activity.getSummary());
             type.setText(activity.getType());
-            initial.setText(String.valueOf(activity.getStartDate()));
+            initial.setText(util.getFormatedDate(util.getDate(activity.getStartDate())));
             duration.setText(String.valueOf(activity.getEndDate()));
             description.setText(activity.getDescription());
             loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
@@ -75,7 +82,11 @@ public class SingleActivityFragment extends Fragment {
         initial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putSerializable("date", initialDate);
+
                 DialogFragment dateFragment = new DatePickerFragment();
+                dateFragment.setArguments(args);
                 dateFragment.setTargetFragment(getSingleActivityFragment(), PICK_DATE);
                 dateFragment.show(getActivity().getFragmentManager(), "datePicker");
             }
@@ -86,11 +97,8 @@ public class SingleActivityFragment extends Fragment {
         ActivityDTO activity= new ActivityDTO();
         activity.setSummary(summary.getText().toString());
         activity.setType(type.getText().toString());
-
-        //TODO initial is always the current time for now
-        long now = Calendar.getInstance().getTimeInMillis();
-        activity.setStartDate(now);
-        activity.setEndDate(now + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
+        activity.setStartDate(initialDate.getTime());
+        activity.setEndDate(initialDate.getTime() + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
 
         activity.setDescription(description.getText().toString());
         activity.setLevelOfJoy(Math.round(loj.getRating()));
@@ -107,8 +115,8 @@ public class SingleActivityFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_DATE) {
             if (resultCode == Activity.RESULT_OK) {
-                Date d = (Date)data.getSerializableExtra("DATE_PICKED");
-                initial.setText(DateUtils.getInstance().getFormatedDate(d));
+                initialDate = (Date)data.getSerializableExtra("DATE_PICKED");
+                initial.setText(DateUtils.getInstance().getFormatedDate(initialDate));
             }
         }
     }
