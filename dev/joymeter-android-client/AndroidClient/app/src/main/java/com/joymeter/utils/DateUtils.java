@@ -29,6 +29,10 @@ public class DateUtils {
         return dateFormat.format(date);
     }
 
+    public String getFormatedDate(long date){
+        return this.getFormatedDate(this.getDate(date));
+    }
+
     public Date getDate(long milliseconds){
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(milliseconds);

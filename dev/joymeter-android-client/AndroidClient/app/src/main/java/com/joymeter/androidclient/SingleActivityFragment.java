@@ -25,7 +25,7 @@ import java.util.Date;
 public class SingleActivityFragment extends Fragment {
 
     private static final int PICK_DATE = 1;
-    private Date initialDate = null;
+    private Long initialDate = null;
 
     private Long id;
 
@@ -58,7 +58,7 @@ public class SingleActivityFragment extends Fragment {
         populateActivity();
 
         if (initialDate == null){
-            initialDate = Calendar.getInstance().getTime();
+            initialDate = Calendar.getInstance().getTimeInMillis();
         }
     }
 
@@ -71,7 +71,10 @@ public class SingleActivityFragment extends Fragment {
 
             summary.setText(activity.getSummary());
             type.setText(activity.getType());
+
             initial.setText(util.getFormatedDate(util.getDate(activity.getStartDate())));
+            initialDate = activity.getStartDate();
+
             duration.setText(String.valueOf(activity.getEndDate()));
             description.setText(activity.getDescription());
             loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
@@ -83,7 +86,7 @@ public class SingleActivityFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Bundle args = new Bundle();
-                args.putSerializable("date", initialDate);
+                args.putLong("date", initialDate);
 
                 DialogFragment dateFragment = new DatePickerFragment();
                 dateFragment.setArguments(args);
@@ -97,8 +100,8 @@ public class SingleActivityFragment extends Fragment {
         ActivityDTO activity= new ActivityDTO();
         activity.setSummary(summary.getText().toString());
         activity.setType(type.getText().toString());
-        activity.setStartDate(initialDate.getTime());
-        activity.setEndDate(initialDate.getTime() + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
+        activity.setStartDate(initialDate);
+        activity.setEndDate(initialDate + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
 
         activity.setDescription(description.getText().toString());
         activity.setLevelOfJoy(Math.round(loj.getRating()));
@@ -115,7 +118,7 @@ public class SingleActivityFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_DATE) {
             if (resultCode == Activity.RESULT_OK) {
-                initialDate = (Date)data.getSerializableExtra("DATE_PICKED");
+                initialDate = data.getLongExtra("DATE_PICKED", 0L);
                 initial.setText(DateUtils.getInstance().getFormatedDate(initialDate));
             }
         }

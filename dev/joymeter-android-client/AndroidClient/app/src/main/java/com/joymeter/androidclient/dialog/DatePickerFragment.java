@@ -21,8 +21,12 @@ public class DatePickerFragment extends DialogFragment
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Bundle setDate = this.getArguments();
+
         // Use the current date as the default date in the picker
         c = Calendar.getInstance();
+        c.setTimeInMillis(setDate.getLong("date"));
+
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
@@ -36,7 +40,7 @@ public class DatePickerFragment extends DialogFragment
         c.set(year, month, day);
 
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("DATE_PICKED", c.getTime());
+        resultIntent.putExtra("DATE_PICKED", c.getTimeInMillis());
 
         Fragment f = getTargetFragment();
         f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
