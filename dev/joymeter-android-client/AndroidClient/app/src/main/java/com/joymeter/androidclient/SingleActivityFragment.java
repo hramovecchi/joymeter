@@ -14,8 +14,10 @@ import android.widget.RatingBar;
 
 import com.joymeter.androidclient.dialog.DatePickerFragment;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.utils.DateUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -105,7 +107,8 @@ public class SingleActivityFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_DATE) {
             if (resultCode == Activity.RESULT_OK) {
-                initial.setText(data.getStringExtra("DATE_PICKED"));
+                Date d = (Date)data.getSerializableExtra("DATE_PICKED");
+                initial.setText(DateUtils.getInstance().getFormatedDate(d));
             }
         }
     }

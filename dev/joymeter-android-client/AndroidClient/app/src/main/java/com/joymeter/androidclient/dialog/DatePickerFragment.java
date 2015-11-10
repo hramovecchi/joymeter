@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
-import com.joymeter.utils.DateUtils;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -39,18 +36,9 @@ public class DatePickerFragment extends DialogFragment
         c.set(year, month, day);
 
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("DATE_PICKED", getFormatedDate());
+        resultIntent.putExtra("DATE_PICKED", c.getTime());
 
         Fragment f = getTargetFragment();
-
         f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
-    }
-
-    public long getTimeInMillis(){
-        return c.getTimeInMillis();
-    }
-
-    public String getFormatedDate(){
-        return DateUtils.getInstance().getFormatedDate(c.getTime());
     }
 }
