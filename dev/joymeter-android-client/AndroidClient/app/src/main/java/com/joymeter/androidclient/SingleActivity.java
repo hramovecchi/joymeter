@@ -1,7 +1,6 @@
 package com.joymeter.androidclient;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -48,7 +47,7 @@ public class SingleActivity extends FragmentActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_save) {
-            SingleActivityFragment fragment = (SingleActivityFragment)getSupportFragmentManager().findFragmentById(R.id.single_joymeter_activity);
+            SingleActivityFragment fragment = (SingleActivityFragment)getFragmentManager().findFragmentById(R.id.single_joymeter_activity);
             final ActivityDTO activity = fragment.getActivityDTO();
 
             ActivityService activityService = ActivityServiceFactory.getInstance();

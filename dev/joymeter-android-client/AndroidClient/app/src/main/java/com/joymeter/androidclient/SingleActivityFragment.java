@@ -1,6 +1,9 @@
 package com.joymeter.androidclient;
 
-import android.support.v4.app.Fragment;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +12,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
+import com.joymeter.androidclient.dialog.DatePickerFragment;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.utils.DateUtils;
 
 import java.util.Calendar;
 
@@ -17,6 +22,9 @@ import java.util.Calendar;
  * A placeholder fragment containing a simple view.
  */
 public class SingleActivityFragment extends Fragment {
+
+    private static final int PICK_DATE = 1;
+    private Long initialDate = null;
 
     private Long id;
 
@@ -47,6 +55,10 @@ public class SingleActivityFragment extends Fragment {
         share = (CheckBox)view.findViewById(R.id.shareCheckBox);
 
         populateActivity();
+
+        if (initialDate == null){
+            initialDate = Calendar.getInstance().getTimeInMillis();
+        }
     }
 
     private void populateActivity() {
@@ -54,26 +66,41 @@ public class SingleActivityFragment extends Fragment {
         ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
 
         if (activity != null){
+            DateUtils util = DateUtils.getInstance();
+
             summary.setText(activity.getSummary());
             type.setText(activity.getType());
-            initial.setText(String.valueOf(activity.getStartDate()));
+
+            initial.setText(util.getFormatedDate(util.getDate(activity.getStartDate())));
+            initialDate = activity.getStartDate();
+
             duration.setText(String.valueOf(activity.getEndDate()));
             description.setText(activity.getDescription());
             loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
             share.setChecked(!activity.getClassified());
             id = activity.getId();
         }
+
+        initial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putLong("date", initialDate);
+
+                DialogFragment dateFragment = new DatePickerFragment();
+                dateFragment.setArguments(args);
+                dateFragment.setTargetFragment(getSingleActivityFragment(), PICK_DATE);
+                dateFragment.show(getActivity().getFragmentManager(), "datePicker");
+            }
+        });
     }
 
     public ActivityDTO getActivityDTO(){
         ActivityDTO activity= new ActivityDTO();
         activity.setSummary(summary.getText().toString());
         activity.setType(type.getText().toString());
-
-        //TODO initial is always the current time for now
-        long now = Calendar.getInstance().getTimeInMillis();
-        activity.setStartDate(now);
-        activity.setEndDate(now + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
+        activity.setStartDate(initialDate);
+        activity.setEndDate(initialDate + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
 
         activity.setDescription(description.getText().toString());
         activity.setLevelOfJoy(Math.round(loj.getRating()));
@@ -84,5 +111,19 @@ public class SingleActivityFragment extends Fragment {
         }
 
         return activity;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_DATE) {
+            if (resultCode == Activity.RESULT_OK) {
+                initialDate = data.getLongExtra("DATE_PICKED", 0L);
+                initial.setText(DateUtils.getInstance().getFormatedDate(initialDate));
+            }
+        }
+    }
+
+    public Fragment getSingleActivityFragment(){
+        return this;
     }
 }
