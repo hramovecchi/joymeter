@@ -17,7 +17,6 @@ import com.joymeter.dto.ActivityDTO;
 import com.joymeter.utils.DateUtils;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * A placeholder fragment containing a simple view.

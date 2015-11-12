@@ -5,12 +5,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
-
-import com.joymeter.utils.DateUtils;
 
 import java.util.Calendar;
 
@@ -29,7 +26,6 @@ public class DatePickerFragment extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle setDate = this.getArguments();
 
-        // Use the current date as the default date in the picker
         c = Calendar.getInstance();
         c.setTimeInMillis(setDate.getLong("date"));
 
@@ -37,7 +33,6 @@ public class DatePickerFragment extends DialogFragment
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        // Create a new instance of DatePickerDialog and return it
         datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
         return datePickerDialog;
     }
