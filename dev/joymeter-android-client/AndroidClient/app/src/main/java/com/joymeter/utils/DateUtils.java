@@ -10,7 +10,7 @@ import java.util.Date;
 public class DateUtils {
 
     private static DateUtils instance = null;
-    private static final String stringDateFormat = "dd/MM/yyyy";
+    private static final String stringDateFormat = "dd-M-yyyy hh:mm";
     private static SimpleDateFormat dateFormat = null;
 
     private DateUtils(){

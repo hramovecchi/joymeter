@@ -5,9 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
+
+import com.joymeter.utils.DateUtils;
 
 import java.util.Calendar;
 
@@ -17,7 +20,10 @@ import java.util.Calendar;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
+    private static final int PICK_TIME = 1;
+
     private Calendar c;
+    private DatePickerDialog datePickerDialog;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -32,7 +38,8 @@ public class DatePickerFragment extends DialogFragment
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        datePickerDialog = new DatePickerDialog(getActivity(), this, year, month, day);
+        return datePickerDialog;
     }
 
     @Override
@@ -42,7 +49,26 @@ public class DatePickerFragment extends DialogFragment
         Intent resultIntent = new Intent();
         resultIntent.putExtra("DATE_PICKED", c.getTimeInMillis());
 
-        Fragment f = getTargetFragment();
-        f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
+        Bundle args = new Bundle();
+        args.putLong("date", c.getTimeInMillis());
+
+        DialogFragment timeFragment = new TimePickerFragment();
+        timeFragment.setArguments(args);
+        timeFragment.setTargetFragment(this, PICK_TIME);
+        timeFragment.show(getActivity().getFragmentManager(), "timePicker");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == PICK_TIME) {
+            if (resultCode == Activity.RESULT_OK) {
+                Long date = data.getLongExtra("DATE_AND_TIME_PICKED", 0L);
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("DATE_PICKED", date);
+                Fragment f = getTargetFragment();
+                f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
+            }
+        }
     }
 }
