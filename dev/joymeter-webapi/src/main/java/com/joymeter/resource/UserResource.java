@@ -1,12 +1,16 @@
 package com.joymeter.resource;
 
+
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -16,16 +20,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.joymeter.entity.Activity;
+import com.joymeter.entity.HistoricalLevel;
+import com.joymeter.entity.LevelOfJoy;
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.UserDTO;
 import com.joymeter.entity.util.ActivityUtils;
 import com.joymeter.entity.util.UserUtils;
 import com.joymeter.security.JoymeterContextHolder;
+import com.joymeter.security.JoymeterUnauthorizedException;
 import com.joymeter.security.RequiresAuthentication;
 import com.joymeter.service.ActivityService;
 import com.joymeter.service.NotificationService;
 import com.joymeter.service.UserService;
+import com.joymeter.service.jpa.LevelOfJoyServiceJpa;
 
 @Component
 @Path("/users")
@@ -40,6 +48,9 @@ public class UserResource{
 	
 	@Autowired
 	NotificationService notificationService;
+
+	@Autowired
+	LevelOfJoyServiceJpa levelOfJoyService;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -94,6 +105,27 @@ public class UserResource{
 		notificationService.sendNotificationMessage(session.getGcmToken(), aux);
 		
 		return Response.ok("{}").build();
+    }
 		
+
+	/*
+	 */
+	@GET
+	@Path("/{id}/loj")
+	@Produces(MediaType.APPLICATION_JSON)
+	@RequiresAuthentication
+	public Response getLevelOfJoy(@PathParam("id") long userId, @QueryParam("days") int days) {
+		
+		log.info("getLevelOfJoy entered");
+		
+		User user = JoymeterContextHolder.get().getJoymeterSession().getUser();
+		
+		if (userId != user.getId()){
+			throw new JoymeterUnauthorizedException();
+		}
+		
+		List<LevelOfJoy> historical = levelOfJoyService.getLastEntriesByUser(user, days);
+		
+		return Response.ok(new HistoricalLevel(historical)).build();
 	}
 }
