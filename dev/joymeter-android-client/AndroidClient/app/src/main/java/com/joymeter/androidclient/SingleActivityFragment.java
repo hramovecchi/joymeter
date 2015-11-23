@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 
 import com.joymeter.androidclient.dialog.DatePickerFragment;
+import com.joymeter.androidclient.dialog.DurationPickerFragment;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.utils.DateUtils;
 
@@ -24,7 +25,11 @@ import java.util.Calendar;
 public class SingleActivityFragment extends Fragment {
 
     private static final int PICK_DATE = 1;
+    private static final int PICK_DURATION = 2;
+
     private Long initialDate = null;
+    private int hoursDuration = 0;
+    private int minutesDuration = 0;
 
     private Long id;
 
@@ -91,6 +96,20 @@ public class SingleActivityFragment extends Fragment {
                 dateFragment.setArguments(args);
                 dateFragment.setTargetFragment(getSingleActivityFragment(), PICK_DATE);
                 dateFragment.show(getActivity().getFragmentManager(), "datePicker");
+            }
+        });
+
+        duration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putInt("hours", hoursDuration);
+                args.putInt("minutes", minutesDuration);
+
+                DialogFragment durationFragment = new DurationPickerFragment();
+                durationFragment.setArguments(args);
+                durationFragment.setTargetFragment(getSingleActivityFragment(), PICK_DURATION);
+                durationFragment.show(getActivity().getFragmentManager(), "durationPicker");
             }
         });
     }
