@@ -16,6 +16,7 @@ import com.joymeter.androidclient.dialog.DatePickerFragment;
 import com.joymeter.androidclient.dialog.DurationPickerFragment;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.utils.DateUtils;
+import com.joymeter.utils.DurationUtils;
 
 import java.util.Calendar;
 
@@ -79,7 +80,12 @@ public class SingleActivityFragment extends Fragment {
             initial.setText(util.getFormatedDate(util.getDate(activity.getStartDate())));
             initialDate = activity.getStartDate();
 
-            duration.setText(String.valueOf(activity.getEndDate()));
+            long durationInMillis = activity.getEndDate() - activity.getStartDate();
+
+            hoursDuration = DurationUtils.getInstance().getHours(durationInMillis);
+            minutesDuration = DurationUtils.getInstance().getMinutes(durationInMillis);
+            duration.setText(DurationUtils.getInstance().getDuration(hoursDuration, minutesDuration));
+
             description.setText(activity.getDescription());
             loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
             share.setChecked(!activity.getClassified());
@@ -119,8 +125,7 @@ public class SingleActivityFragment extends Fragment {
         activity.setSummary(summary.getText().toString());
         activity.setType(type.getText().toString());
         activity.setStartDate(initialDate);
-        activity.setEndDate(initialDate + (Long.valueOf(duration.getText().toString()) * 60 + 1000));
-
+        activity.setEndDate(DurationUtils.getInstance().getEndDate(initialDate, hoursDuration, minutesDuration));
         activity.setDescription(description.getText().toString());
         activity.setLevelOfJoy(Math.round(loj.getRating()));
         activity.setClassified(!share.isChecked());
@@ -138,6 +143,12 @@ public class SingleActivityFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 initialDate = data.getLongExtra("DATE_PICKED", 0L);
                 initial.setText(DateUtils.getInstance().getFormatedDate(initialDate));
+            }
+        } else  if (requestCode == PICK_DURATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                hoursDuration = data.getIntExtra("HOURS_PICKED", 0);
+                minutesDuration = data.getIntExtra("MINUTES_PICKED", 0);
+                duration.setText(DurationUtils.getInstance().getDuration(hoursDuration, minutesDuration));
             }
         }
     }

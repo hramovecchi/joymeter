@@ -38,8 +38,8 @@ public class DurationPickerFragment extends DialogFragment
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("DURATION_HOURS_PICKED", hourOfDay);
-        resultIntent.putExtra("DURATION_MINUTES_PICKED", minute);
+        resultIntent.putExtra("HOURS_PICKED", hourOfDay);
+        resultIntent.putExtra("MINUTES_PICKED", minute);
 
         Fragment f = getTargetFragment();
         f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
