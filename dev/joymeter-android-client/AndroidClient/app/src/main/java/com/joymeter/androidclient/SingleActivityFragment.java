@@ -12,8 +12,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
-import com.joymeter.androidclient.dialog.DatePickerFragment;
-import com.joymeter.androidclient.dialog.DurationPickerFragment;
+import com.joymeter.androidclient.picker.DatePickerFragment;
+import com.joymeter.androidclient.picker.DurationPickerFragment;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.utils.DateUtils;
 import com.joymeter.utils.DurationUtils;

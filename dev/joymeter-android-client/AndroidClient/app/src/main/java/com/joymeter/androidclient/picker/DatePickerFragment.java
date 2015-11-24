@@ -1,4 +1,4 @@
-package com.joymeter.androidclient.dialog;
+package com.joymeter.androidclient.picker;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;

@@ -1,4 +1,4 @@
-package com.joymeter.androidclient.dialog;
+package com.joymeter.androidclient.picker;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -15,31 +15,31 @@ import java.util.Calendar;
 /**
  * Created by hramovecchi on 12/11/2015.
  */
-public class DurationPickerFragment extends DialogFragment
+public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
     private Calendar c;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Bundle setDuration = this.getArguments();
+        Bundle setDate = this.getArguments();
 
-        int hour = setDuration.getInt("hours");
-        int minute = setDuration.getInt("minutes");
+        c = Calendar.getInstance();
+        c.setTimeInMillis(setDate.getLong("date"));
 
-       TimePickerDialog durationPicker =  new TimePickerDialog(getActivity(), this, hour, minute,
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+
+        return new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
-
-        durationPicker.setTitle("Duration:");
-
-        return durationPicker;
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
 
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("HOURS_PICKED", hourOfDay);
-        resultIntent.putExtra("MINUTES_PICKED", minute);
+        resultIntent.putExtra("DATE_AND_TIME_PICKED", c.getTimeInMillis());
 
         Fragment f = getTargetFragment();
         f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
