@@ -20,6 +20,8 @@ import com.joymeter.dto.ActivityDTO;
 import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.factory.ActivityServiceFactory;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
@@ -53,7 +55,16 @@ public class ActivityListFragment extends ListFragment {
                 public void success(Activities activities, Response response) {
 
                     userActivities = activities.getActivities();
-                    activityArrayAdapter = new ActivityArrayAdapter(getActivity(), activities.getActivities());
+                    Collections.sort(userActivities, new Comparator<ActivityDTO>() {
+                        @Override
+                        public int compare(ActivityDTO a1, ActivityDTO a2) {
+                            if (a1.getId() < a2.getId()){
+                                return 1;
+                            }
+                            return -1;
+                        }
+                    });
+                    activityArrayAdapter = new ActivityArrayAdapter(getActivity(), userActivities);
                     setListAdapter(activityArrayAdapter);
 
                     registerForContextMenu(getListView());
@@ -138,7 +149,7 @@ public class ActivityListFragment extends ListFragment {
     }
 
     public void addActivity(ActivityDTO activity){
-        activityArrayAdapter.add(activity);
+        activityArrayAdapter.insert(activity, 0);
         activityArrayAdapter.notifyDataSetChanged();
     }
 }
