@@ -58,7 +58,7 @@ public class ActivityListFragment extends ListFragment {
                     Collections.sort(userActivities, new Comparator<ActivityDTO>() {
                         @Override
                         public int compare(ActivityDTO a1, ActivityDTO a2) {
-                            if (a1.getId() < a2.getId()){
+                            if (a1.getStartDate() < a2.getStartDate()){
                                 return 1;
                             }
                             return -1;
