@@ -19,6 +19,7 @@ import com.joymeter.dto.Activities;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.factory.ActivityServiceFactory;
+import com.joymeter.utils.ActivityComparator;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,12 +40,15 @@ public class ActivityListFragment extends ListFragment {
     private List<ActivityDTO> userActivities;
     private SharedPreferences preferences;
     private ActivityArrayAdapter activityArrayAdapter;
+    private ActivityComparator comparator;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        comparator = new ActivityComparator();
 
         Long userIdNotFoung = 0L;
         Long userId = preferences.getLong("userId", userIdNotFoung);
@@ -55,15 +59,7 @@ public class ActivityListFragment extends ListFragment {
                 public void success(Activities activities, Response response) {
 
                     userActivities = activities.getActivities();
-                    Collections.sort(userActivities, new Comparator<ActivityDTO>() {
-                        @Override
-                        public int compare(ActivityDTO a1, ActivityDTO a2) {
-                            if (a1.getStartDate() < a2.getStartDate()){
-                                return 1;
-                            }
-                            return -1;
-                        }
-                    });
+                    Collections.sort(userActivities, comparator);
                     activityArrayAdapter = new ActivityArrayAdapter(getActivity(), userActivities);
                     setListAdapter(activityArrayAdapter);
 
@@ -149,7 +145,8 @@ public class ActivityListFragment extends ListFragment {
     }
 
     public void addActivity(ActivityDTO activity){
-        activityArrayAdapter.insert(activity, 0);
+        activityArrayAdapter.add(activity);
+        activityArrayAdapter.sort(comparator);
         activityArrayAdapter.notifyDataSetChanged();
     }
 }
