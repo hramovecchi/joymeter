@@ -8,13 +8,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.joymeter.entity.Activity;
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.UserDTO;
@@ -22,6 +22,8 @@ import com.joymeter.entity.util.UserUtils;
 import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.JoymeterUnauthorizedException;
 import com.joymeter.security.RequiresAuthentication;
+import com.joymeter.service.ActivityService;
+import com.joymeter.service.NotificationService;
 import com.joymeter.service.UserService;
 
 @Component
@@ -31,6 +33,12 @@ public class UserResource{
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	ActivityService activityService;
+	
+	@Autowired
+	NotificationService notificationService;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -72,5 +80,21 @@ public class UserResource{
 		user = UserUtils.mappedToUser(user, userDTO);
 		userService.update(user);
 		return Response.ok(user).build();
+	}
+	
+	@GET
+	@Path("/me/suggest")
+	@RequiresAuthentication
+	public Response suggestActivity(){
+		Session session = JoymeterContextHolder.get().getJoymeterSession();
+		
+		long userId = session.getUser().getId();
+		
+		Activity activityToSuggest = activityService.suggestActivity(userId);
+		
+		notificationService.sendNotificationMessage(session.getGcmToken(), activityToSuggest.toString());
+		
+		return Response.ok("{}").build();
+		
 	}
 }

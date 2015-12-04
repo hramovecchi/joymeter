@@ -68,7 +68,6 @@ public class LoginActivity extends FragmentActivity {
                     sessionService = SessionServiceFactory.getInstance();
 
                     final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-                    I
 
                     SignupRequestDTO signupRequest = new SignupRequestDTO(currentAccessToken.getToken(), androidId);
 

@@ -63,5 +63,11 @@ public class ActivityServiceJpa implements ActivityService {
 		entityManager.flush();
 		return activity;
 	}
+	
+	public Activity suggestActivity(long userID){
+		List<Activity> activities = getByUserId(userID);
+		
+		return activities.get(0);
+	}
 
 }
