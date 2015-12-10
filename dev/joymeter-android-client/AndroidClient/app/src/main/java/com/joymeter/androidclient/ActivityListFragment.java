@@ -22,7 +22,6 @@ import com.joymeter.rest.factory.ActivityServiceFactory;
 import com.joymeter.utils.ActivityComparator;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
@@ -136,6 +135,7 @@ public class ActivityListFragment extends ListFragment {
                 ActivityDTO activity = (ActivityDTO)data.getSerializableExtra("ACTIVITY_UPDATED");
                 activityArrayAdapter.remove(activityArrayAdapter.getItem(position));
                 activityArrayAdapter.insert(activity, position);
+                activityArrayAdapter.sort(comparator);
                 activityArrayAdapter.notifyDataSetChanged();
 
             }else if (resultCode == Activity.RESULT_CANCELED){
