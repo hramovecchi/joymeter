@@ -21,6 +21,7 @@ public class RegistrationIntentService extends IntentService {
 
     public static final String SENT_TOKEN_TO_SERVER = "sentTokenToServer";
     public static final String REGISTRATION_COMPLETE = "registrationComplete";
+    public static final String GCM_TOKEN = "GCM_TOKEN";
 
 
     private static final String TAG = "RegIntentService";
@@ -34,6 +35,7 @@ public class RegistrationIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        String token = null;
         try {
             // [START register_for_gcm]
             // Initially this call goes out to the network to retrieve the token, subsequent calls
@@ -42,13 +44,10 @@ public class RegistrationIntentService extends IntentService {
             // See https://developers.google.com/cloud-messaging/android/start for details on this file.
             // [START get_token]
             InstanceID instanceID = InstanceID.getInstance(this);
-            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
+            token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             // [END get_token]
             Log.i(TAG, "GCM Registration Token: " + token);
-
-            // TODO: Implement this method to send any registration to your app's servers.
-            sendRegistrationToServer(token);
 
             // Subscribe to topic channels
             subscribeTopics(token);
@@ -66,19 +65,8 @@ public class RegistrationIntentService extends IntentService {
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
         Intent registrationComplete = new Intent(REGISTRATION_COMPLETE);
+        registrationComplete.putExtra(GCM_TOKEN, token);
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
-    }
-
-    /**
-     * Persist registration to third-party servers.
-     *
-     * Modify this method to associate the user's GCM registration token with any server-side account
-     * maintained by your application.
-     *
-     * @param token The new token.
-     */
-    private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed.
     }
 
     /**

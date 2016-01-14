@@ -1,18 +1,28 @@
 package com.joymeter.androidclient;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.joymeter.androidclient.service.RegistrationIntentService;
 import com.joymeter.dto.SignupRequestDTO;
 import com.joymeter.dto.SignupResponseDTO;
 import com.joymeter.rest.SessionService;
@@ -33,6 +43,10 @@ public class LoginActivity extends FragmentActivity {
     private SharedPreferences preferences;
     private AccessTokenTracker accessTokenTracker;
     private static Context context;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String TAG = "LoginActivity";
 
     public static Context getAppContext(){
         return context;
@@ -49,49 +63,75 @@ public class LoginActivity extends FragmentActivity {
             Intent intent =  new Intent(context, HistoryActivity.class);
             startActivity(intent);
             finish();
+
         } else {
 
-            FacebookSdk.sdkInitialize(context);
-
-            callbackManager = CallbackManager.Factory.create();
-            setContentView(R.layout.login_activity);
-
-            loginBtn = (LoginButton) findViewById(R.id.login_button);
-            loginBtn.setReadPermissions(Arrays.asList("email"));
-
-            accessTokenTracker = new AccessTokenTracker() {
+            mRegistrationBroadcastReceiver = new BroadcastReceiver() {
                 @Override
-                protected void onCurrentAccessTokenChanged(
-                        AccessToken oldAccessToken,
-                        AccessToken currentAccessToken) {
+                public void onReceive(Context context, Intent intent) {
+                    //mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
+                    SharedPreferences sharedPreferences =
+                            PreferenceManager.getDefaultSharedPreferences(getAppContext());
+                    boolean sentToken = sharedPreferences
+                            .getBoolean(RegistrationIntentService.SENT_TOKEN_TO_SERVER, false);
 
-                    sessionService = SessionServiceFactory.getInstance();
+                    if (sentToken) {
+                        final String gcmToken = intent.getStringExtra(RegistrationIntentService.GCM_TOKEN);
 
-                    final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                        FacebookSdk.sdkInitialize(context);
 
-                    SignupRequestDTO signupRequest = new SignupRequestDTO(currentAccessToken.getToken(), androidId);
+                        callbackManager = CallbackManager.Factory.create();
 
-                    sessionService.createUser(signupRequest, new Callback<SignupResponseDTO>() {
-                        @Override
-                        public void success(SignupResponseDTO signupResponseDTO, Response response) {
+                        loginBtn = (LoginButton) findViewById(R.id.login_button);
+                        loginBtn.setReadPermissions(Arrays.asList("email"));
+                        loginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                            @Override
+                            public void onSuccess(LoginResult loginResult) {
+                                sessionService = SessionServiceFactory.getInstance();
 
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("sessionToken", signupResponseDTO.getSessionToken());
-                            editor.putLong("userId", signupResponseDTO.getUser().getId());
-                            editor.commit();
+                                SignupRequestDTO signupRequest = new SignupRequestDTO(loginResult.getAccessToken().getToken(), gcmToken);
 
-                            Intent intent = new Intent(context, HistoryActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
+                                sessionService.createUser(signupRequest, new Callback<SignupResponseDTO>() {
+                                    @Override
+                                    public void success(SignupResponseDTO signupResponseDTO, Response response) {
 
-                        @Override
-                        public void failure(RetrofitError error) {
+                                        SharedPreferences.Editor editor = preferences.edit();
+                                        editor.putString("sessionToken", signupResponseDTO.getSessionToken());
+                                        editor.putLong("userId", signupResponseDTO.getUser().getId());
+                                        editor.commit();
 
-                        }
-                    });
+                                        Intent intent = new Intent(getAppContext(), HistoryActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError error) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+
+                            @Override
+                            public void onError(FacebookException error) {
+
+                            }
+                        });
+                    } else {
+
+                    }
                 }
             };
+
+            if (checkPlayServices()){
+                Intent intent = new Intent(LoginActivity.this, RegistrationIntentService.class);
+                startService(intent);
+            }
         }
     }
 
@@ -107,5 +147,39 @@ public class LoginActivity extends FragmentActivity {
         if (accessTokenTracker != null) {
             accessTokenTracker.stopTracking();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(RegistrationIntentService.REGISTRATION_COMPLETE));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }
