@@ -41,7 +41,6 @@ public class LoginActivity extends FragmentActivity {
     private LoginButton loginBtn;
     private SessionService sessionService;
     private SharedPreferences preferences;
-    private AccessTokenTracker accessTokenTracker;
     private static Context context;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
@@ -73,7 +72,7 @@ public class LoginActivity extends FragmentActivity {
                     SharedPreferences sharedPreferences =
                             PreferenceManager.getDefaultSharedPreferences(getAppContext());
                     boolean sentToken = sharedPreferences
-                            .getBoolean(RegistrationIntentService.SENT_TOKEN_TO_SERVER, false);
+                            .getBoolean(JoymeterPreferences.SENT_TOKEN_TO_SERVER, false);
 
                     if (sentToken) {
                         final String gcmToken = intent.getStringExtra(RegistrationIntentService.GCM_TOKEN);
@@ -81,6 +80,8 @@ public class LoginActivity extends FragmentActivity {
                         FacebookSdk.sdkInitialize(context);
 
                         callbackManager = CallbackManager.Factory.create();
+
+                        setContentView(R.layout.login_activity);
 
                         loginBtn = (LoginButton) findViewById(R.id.login_button);
                         loginBtn.setReadPermissions(Arrays.asList("email"));
@@ -128,6 +129,9 @@ public class LoginActivity extends FragmentActivity {
                 }
             };
 
+            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                    new IntentFilter(JoymeterPreferences.REGISTRATION_COMPLETE));
+
             if (checkPlayServices()){
                 Intent intent = new Intent(LoginActivity.this, RegistrationIntentService.class);
                 startService(intent);
@@ -143,23 +147,10 @@ public class LoginActivity extends FragmentActivity {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        if (accessTokenTracker != null) {
-            accessTokenTracker.stopTracking();
+        if (mRegistrationBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(RegistrationIntentService.REGISTRATION_COMPLETE));
-    }
-
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
+        super.onDestroy();
     }
 
     /**
