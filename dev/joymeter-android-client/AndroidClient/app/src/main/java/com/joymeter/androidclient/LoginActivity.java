@@ -151,6 +151,7 @@ public class LoginActivity extends FragmentActivity {
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString(JoymeterPreferences.JOYMETER_TOKEN, signupResponseDTO.getSessionToken());
                         editor.putLong(JoymeterPreferences.USER_ID, signupResponseDTO.getUser().getId());
+                        editor.putString(JoymeterPreferences.FACEBOOK_TOKEN, signupResponseDTO.getSessionToken());
                         editor.commit();
 
                         Intent intent = new Intent(getAppContext(), HistoryActivity.class);

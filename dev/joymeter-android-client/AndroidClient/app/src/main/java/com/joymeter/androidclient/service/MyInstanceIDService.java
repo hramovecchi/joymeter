@@ -5,7 +5,7 @@ import android.content.Intent;
 import com.google.android.gms.iid.InstanceIDListenerService;
 
 /**
- * Created by hernan.ramovecchi on 02/12/2015.
+ * Created by hramovecchi on 02/12/2015.
  */
 public class MyInstanceIDService extends InstanceIDListenerService{
 
@@ -20,6 +20,7 @@ public class MyInstanceIDService extends InstanceIDListenerService{
     public void onTokenRefresh() {
         // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
         Intent intent = new Intent(this, RegistrationIntentService.class);
+        intent.putExtra("tokenUpdatedByGCM", true);
         startService(intent);
     }
 }
