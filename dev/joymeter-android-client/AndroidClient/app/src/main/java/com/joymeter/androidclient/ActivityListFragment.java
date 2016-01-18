@@ -50,7 +50,7 @@ public class ActivityListFragment extends ListFragment {
         comparator = new ActivityComparator();
 
         Long userIdNotFoung = 0L;
-        Long userId = preferences.getLong("userId", userIdNotFoung);
+        Long userId = preferences.getLong(JoymeterPreferences.USER_ID, userIdNotFoung);
 
         if (!userId.equals(userIdNotFoung)) {
             ActivityServiceFactory.getInstance().getActivities(userId, new Callback<Activities>() {

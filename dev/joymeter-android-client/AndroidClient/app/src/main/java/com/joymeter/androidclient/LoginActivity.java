@@ -40,7 +40,6 @@ public class LoginActivity extends FragmentActivity {
 
     CallbackManager callbackManager;
     private LoginButton loginBtn;
-    private SessionService sessionService;
     private SharedPreferences preferences;
     private static Context context;
 
@@ -57,16 +56,14 @@ public class LoginActivity extends FragmentActivity {
         context = this.getApplicationContext();
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String sessionToken = preferences.getString("sessionToken", null);
+        String sessionToken = preferences.getString(JoymeterPreferences.JOYMETER_TOKEN, null);
         if (sessionToken != null){
             Intent intent =  new Intent(context, HistoryActivity.class);
             startActivity(intent);
             finish();
 
         } else {
-
             FacebookSdk.sdkInitialize(context);
-
             callbackManager = CallbackManager.Factory.create();
 
             setContentView(R.layout.login_activity);
@@ -138,26 +135,22 @@ public class LoginActivity extends FragmentActivity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             //mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
-            SharedPreferences sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(getAppContext());
-            boolean sentToken = sharedPreferences
-                    .getBoolean(JoymeterPreferences.SENT_TOKEN_TO_SERVER, false);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getAppContext());
+            boolean sentToken = sharedPreferences.getBoolean(JoymeterPreferences.SENT_TOKEN_TO_SERVER, false);
 
             if (sentToken) {
                 final String gcmToken = intent.getStringExtra(JoymeterPreferences.GCM_TOKEN);
                 final String fbAccessToken = intent.getStringExtra(JoymeterPreferences.FACEBOOK_TOKEN);
 
-                sessionService = SessionServiceFactory.getInstance();
-
+                SessionService sessionService = SessionServiceFactory.getInstance();
                 SignupRequestDTO signupRequest = new SignupRequestDTO(fbAccessToken, gcmToken);
 
                 sessionService.createUser(signupRequest, new Callback<SignupResponseDTO>() {
                     @Override
                     public void success(SignupResponseDTO signupResponseDTO, Response response) {
-
                         SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("sessionToken", signupResponseDTO.getSessionToken());
-                        editor.putLong("userId", signupResponseDTO.getUser().getId());
+                        editor.putString(JoymeterPreferences.JOYMETER_TOKEN, signupResponseDTO.getSessionToken());
+                        editor.putLong(JoymeterPreferences.USER_ID, signupResponseDTO.getUser().getId());
                         editor.commit();
 
                         Intent intent = new Intent(getAppContext(), HistoryActivity.class);
