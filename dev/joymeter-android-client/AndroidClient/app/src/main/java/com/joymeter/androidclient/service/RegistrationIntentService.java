@@ -20,9 +20,6 @@ import java.io.IOException;
  */
 public class RegistrationIntentService extends IntentService {
 
-    public static final String GCM_TOKEN = "GCM_TOKEN";
-
-
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global"};
 
@@ -64,7 +61,8 @@ public class RegistrationIntentService extends IntentService {
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
         Intent registrationComplete = new Intent(JoymeterPreferences.REGISTRATION_COMPLETE);
-        registrationComplete.putExtra(GCM_TOKEN, token);
+        registrationComplete.putExtra(JoymeterPreferences.GCM_TOKEN, token);
+        registrationComplete.putExtra(JoymeterPreferences.FACEBOOK_TOKEN, intent.getStringExtra(JoymeterPreferences.FACEBOOK_TOKEN));
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
     }
 

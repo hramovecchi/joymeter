@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -42,7 +43,6 @@ public class LoginActivity extends FragmentActivity {
     private SessionService sessionService;
     private SharedPreferences preferences;
     private static Context context;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "LoginActivity";
@@ -65,77 +65,37 @@ public class LoginActivity extends FragmentActivity {
 
         } else {
 
-            mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            FacebookSdk.sdkInitialize(context);
+
+            callbackManager = CallbackManager.Factory.create();
+
+            setContentView(R.layout.login_activity);
+
+            loginBtn = (LoginButton) findViewById(R.id.login_button);
+            loginBtn.setReadPermissions(Arrays.asList("email"));
+            loginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
-                public void onReceive(Context context, Intent intent) {
-                    //mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
-                    SharedPreferences sharedPreferences =
-                            PreferenceManager.getDefaultSharedPreferences(getAppContext());
-                    boolean sentToken = sharedPreferences
-                            .getBoolean(JoymeterPreferences.SENT_TOKEN_TO_SERVER, false);
+                public void onSuccess(LoginResult loginResult) {
+                    LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver(mRegistrationBroadcastReceiver,
+                            new IntentFilter(JoymeterPreferences.REGISTRATION_COMPLETE));
 
-                    if (sentToken) {
-                        final String gcmToken = intent.getStringExtra(RegistrationIntentService.GCM_TOKEN);
-
-                        FacebookSdk.sdkInitialize(context);
-
-                        callbackManager = CallbackManager.Factory.create();
-
-                        setContentView(R.layout.login_activity);
-
-                        loginBtn = (LoginButton) findViewById(R.id.login_button);
-                        loginBtn.setReadPermissions(Arrays.asList("email"));
-                        loginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-                            @Override
-                            public void onSuccess(LoginResult loginResult) {
-                                sessionService = SessionServiceFactory.getInstance();
-
-                                SignupRequestDTO signupRequest = new SignupRequestDTO(loginResult.getAccessToken().getToken(), gcmToken);
-
-                                sessionService.createUser(signupRequest, new Callback<SignupResponseDTO>() {
-                                    @Override
-                                    public void success(SignupResponseDTO signupResponseDTO, Response response) {
-
-                                        SharedPreferences.Editor editor = preferences.edit();
-                                        editor.putString("sessionToken", signupResponseDTO.getSessionToken());
-                                        editor.putLong("userId", signupResponseDTO.getUser().getId());
-                                        editor.commit();
-
-                                        Intent intent = new Intent(getAppContext(), HistoryActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-
-                                    @Override
-                                    public void failure(RetrofitError error) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onCancel() {
-
-                            }
-
-                            @Override
-                            public void onError(FacebookException error) {
-
-                            }
-                        });
-                    } else {
-
+                    if (checkPlayServices()){
+                        Intent intent = new Intent(LoginActivity.this, RegistrationIntentService.class);
+                        intent.putExtra(JoymeterPreferences.FACEBOOK_TOKEN, loginResult.getAccessToken().getToken());
+                        startService(intent);
                     }
                 }
-            };
 
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(JoymeterPreferences.REGISTRATION_COMPLETE));
+                @Override
+                public void onCancel() {
 
-            if (checkPlayServices()){
-                Intent intent = new Intent(LoginActivity.this, RegistrationIntentService.class);
-                startService(intent);
-            }
+                }
+
+                @Override
+                public void onError(FacebookException error) {
+                    Toast.makeText(context, "Something went wrong calling Facebook API", Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
@@ -173,4 +133,47 @@ public class LoginActivity extends FragmentActivity {
         }
         return true;
     }
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            //mRegistrationProgressBar.setVisibility(ProgressBar.GONE);
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(getAppContext());
+            boolean sentToken = sharedPreferences
+                    .getBoolean(JoymeterPreferences.SENT_TOKEN_TO_SERVER, false);
+
+            if (sentToken) {
+                final String gcmToken = intent.getStringExtra(JoymeterPreferences.GCM_TOKEN);
+                final String fbAccessToken = intent.getStringExtra(JoymeterPreferences.FACEBOOK_TOKEN);
+
+                sessionService = SessionServiceFactory.getInstance();
+
+                SignupRequestDTO signupRequest = new SignupRequestDTO(fbAccessToken, gcmToken);
+
+                sessionService.createUser(signupRequest, new Callback<SignupResponseDTO>() {
+                    @Override
+                    public void success(SignupResponseDTO signupResponseDTO, Response response) {
+
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("sessionToken", signupResponseDTO.getSessionToken());
+                        editor.putLong("userId", signupResponseDTO.getUser().getId());
+                        editor.commit();
+
+                        Intent intent = new Intent(getAppContext(), HistoryActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(context, "Something went wrong calling Joymeter API", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } else {
+                Toast.makeText(context, "Something went wrong calling GCM API", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 }
