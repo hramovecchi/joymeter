@@ -15,10 +15,10 @@ public interface UserService {
 
     String userPath = "/api/users";
 
-    @GET(userPath + "/{id}")
-    void getUser(@Path("id") long userId, Callback<UserDTO> callback);
+    @GET(userPath + "/me")
+    void getUser(Callback<UserDTO> callback);
 
-    @PUT(userPath + "/{id}")
-    void updateUser(@Path("id") long userId, @Body UserDTO user, Callback<UserDTO> callback);
+    @PUT(userPath + "/me")
+    void updateUser(@Body UserDTO user, Callback<UserDTO> callback);
 
 }

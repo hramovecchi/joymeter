@@ -9,5 +9,4 @@ public class JoymeterPreferences {
     public static final String GCM_TOKEN = "googleCloudMessageToken";
     public static final String FACEBOOK_TOKEN = "facebookAccessToken";
     public static final String JOYMETER_TOKEN = "joymeterSessionToken";
-    public static final String USER_ID = "joymeterUserId";
 }

@@ -21,7 +21,7 @@ public interface ActivityService {
     String activityPath = "/api/activities";
 
     @GET(activityPath)
-    void getActivities(@Query("user_id") long userId, Callback<Activities> callback);
+    void getActivities(Callback<Activities> callback);
 
     @GET(activityPath + "/{id}")
     void getActivity(@Path("id") long id, Callback<ActivityDTO> callback);
