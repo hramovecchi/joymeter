@@ -49,28 +49,23 @@ public class ActivityListFragment extends ListFragment {
 
         comparator = new ActivityComparator();
 
-        Long userIdNotFoung = 0L;
-        Long userId = preferences.getLong("userId", userIdNotFoung);
+        ActivityServiceFactory.getInstance().getActivities(new Callback<Activities>() {
+            @Override
+            public void success(Activities activities, Response response) {
 
-        if (!userId.equals(userIdNotFoung)) {
-            ActivityServiceFactory.getInstance().getActivities(userId, new Callback<Activities>() {
-                @Override
-                public void success(Activities activities, Response response) {
+                userActivities = activities.getActivities();
+                Collections.sort(userActivities, comparator);
+                activityArrayAdapter = new ActivityArrayAdapter(getActivity(), userActivities);
+                setListAdapter(activityArrayAdapter);
 
-                    userActivities = activities.getActivities();
-                    Collections.sort(userActivities, comparator);
-                    activityArrayAdapter = new ActivityArrayAdapter(getActivity(), userActivities);
-                    setListAdapter(activityArrayAdapter);
+                registerForContextMenu(getListView());
+            }
 
-                    registerForContextMenu(getListView());
-                }
+            @Override
+            public void failure(RetrofitError error) {
 
-                @Override
-                public void failure(RetrofitError error) {
-
-                }
-            });
-        }
+            }
+        });
     }
 
     @Override

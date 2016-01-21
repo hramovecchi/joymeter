@@ -10,4 +10,5 @@ public interface ActivityService {
 	Activity getById(long id);
 	boolean delete(Activity activity);
 	Activity update(Activity activity);
+	Activity suggestActivity(long userID);
 }
