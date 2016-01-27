@@ -25,7 +25,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "LEVELOFJOY")
 @NamedQueries( { @NamedQuery(name = "LevelOfJoy.findAllByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID"),
 				 @NamedQuery(name = "LevelOfJoy.findLastEntriesByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID AND a.milliseconds >= :millis"),
-				 @NamedQuery(name = "LevelOfJoy.findLastByUser", query = "SELECT * FROM LEVELOFJOY a INNER JOIN (SELECT id, MAX(milliseconds) milliseconds FROM LEVELOFJOY WHERE user.id=:userID GROUP BY id) b ON a.id = b.id AND a.milliseconds = b.milliseconds")})
+				 @NamedQuery(name = "LevelOfJoy.findByDateUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID AND a.milliseconds = :millis"),
+				 @NamedQuery(name = "LevelOfJoy.findLastByUser", query = "SELECT a FROM LevelOfJoy a WHERE user.id = :userID ORDER BY milliseconds DESC")})
 public class LevelOfJoy implements Serializable{
 	
 private static final long serialVersionUID = -3597156974325366320L;
@@ -35,6 +36,7 @@ private static final long serialVersionUID = -3597156974325366320L;
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
+	//millis of the date
 	private long milliseconds;
 	
 	private Double level;

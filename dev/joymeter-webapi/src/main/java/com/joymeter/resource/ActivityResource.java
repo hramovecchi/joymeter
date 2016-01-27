@@ -10,7 +10,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -19,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.joymeter.entity.Activities;
 import com.joymeter.entity.Activity;
@@ -30,6 +28,7 @@ import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.JoymeterUnauthorizedException;
 import com.joymeter.security.RequiresAuthentication;
 import com.joymeter.service.ActivityService;
+import com.joymeter.service.LevelOfJoyHistoricalService;
 import com.joymeter.service.UserService;
 
 @Component
@@ -42,6 +41,9 @@ public class ActivityResource {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	LevelOfJoyHistoricalService levelOfJoyHistoricalService;
 	
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -76,6 +78,7 @@ public class ActivityResource {
 		activity = ActivityUtils.mappedToActivity(activity, activityDTO);
 		activity.setUser(owner);
 		
+		levelOfJoyHistoricalService.updateHistoryNewActivity(activity);
 		activityService.save(activity);
 		
 		return Response.ok(activity).build();
@@ -119,8 +122,9 @@ public class ActivityResource {
 		if (owner.getId() != activity.getUser().getId()){
 			throw new JoymeterUnauthorizedException();
 		}
-		
 		activityService.delete(activity);
+		levelOfJoyHistoricalService.updateHistoryDeleteActivity(activity);
+		
 		return Response.ok().build();
 	}
 
@@ -150,6 +154,7 @@ public class ActivityResource {
 		activity = ActivityUtils.mappedToActivity(activity, activityDTO);
 		
 		activityService.update(activity);
+		levelOfJoyHistoricalService.updateHistoryUpdateActivity(activity);
 		
 		return Response.ok(activity).build();
 	}

@@ -30,10 +30,11 @@ import com.joymeter.entity.util.UserUtils;
 import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.JoymeterUnauthorizedException;
 import com.joymeter.security.RequiresAuthentication;
+
 import com.joymeter.service.ActivityService;
 import com.joymeter.service.NotificationService;
+import com.joymeter.service.LevelOfJoyHistoricalService;
 import com.joymeter.service.UserService;
-import com.joymeter.service.jpa.LevelOfJoyServiceJpa;
 
 @Component
 @Path("/users")
@@ -50,7 +51,7 @@ public class UserResource{
 	NotificationService notificationService;
 
 	@Autowired
-	LevelOfJoyServiceJpa levelOfJoyService;
+	LevelOfJoyHistoricalService levelOfJoyHistoricalService;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -124,7 +125,7 @@ public class UserResource{
 			throw new JoymeterUnauthorizedException();
 		}
 		
-		List<LevelOfJoy> historical = levelOfJoyService.getLastEntriesByUser(user, days);
+		List<LevelOfJoy> historical = levelOfJoyHistoricalService.getLastEntriesByUser(user, days);
 		
 		return Response.ok(new HistoricalLevel(historical)).build();
 	}

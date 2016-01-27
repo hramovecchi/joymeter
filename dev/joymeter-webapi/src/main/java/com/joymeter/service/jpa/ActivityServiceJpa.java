@@ -74,6 +74,7 @@ public class ActivityServiceJpa implements ActivityService {
 		return activities.get(0);
 	}
 
+
 	private Activity getDefaultActivity() {
 		Activity a = new Activity();
 		a.setClassified(Boolean.FALSE);
@@ -82,5 +83,15 @@ public class ActivityServiceJpa implements ActivityService {
 		a.setSummary("Cerveza en Antares");
 		a.setType("Recleación, Salida");
 		return a;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Activity> getDayActivitiesByUserId(long userId, long startday, long endday) {
+		Query queryFindActivities = entityManager.createNamedQuery("Activity.findDayActivitiesByUser");
+		queryFindActivities.setParameter("userID", userId);
+		queryFindActivities.setParameter("startday", startday);
+		queryFindActivities.setParameter("endday", endday);
+		List<Activity> activities = queryFindActivities.getResultList();
+		return activities;
 	}
 }
