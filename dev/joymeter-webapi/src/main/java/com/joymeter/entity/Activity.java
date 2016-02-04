@@ -97,5 +97,15 @@ public class Activity implements Serializable{
 	public void setClassified(boolean classified) {
 		this.classified = classified;
 	}
+	public void clone(Activity activityToClone) {
+		this.type = activityToClone.getType();
+		this.summary = activityToClone.getSummary();
+		this.description = activityToClone.getDescription();
+		this.level_of_joy = activityToClone.getLevelOfJoy();
+		this.start_date = activityToClone.getStartDate();
+		this.end_date = activityToClone.getEndDate();
+		this.user = activityToClone.getUser();
+		this.classified = activityToClone.isClassified();
+	}
 
 }
