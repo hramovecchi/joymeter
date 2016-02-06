@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.joymeter.api.client.ClientFactory;
+import com.joymeter.api.client.dto.GCMActivityContainer;
 import com.joymeter.api.client.dto.GCMToAndroidClientDTO;
 import com.joymeter.entity.Activity;
 import com.joymeter.service.NotificationService;
@@ -36,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
 		
 		GCMToAndroidClientDTO dto = new GCMToAndroidClientDTO();
 		dto.setTo(userGCMID);
-		dto.setData(activityToSuggest);
+		dto.setData(new GCMActivityContainer(activityToSuggest));
 		
 		client.resource(resourceUri)
 			.header(autorizationHeader, "key=" + apiKey)

@@ -13,6 +13,7 @@ public class SignUpRequestDTO  implements Serializable{
 	
 	private String facebookAccessToken;
 	private String gcmToken;
+	private String deviceId;
 
 	public String getFacebookAccessToken() {
 		return facebookAccessToken;
@@ -28,5 +29,13 @@ public class SignUpRequestDTO  implements Serializable{
 
 	public void setGcmToken(String gcmToken) {
 		this.gcmToken = gcmToken;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 }

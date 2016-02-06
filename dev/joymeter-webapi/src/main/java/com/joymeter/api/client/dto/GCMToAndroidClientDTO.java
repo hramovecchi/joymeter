@@ -1,11 +1,10 @@
 package com.joymeter.api.client.dto;
 
-import com.joymeter.entity.Activity;
 
 public class GCMToAndroidClientDTO {
 	
 	private String to;
-	private Activity data;
+	private GCMActivityContainer data;
 	
 	public String getTo() {
 		return to;
@@ -13,11 +12,10 @@ public class GCMToAndroidClientDTO {
 	public void setTo(String to) {
 		this.to = to;
 	}
-	public Activity getData() {
+	public GCMActivityContainer getData() {
 		return data;
 	}
-	public void setData(Activity data) {
+	public void setData(GCMActivityContainer data) {
 		this.data = data;
 	}
-
 }
