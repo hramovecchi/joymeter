@@ -21,7 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries( { 
 	@NamedQuery(name = "Session.findAllByUser", query = "SELECT s FROM Session s WHERE s.user.id=:userID"),
 	@NamedQuery(name = "Session.findSessionBySessionToken", query = "SELECT s FROM Session s WHERE s.session_token=:sessionToken"),
-	@NamedQuery(name = "Session.deleteSessionByUserIdAndGcm", query = "DELETE FROM Session s WHERE s.user.id =:userID AND s.gcm_token=:gcmToken")})
+	@NamedQuery(name = "Session.deleteSessionByUserIdAndGcm", query = "DELETE FROM Session s WHERE s.user.id =:userID AND s.gcm_token=:gcmToken"),
+	@NamedQuery(name = "Session.deleteSessionByDeviceId", query = "DELETE FROM Session s WHERE s.device_id=:deviceId")})
 public class Session implements Serializable{
 	
 	private static final long serialVersionUID = 7753016265168879373L;
@@ -38,6 +39,7 @@ public class Session implements Serializable{
 	
 	private String session_token;
 	private String gcm_token;
+	private String device_id;
 	
 	public long getId() {
 		return id;
@@ -69,5 +71,13 @@ public class Session implements Serializable{
 	
 	public void setGcmToken(String gcmToken) {
 		this.gcm_token = gcmToken;
+	}
+	
+	public String getDeviceId(){
+		return device_id;
+	}
+	
+	public void setDeviceId(String deviceId){
+		this.device_id = deviceId;
 	}
 }

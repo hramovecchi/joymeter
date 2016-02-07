@@ -11,8 +11,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.google.gson.Gson;
 import com.joymeter.androidclient.HistoryActivity;
 import com.joymeter.androidclient.R;
+import com.joymeter.dto.ActivityDTO;
 
 /**
  * Created by hramovecchi on 02/12/2015.
@@ -31,9 +33,11 @@ public class MyGcmListenerService extends GcmListenerService{
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        Gson gson = new Gson();
+        ActivityDTO activity = gson.fromJson(data.getString("activity"), ActivityDTO.class);
+
         Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        Log.d(TAG, "Message: " + activity);
 
         if (from.startsWith("/topics/")) {
             // message received from some topic.
@@ -53,7 +57,7 @@ public class MyGcmListenerService extends GcmListenerService{
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        sendNotification(message);
+        sendNotification(activity);
         // [END_EXCLUDE]
     }
     // [END receive_message]
@@ -63,7 +67,7 @@ public class MyGcmListenerService extends GcmListenerService{
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message) {
+    private void sendNotification(ActivityDTO message) {
         Intent intent = new Intent(this, HistoryActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -73,7 +77,7 @@ public class MyGcmListenerService extends GcmListenerService{
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_jm_launcher)
                 .setContentTitle("GCM Message")
-                .setContentText(message)
+                .setContentText("context text")
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

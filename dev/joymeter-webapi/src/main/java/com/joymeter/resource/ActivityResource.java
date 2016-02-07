@@ -50,18 +50,11 @@ public class ActivityResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@RequiresAuthentication
-	public Response getActivities(@QueryParam("user_id") String userId) {
-		if (StringUtils.isEmpty(userId)){
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
+	public Response getActivities() {
 		User user = JoymeterContextHolder.get().getJoymeterSession().getUser();
 		
-		if (Long.valueOf(userId).longValue() != user.getId()){
-			throw new JoymeterUnauthorizedException();
-		}
 		log.info("getActivities entered");
-		log.info("userId: "+userId);
+		log.info("userId: "+user.getId());
 		
 		List<Activity> activities = activityService.getByUserId(user.getId());
 		

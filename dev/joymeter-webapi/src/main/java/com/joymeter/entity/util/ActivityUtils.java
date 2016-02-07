@@ -5,6 +5,9 @@ import com.joymeter.entity.dto.ActivityDTO;
 
 public class ActivityUtils {
 	
+	private static int min = 3600000;
+	private static int max = min * 3;
+	
 	public static Activity mappedToActivity (Activity activity, ActivityDTO dto){
 		activity.setClassified(dto.getClassified() != null ? dto.getClassified().booleanValue(): activity.isClassified());
 		activity.setDescription(dto.getDescription() != null ? dto.getDescription() : activity.getDescription());
@@ -15,6 +18,11 @@ public class ActivityUtils {
 		activity.setType(dto.getType() != null ? dto.getType() : activity.getType());
 		
 		return activity;
+	}
+	
+	public static long durationToSuggest (){
+		long num=(long)Math.floor(Math.random()*(min-(max+1))+(max+1));
+        return num;
 	}
 
 }

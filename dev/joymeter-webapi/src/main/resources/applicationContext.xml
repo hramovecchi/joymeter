@@ -16,7 +16,7 @@
 			">
 	<!--  Scan for both Jersey Rest Annotations a -->
 	<context:component-scan
-		base-package="com.joymeter.resource,com.joymeter.service,com.joymeter.service.jpa,com.joymeter.entity.util" />
+		base-package="com.joymeter.resource,com.joymeter.service,com.joymeter.service.impl,com.joymeter.service.jpa,com.joymeter.entity.util" />
 	<context:annotation-config />
 	<tx:annotation-driven/>
 	
@@ -37,6 +37,7 @@
 				<value>classpath:joymeter.properties</value>
 			</list>
 		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
 
 	<bean id="entityManagerFactory"
