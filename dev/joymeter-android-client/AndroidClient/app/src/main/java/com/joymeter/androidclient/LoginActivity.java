@@ -13,8 +13,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -141,9 +139,10 @@ public class LoginActivity extends FragmentActivity {
             if (sentToken) {
                 final String gcmToken = intent.getStringExtra(JoymeterPreferences.GCM_TOKEN);
                 final String fbAccessToken = intent.getStringExtra(JoymeterPreferences.FACEBOOK_TOKEN);
+                final String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 
                 SessionService sessionService = SessionServiceFactory.getInstance();
-                SignupRequestDTO signupRequest = new SignupRequestDTO(fbAccessToken, gcmToken);
+                SignupRequestDTO signupRequest = new SignupRequestDTO(fbAccessToken, gcmToken, deviceId);
 
                 sessionService.createUser(signupRequest, new Callback<SignupResponseDTO>() {
                     @Override
