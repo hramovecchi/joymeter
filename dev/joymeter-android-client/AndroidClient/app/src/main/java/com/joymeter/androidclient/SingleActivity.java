@@ -25,7 +25,7 @@ public class SingleActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single);
 
-        if ((ActivityDTO)getIntent().getSerializableExtra("joymeterActivity")!= null){
+        if (getIntent().getBooleanExtra("updateActivity",Boolean.FALSE)){
             saveAction = "update";
         }
     }

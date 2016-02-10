@@ -70,7 +70,7 @@ public class SessionResource {
 						fbProfile.getFirstName(), fbProfile.getMiddleName(),
 						fbProfile.getLastName()));
 			} else {
-				sessionService.deleteByUserId(user.getId(),signUpRequestDTO.getGcmToken());
+				sessionService.deleteByDeviceId(signUpRequestDTO.getDeviceId());
 			}
 			//update facebook access token
 			user.setFacebookAccessToken(signUpRequestDTO.getFacebookAccessToken());
@@ -79,6 +79,7 @@ public class SessionResource {
 			sessionToStore.setUser(user);			
 			sessionToStore.setSessionToken(SessionUtils.randomSessionToken());
 			sessionToStore.setGcmToken(signUpRequestDTO.getGcmToken());
+			sessionToStore.setDeviceId(signUpRequestDTO.getDeviceId());
 			
 			sessionService.save(sessionToStore);
 			

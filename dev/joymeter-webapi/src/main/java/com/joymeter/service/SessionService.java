@@ -12,4 +12,5 @@ public interface SessionService {
 	boolean delete(Session session);
 	boolean update(Session session);
 	boolean deleteByUserId(long userID, String gcmToken);
+	boolean deleteByDeviceId(String deviceId);
 }

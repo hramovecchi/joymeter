@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,11 +16,8 @@ import com.joymeter.androidclient.JoymeterPreferences;
 import com.joymeter.androidclient.R;
 import com.joymeter.dto.SignupRequestDTO;
 import com.joymeter.dto.SignupResponseDTO;
-import com.joymeter.dto.UserDTO;
 import com.joymeter.rest.SessionService;
-import com.joymeter.rest.UserService;
 import com.joymeter.rest.factory.SessionServiceFactory;
-import com.joymeter.rest.factory.UserServiceFactory;
 
 import java.io.IOException;
 
@@ -66,8 +64,9 @@ public class RegistrationIntentService extends IntentService {
         if (tokenUpdatedByGCM){
             SessionService sessionService = SessionServiceFactory.getInstance();
             String fbAccessToken = preferences.getString(JoymeterPreferences.FACEBOOK_TOKEN, "");
+            String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            SignupRequestDTO signupRequestDTO= new SignupRequestDTO(fbAccessToken, token);
+            SignupRequestDTO signupRequestDTO= new SignupRequestDTO(fbAccessToken, token, deviceId);
             sessionService.createUser(signupRequestDTO, new Callback<SignupResponseDTO>() {
                 @Override
                 public void success(SignupResponseDTO signupResponseDTO, Response response) {

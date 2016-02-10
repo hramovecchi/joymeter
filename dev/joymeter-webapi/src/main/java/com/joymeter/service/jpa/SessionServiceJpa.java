@@ -84,4 +84,13 @@ public class SessionServiceJpa implements SessionService {
 		
 		return result > 0;
 	}
+
+	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
+	public boolean deleteByDeviceId(String deviceId) {
+		Query queryDeleteSession = entityManager.createNamedQuery("Session.deleteSessionByDeviceId");
+		queryDeleteSession.setParameter("deviceId", deviceId);
+		
+		int result = queryDeleteSession.executeUpdate();
+		return result > 0;
+	}
 }
