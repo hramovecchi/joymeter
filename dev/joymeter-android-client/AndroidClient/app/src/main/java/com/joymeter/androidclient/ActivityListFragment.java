@@ -94,6 +94,7 @@ public class ActivityListFragment extends ListFragment {
 
             case R.id.edit:
                 Intent i = new Intent(getActivity(), SingleActivity.class);
+                i.putExtra("updateActivity", Boolean.TRUE);
                 i.putExtra("joymeterActivity", activity);
                 i.putExtra("position", info.position);
 

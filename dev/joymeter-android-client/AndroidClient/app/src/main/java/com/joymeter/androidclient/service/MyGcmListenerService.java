@@ -8,12 +8,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
-import com.joymeter.androidclient.HistoryActivity;
 import com.joymeter.androidclient.R;
+import com.joymeter.androidclient.SingleActivity;
 import com.joymeter.dto.ActivityDTO;
 
 /**
@@ -36,23 +35,6 @@ public class MyGcmListenerService extends GcmListenerService{
         Gson gson = new Gson();
         ActivityDTO activity = gson.fromJson(data.getString("activity"), ActivityDTO.class);
 
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + activity);
-
-        if (from.startsWith("/topics/")) {
-            // message received from some topic.
-        } else {
-            // normal downstream message.
-        }
-
-        // [START_EXCLUDE]
-        /**
-         * Production applications would usually process the message here.
-         * Eg: - Syncing with server.
-         *     - Store message in local database.
-         *     - Update UI.
-         */
-
         /**
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
@@ -65,19 +47,23 @@ public class MyGcmListenerService extends GcmListenerService{
     /**
      * Create and show a simple notification containing the received GCM message.
      *
-     * @param message GCM message received.
+     * @param activity GCM message received.
      */
-    private void sendNotification(ActivityDTO message) {
-        Intent intent = new Intent(this, HistoryActivity.class);
+    private void sendNotification(ActivityDTO activity) {
+        Intent intent = new Intent(this, SingleActivity.class);
+        intent.putExtra("joymeterActivity",activity);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        String contentText = activity.getDescription().length() < 15 ? activity.getDescription() :
+                activity.getDescription().substring(0, 12) + "...";
+
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_jm_launcher)
-                .setContentTitle("GCM Message")
-                .setContentText("context text")
+                .setContentTitle("Joymeter Recomendation")
+                .setContentText(contentText)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
