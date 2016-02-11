@@ -67,6 +67,20 @@ public class ActivityServiceJpa implements ActivityService {
 	public Activity suggestActivity(long userID) {
 		List<Activity> activities = getByUserId(userID);
 		
+		if (activities.isEmpty()){
+			return getDefaultActivity();
+		}
+		
 		return activities.get(0);
+	}
+
+	private Activity getDefaultActivity() {
+		Activity a = new Activity();
+		a.setClassified(Boolean.FALSE);
+		a.setDescription("Birra con amigos");
+		a.setLevelOfJoy(5);
+		a.setSummary("Cerveza en Antares");
+		a.setType("Recleación, Salida");
+		return a;
 	}
 }
