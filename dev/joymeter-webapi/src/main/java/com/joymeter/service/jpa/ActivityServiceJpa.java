@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,11 +87,12 @@ public class ActivityServiceJpa implements ActivityService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Activity> getDayActivitiesByUserId(long userId, long startday, long endday) {
+	public List<Activity> getDayActivitiesByUserId(long userId, DateTime date) {
+		
 		Query queryFindActivities = entityManager.createNamedQuery("Activity.findDayActivitiesByUser");
 		queryFindActivities.setParameter("userID", userId);
-		queryFindActivities.setParameter("startday", startday);
-		queryFindActivities.setParameter("endday", endday);
+		queryFindActivities.setParameter("startday", date.withTimeAtStartOfDay().getMillis());
+		queryFindActivities.setParameter("endday", date.plusDays(1).withTimeAtStartOfDay().getMillis()-1);
 		List<Activity> activities = queryFindActivities.getResultList();
 		return activities;
 	}

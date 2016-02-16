@@ -29,7 +29,16 @@ public class LevelOfJoyServiceJpa implements LevelOfJoyService{
 	
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public LevelOfJoy save(LevelOfJoy loj) {
-		log.info("Saving: "+loj.getId());
+		log.info("Saving: "+loj.toString());
+		if (loj.getId() != 0) {
+			return update(loj);
+		}
+		
+		LevelOfJoy storedLoj = getByUserDate(loj.getUser(), loj.getDate());
+		if (storedLoj != null) {
+			loj.setId(storedLoj.getId());
+			return update(loj);
+		}
 		entityManager.persist(loj);
 		entityManager.flush();
 		return loj;
@@ -41,6 +50,19 @@ public class LevelOfJoyServiceJpa implements LevelOfJoyService{
 		Query queryFindHistory = entityManager.createNamedQuery("LevelOfJoy.findAllByUser");
 		queryFindHistory.setParameter("userID", user.getId());
 		return queryFindHistory.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public LevelOfJoy getByUserDate(User user, DateTime date) {
+		Query queryFindHistory = entityManager.createNamedQuery("LevelOfJoy.findByDateUser");
+		queryFindHistory.setParameter("userID", user.getId());
+		queryFindHistory.setParameter("millis", date.withTimeAtStartOfDay().getMillis());
+		List<LevelOfJoy> listResult = queryFindHistory.getResultList();
+		if(listResult != null && !listResult.isEmpty()) {
+			return listResult.get(0);
+		}
+		return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -61,6 +83,7 @@ public class LevelOfJoyServiceJpa implements LevelOfJoyService{
 
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public LevelOfJoy update(LevelOfJoy loj) {
+		log.info("Updating: "+loj.getId());
 		entityManager.merge(loj);
 		entityManager.flush();
 		return loj;

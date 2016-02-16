@@ -24,24 +24,25 @@ public class LevelOfJoyHistoricalService {
 			LevelOfJoy last = levelOfJoyService.getLastByUser(user);
 			if (last != null) {
 				DateTime today = DateTime.now();
-				DateTime actualDate = new DateTime(last.getMilliseconds());
+				DateTime actualDate = last.getDate();
 				List<LevelOfJoy> activities = null;
 				while(isPreviousDay(actualDate, today)) {
 					actualDate = actualDate.plusDays(1).withTimeAtStartOfDay();
 					if (isSameDay(actualDate, today)) {
-						activities = getActualActivities(user); //OJOOOOO aca estoy usando el millis del levelof joy como duracion en vez de date
+						activities = getActualActivities(user); //Be careful! We are using LevelOfJoy Object as a representation of the activity with duration
 					}
-					last = createActual(user, actualDate.getMillis(), last.getLevel(), activities);
+					last = createActual(user, actualDate, last.getLevel(), activities);
 				}
+				//TODO: review comment and remove it.
 				return last; //revisar si aca estoy devolviendo el today sin el aplicarle las actividades, si agrego el listado de actividades arriba, creo q se soluciona, pero tengo llamados innecesarios a la base.
 			}
 			
-			return createActual(user,getStartOfDayMillis(DateTime.now()), Double.valueOf(0), getActualActivities(user));
+			return createActual(user, DateTime.now(), Double.valueOf(0), getActualActivities(user));
 	}
 	
-	private LevelOfJoy createActual(User user, long actualMillis, Double prevLevel, List<LevelOfJoy> activities) {
+	private LevelOfJoy createActual(User user, DateTime actualDate, Double prevLevel, List<LevelOfJoy> activities) {
 		LevelOfJoy actual = new LevelOfJoy();
-		actual.setMilliseconds(actualMillis);
+		actual.setDate(actualDate);
 		actual.setUser(user);
 		actual.setLevel(calculateActualLevel(prevLevel, activities));
 		levelOfJoyService.save(actual);
@@ -64,22 +65,21 @@ public class LevelOfJoyHistoricalService {
 		return getActualActivities(DateTime.now(), null, user);		
 	}
 	
-	private long getStartOfDayMillis(DateTime date) {
-		return date.withTimeAtStartOfDay().getMillis();
-	}
-	
-	private long getEndOfDayMillis(DateTime date) {
-		return date.plusDays(1).withTimeAtStartOfDay().getMillis()-1;
-	}
-	
+	/** Use LevelOfJoy Object as a representation of the activity with duration
+	 * 
+	 * @param user
+	 * @param activity
+	 * @return LevelOfJoy
+	 */
 	private LevelOfJoy extractLevelOfJoy(User user, Activity activity) {
 		LevelOfJoy levelOfJoy = new LevelOfJoy();
 		levelOfJoy.setUser(user);
 		levelOfJoy.setLevel(Double.valueOf(activity.getLevelOfJoy()));
-		levelOfJoy.setMilliseconds(activity.getEndDate() - activity.getStartDate());
+		levelOfJoy.setMilliseconds(activity.getEndDate() - activity.getStartDate()); //Duration of the activity
 		return levelOfJoy;
 	}
 	
+	//TODO: hook to implement different strategies of calculation
 	private Double calculateActualLevel(Double prevLevel, List<LevelOfJoy> activities) {
 		Double actual = decreseLevel(prevLevel);
 		if (activities != null && !activities.isEmpty()) {
@@ -87,17 +87,18 @@ public class LevelOfJoyHistoricalService {
 		}
 		return actual;
 	}
-	
+	//TODO: hook to implement different strategies of calculation
 	private double calculateAverage(Double actual, List<LevelOfJoy> activities) {
+		int size = (actual == 0) ? activities.size() : activities.size() + 1;
 		if (!activities.isEmpty()) {
 			for (LevelOfJoy mark : activities) {
 				actual += mark.getLevel();
 			}
-			return actual.doubleValue() / activities.size()+1;
+			return actual.doubleValue() / size;
 		}
 		return actual;
 	}
-
+	//TODO: hook to implement different strategies of calculation
 	private Double decreseLevel(Double prevLevel) {
 		return prevLevel*0.99;
 	}
@@ -107,7 +108,7 @@ public class LevelOfJoyHistoricalService {
 		
 		List<LevelOfJoy> historical = levelOfJoyService.getLastEntriesByUser(user, days);
 		if( historical != null && days+1 != historical.size()) {
-			calculateToday(user); //calculates todays level and update the missing entries - it happens when the last activity entry is older than today.
+			calculateToday(user); //Calculates todays level and update the missing entries - it happens when the last activity entry is older than today.
 			historical = levelOfJoyService.getLastEntriesByUser(user, days);
 		}
 		return historical;
@@ -116,7 +117,7 @@ public class LevelOfJoyHistoricalService {
 	public void updateHistoryNewActivity(Activity activity) {
 		
 		LevelOfJoy last = levelOfJoyService.getLastByUser(activity.getUser());
-		DateTime lastDate = (last != null) ? new DateTime(last.getMilliseconds()).withTimeAtStartOfDay() : null;//revisar si se necesita el with time
+		DateTime lastDate = (last != null) ? last.getDate().withTimeAtStartOfDay() : null;//revisar si se necesita el with time
 		Double lastLevel = (last != null) ? last.getLevel() : Double.valueOf(0);
 		DateTime today = DateTime.now();
 		DateTime startActivityDate = new DateTime(activity.getStartDate());
@@ -134,7 +135,7 @@ public class LevelOfJoyHistoricalService {
 			if (intoDayRange(actualDate, startActivityDate, endActivityDate)) {
 				activities = getActualActivities(actualDate, activity, activity.getUser());
 			}
-			lastLevel = createActual(activity.getUser(), actualDate.getMillis(), lastLevel, activities).getLevel();
+			lastLevel = createActual(activity.getUser(), actualDate, lastLevel, activities).getLevel();
 			actualDate  = actualDate.plusDays(1).withTimeAtStartOfDay();
 		}
 	}
@@ -142,14 +143,14 @@ public class LevelOfJoyHistoricalService {
 	private boolean intoDayRange(DateTime actualDate, DateTime startActivityDate, DateTime endActivityDate) {
 		return !isPreviousDay(endActivityDate, actualDate) && !isPreviousDay(actualDate, startActivityDate);
 	}
-
+	
 	private List<LevelOfJoy> getActualActivities(DateTime actualDate, Activity newActivity, User user) {
-
-		long startOfDay = getStartOfDayMillis(actualDate);
-		long endOfDay = getEndOfDayMillis(actualDate);
+		
+		long startOfDay = actualDate.withTimeAtStartOfDay().getMillis();
+		long endOfDay = actualDate.plusDays(1).withTimeAtStartOfDay().getMillis()-1;
 		
 		List<LevelOfJoy> actualActivities = new ArrayList<LevelOfJoy>();
-		List<Activity> activities = activityService.getDayActivitiesByUserId(user.getId(), startOfDay, endOfDay);
+		List<Activity> activities = activityService.getDayActivitiesByUserId(user.getId(), actualDate);
 		if(newActivity != null) {
 			DateTime startActivityDate = new DateTime(newActivity.getStartDate());
 			DateTime endActivityDate = new DateTime(newActivity.getEndDate());
@@ -162,7 +163,7 @@ public class LevelOfJoyHistoricalService {
 			DateTime startDate = new DateTime(activity.getStartDate());
 			DateTime endDate = new DateTime(activity.getEndDate());
 
-			LevelOfJoy todaysActivity = extractLevelOfJoy(user, activity);
+			LevelOfJoy todaysActivity = extractLevelOfJoy(user, activity); //Use Level of Joy Object as a representation of the activity with duration
 			if(!isSameDay(startDate, endDate)) {
 				long endTime = isSameDay(endDate, actualDate) ? activity.getEndDate() : endOfDay;
 				long startTime = isSameDay(startDate, actualDate) ? activity.getStartDate() : startOfDay;
@@ -176,11 +177,12 @@ public class LevelOfJoyHistoricalService {
 	public void updateHistoryDeleteActivity(Activity activity) {
 		DateTime startActivityDate = new DateTime(activity.getStartDate());
 		DateTime endActivityDate = new DateTime(activity.getEndDate());
+		//TODO: review comment and remove it.
 		LevelOfJoy prev = levelOfJoyService.getPreviousByUser(activity.getUser(), startActivityDate); //REVISAR PUEDE Q YO NECESITE UN ACTIVITY Y NO UN LEVEL
 		Double prevLevel = (prev != null) ? prev.getLevel() : Double.valueOf(0);
 		
 		LevelOfJoy last = levelOfJoyService.getLastByUser(activity.getUser());
-		DateTime lastDate = (last != null) ? new DateTime(last.getMilliseconds()).withTimeAtStartOfDay() : null;
+		DateTime lastDate = (last != null) ? last.getDate() : null;
 		
 		DateTime today = DateTime.now();
 		
@@ -191,7 +193,7 @@ public class LevelOfJoyHistoricalService {
 			if (intoDayRange(actualDate, startActivityDate, endActivityDate)) {
 				activities = getActualActivities(actualDate, null, activity.getUser());
 			}
-			prevLevel = createActual(activity.getUser(), actualDate.getMillis(), prevLevel, activities).getLevel();
+			prevLevel = createActual(activity.getUser(), actualDate, prevLevel, activities).getLevel();
 			actualDate  = actualDate.plusDays(1).withTimeAtStartOfDay();
 		}
 	}
@@ -213,7 +215,7 @@ public class LevelOfJoyHistoricalService {
 			if (intoDayRange(actualDate, startActivityDate, endActivityDate)) {
 				activities = getActualActivities(actualDate, null, activity.getUser());
 			}
-			lastLevel = createActual(activity.getUser(), actualDate.getMillis(), lastLevel, activities).getLevel();
+			lastLevel = createActual(activity.getUser(), actualDate, lastLevel, activities).getLevel();
 			actualDate  = actualDate.plusDays(1).withTimeAtStartOfDay();
 		}
 	}

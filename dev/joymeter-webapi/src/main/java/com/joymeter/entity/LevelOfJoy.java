@@ -13,6 +13,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -73,8 +75,16 @@ private static final long serialVersionUID = -3597156974325366320L;
 	public long getMilliseconds() {
 		return milliseconds;
 	}
+	
+	public DateTime getDate() {
+		return new DateTime(milliseconds).withTimeAtStartOfDay();
+	}
 
 	public void setMilliseconds(long milliseconds) {
 		this.milliseconds = milliseconds;
+	}
+	
+	public void setDate(DateTime date) {
+		this.milliseconds = date.withTimeAtStartOfDay().getMillis();
 	}
 }

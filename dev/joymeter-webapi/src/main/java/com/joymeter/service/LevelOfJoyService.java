@@ -10,6 +10,7 @@ import com.joymeter.entity.User;
 public interface LevelOfJoyService {
 	LevelOfJoy save(LevelOfJoy activity);
 	List<LevelOfJoy> getByUser(User user);
+	LevelOfJoy getByUserDate(User user, DateTime date);
 	List<LevelOfJoy> getLastEntriesByUser(User user, int days);
 	LevelOfJoy getLastByUser(User user);
 	LevelOfJoy getPreviousByUser(User user, DateTime date);
