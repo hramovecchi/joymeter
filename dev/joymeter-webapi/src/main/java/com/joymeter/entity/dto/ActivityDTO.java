@@ -12,6 +12,8 @@ public class ActivityDTO {
 	private String levelOfJoy;
 	private String startDate;
 	private String endDate;
+	private String startDateTime;
+	private String endDateTime;
 	private Boolean classified;
 	
 	public String getType() {
@@ -56,5 +58,17 @@ public class ActivityDTO {
 	}
 	public void setClassified(Boolean classified) {
 		this.classified = classified;
+	}
+	public String getStartDateTime() {
+		return startDateTime;
+	}
+	public void setStartDateTime(String startDateTime) {
+		this.startDateTime = startDateTime;
+	}
+	public String getEndDateTime() {
+		return endDateTime;
+	}
+	public void setEndDateTime(String endDateTime) {
+		this.endDateTime = endDateTime;
 	}
 }

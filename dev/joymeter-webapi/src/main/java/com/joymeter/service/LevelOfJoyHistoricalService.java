@@ -127,14 +127,19 @@ public class LevelOfJoyHistoricalService {
 			endDate = isLaterDay(today, endActivityDate) ? today : endActivityDate;
 		} else {
 			endDate = isLaterDay(today, endActivityDate) && isLaterDay(today, lastDate) ? today : isLaterDay(lastDate, endActivityDate) ? lastDate : endActivityDate;
+			if(isPreviousDay(endActivityDate, lastDate)) {
+				LevelOfJoy prev = levelOfJoyService.getPreviousByUser(activity.getUser(), startActivityDate); //REVISAR PUEDE Q YO NECESITE UN ACTIVITY Y NO UN LEVEL
+				lastLevel = (prev != null) ? prev.getLevel() : Double.valueOf(0);
+			}
 		}
 		DateTime actualDate = (lastDate != null && isPreviousDay(lastDate, startActivityDate)) ? lastDate : startActivityDate;
 		
 		while(!isPreviousDay(endDate, actualDate)) {
-			List<LevelOfJoy> activities = null;
+			Activity actualActivity = null;
 			if (intoDayRange(actualDate, startActivityDate, endActivityDate)) {
-				activities = getActualActivities(actualDate, activity, activity.getUser());
+				actualActivity = activity;
 			}
+			List<LevelOfJoy> activities = getActualActivities(actualDate, actualActivity, activity.getUser());
 			lastLevel = createActual(activity.getUser(), actualDate, lastLevel, activities).getLevel();
 			actualDate  = actualDate.plusDays(1).withTimeAtStartOfDay();
 		}
@@ -189,10 +194,11 @@ public class LevelOfJoyHistoricalService {
 		DateTime endDate = isLaterDay(today, lastDate) ? today : lastDate;
 		DateTime actualDate = startActivityDate;
 		while(!isPreviousDay(endDate, actualDate)) {
-			List<LevelOfJoy> activities = null;
+			/*List<LevelOfJoy> activities = null;
 			if (intoDayRange(actualDate, startActivityDate, endActivityDate)) {
 				activities = getActualActivities(actualDate, null, activity.getUser());
-			}
+			}*/ //CREO QUE NO VA
+			List<LevelOfJoy> activities = getActualActivities(actualDate, null, activity.getUser());
 			prevLevel = createActual(activity.getUser(), actualDate, prevLevel, activities).getLevel();
 			actualDate  = actualDate.plusDays(1).withTimeAtStartOfDay();
 		}
@@ -211,10 +217,11 @@ public class LevelOfJoyHistoricalService {
 		DateTime endDate = isLaterDay(today, endActivityDate) ? today : endActivityDate;
 		DateTime actualDate = startActivityDate;
 		while(!isPreviousDay(endDate, actualDate)) {
-			List<LevelOfJoy> activities = null;
+			/*Activity actualActivity = null;
 			if (intoDayRange(actualDate, startActivityDate, endActivityDate)) {
-				activities = getActualActivities(actualDate, null, activity.getUser());
-			}
+				actualActivity = activity;
+			}*///creo que no va por que ya esta aplicado el update
+			List<LevelOfJoy> activities = getActualActivities(actualDate, null, activity.getUser());
 			lastLevel = createActual(activity.getUser(), actualDate, lastLevel, activities).getLevel();
 			actualDate  = actualDate.plusDays(1).withTimeAtStartOfDay();
 		}

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.joda.time.DateTime;
 
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties
 @Entity
-@Table(name = "LEVELOFJOY")
+@Table(name = "LEVELOFJOY", uniqueConstraints={@UniqueConstraint(columnNames={"user_id", "milliseconds"})})
 @NamedQueries( { @NamedQuery(name = "LevelOfJoy.findAllByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID"),
 				 @NamedQuery(name = "LevelOfJoy.findLastEntriesByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID AND a.milliseconds >= :millis"),
 				 @NamedQuery(name = "LevelOfJoy.findByDateUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID AND a.milliseconds = :millis"),
