@@ -56,13 +56,13 @@ public class MyGcmListenerService extends GcmListenerService{
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        String contentText = activity.getDescription().length() < 15 ? activity.getDescription() :
-                activity.getDescription().substring(0, 12) + "...";
+        String contentText = activity.getDescription().length() < 25 ? activity.getDescription() :
+                activity.getDescription().substring(0, 24) + "...";
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_jm_launcher)
-                .setContentTitle("Joymeter Recomendation")
+                .setContentTitle("Joymeter Suggest")
                 .setContentText(contentText)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
