@@ -7,6 +7,7 @@
         <class>com.joymeter.entity.User</class>
         <class>com.joymeter.entity.Activity</class>
         <class>com.joymeter.entity.Session</class>
+        <class>com.joymeter.entity.LevelOfJoy</class>
     </persistence-unit>
 
 </persistence>
