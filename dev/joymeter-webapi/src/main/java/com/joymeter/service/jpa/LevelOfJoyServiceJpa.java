@@ -118,10 +118,13 @@ public class LevelOfJoyServiceJpa implements LevelOfJoyService{
 		if (days < 0) {
 			return null;
 		}
+		long today = DateTime.now().withTimeAtStartOfDay().getMillis();
 		long millis = DateTime.now().plusDays(-days).withTimeAtStartOfDay().getMillis();//rest the number of days to today
+		
 		Query queryFindHistory = entityManager.createNamedQuery("LevelOfJoy.findLastEntriesByUser");
 		queryFindHistory.setParameter("userID", user.getId());
 		queryFindHistory.setParameter("millis", millis);
+		queryFindHistory.setParameter("today", today);
 		List<LevelOfJoy> historical = queryFindHistory.getResultList();
 		return historical;
 	}
