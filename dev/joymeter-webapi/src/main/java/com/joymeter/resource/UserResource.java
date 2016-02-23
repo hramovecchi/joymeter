@@ -112,18 +112,14 @@ public class UserResource{
 	/*
 	 */
 	@GET
-	@Path("/{id}/loj")
+	@Path("/me/loj")
 	@Produces(MediaType.APPLICATION_JSON)
 	@RequiresAuthentication
-	public Response getLevelOfJoy(@PathParam("id") long userId, @QueryParam("days") int days) {
+	public Response getLevelOfJoy(@QueryParam("days") int days) {
 		
 		log.info("getLevelOfJoy entered");
 		
 		User user = JoymeterContextHolder.get().getJoymeterSession().getUser();
-		
-		if (userId != user.getId()){
-			throw new JoymeterUnauthorizedException();
-		}
 		
 		List<LevelOfJoy> historical = levelOfJoyHistoricalService.getLastEntriesByUser(user, days);
 		
