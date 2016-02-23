@@ -71,7 +71,9 @@ public class ActivityServiceJpa implements ActivityService {
 			return getDefaultActivity();
 		}
 		
-		return activities.get(0);
+		int index = (int)Math.floor(Math.random()*(0-(activities.size()))+(activities.size()+1));
+		
+		return activities.get(index);
 	}
 
 	private Activity getDefaultActivity() {
