@@ -2,7 +2,6 @@ package com.joymeter.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,7 +19,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties
 @Entity
 @Table(name = "ACTIVITY")
-@NamedQueries( { @NamedQuery(name = "Activity.findAllByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID")})
+@NamedQueries( { @NamedQuery(name = "Activity.findAllByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID"),
+				 @NamedQuery(name = "Activity.findDayActivitiesByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID AND a.start_date <= :endday AND a.end_date >= :startday")})
+
 public class Activity implements Serializable{
 	
 	private static final long serialVersionUID = -3597156974325366320L;
