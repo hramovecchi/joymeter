@@ -88,7 +88,7 @@ public class SingleActivityFragment extends Fragment {
 
             description.setText(activity.getDescription());
             loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
-            share.setChecked(!activity.getClassified());
+            share.setChecked(!activity.isClassified());
             id = activity.getId();
         }
 

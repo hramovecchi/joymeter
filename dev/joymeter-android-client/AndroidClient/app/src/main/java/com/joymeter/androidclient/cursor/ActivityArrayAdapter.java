@@ -1,6 +1,7 @@
 package com.joymeter.androidclient.cursor;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,8 @@ import java.util.List;
  */
 public class ActivityArrayAdapter extends ArrayAdapter<ActivityDTO>{
 
-    private final Context context;
-
     public ActivityArrayAdapter(Context context, List<ActivityDTO> activities) {
-        super(context, R.layout.activity_list_item ,activities);
-        this.context = context;
+        super(context, R.layout.activity_list_item, activities);
     }
 
     private class ViewHolder{
@@ -37,7 +35,7 @@ public class ActivityArrayAdapter extends ArrayAdapter<ActivityDTO>{
 
         if (convertView == null){
 
-            LayoutInflater inflater = LayoutInflater.from(context);
+            LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.activity_list_item, parent, false);
 
             //initialize the view holder
@@ -55,11 +53,27 @@ public class ActivityArrayAdapter extends ArrayAdapter<ActivityDTO>{
 
         // update the item view
         ActivityDTO activity = getItem(position);
-        //TODO set an image for an activity
-        //holder.img.setImageDrawable();
+        holder.img.setImageDrawable(getLevelOfJoyImage(activity.getLevelOfJoy()));
         holder.title.setText(activity.getSummary());
         holder.description.setText(activity.getDescription());
 
         return convertView;
+    }
+
+    private Drawable getLevelOfJoyImage(Integer levelOfJoy) {
+        switch (levelOfJoy){
+            case 1:
+                return getContext().getResources().getDrawable(R.mipmap.loj_1);
+            case 2:
+                return getContext().getResources().getDrawable(R.mipmap.loj_2);
+            case 3:
+                return getContext().getResources().getDrawable(R.mipmap.loj_3);
+            case 4:
+                return getContext().getResources().getDrawable(R.mipmap.loj_4);
+            case 5:
+                return getContext().getResources().getDrawable(R.mipmap.loj_5);
+            default:
+                return getContext().getResources().getDrawable(R.mipmap.loj_5);
+        }
     }
 }
