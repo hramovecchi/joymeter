@@ -1,12 +1,20 @@
 package com.joymeter.androidclient;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.factory.ActivityServiceFactory;
@@ -92,6 +100,40 @@ public class SingleActivity extends FragmentActivity {
                     }
                 });
             }
+
+            if (!activity.isClassified()){
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                CallbackManager callbackManager = CallbackManager.Factory.create();
+                ShareDialog shareDialog = new ShareDialog(this);
+                shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                    @Override
+                    public void onSuccess(Sharer.Result result) {
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+
+                    }
+                });
+
+                if (ShareDialog.canShow(ShareLinkContent.class)) {
+                    ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                            .setContentTitle("Hello Facebook")
+                            .setContentDescription(
+                                    "The 'Hello Facebook' sample  showcases simple Facebook integration")
+                            .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                            .build();
+
+                    shareDialog.show(linkContent);
+                }
+            }
+
             return true;
         }
 
