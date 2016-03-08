@@ -84,7 +84,7 @@ public class HistoryActivity extends FragmentActivity {
     }
 
     @Subscribe
-    public void activityCallback(ActivityAction activityAction){
+    public void activityCallback(final ActivityAction activityAction){
         ActivityService activityService = ActivityServiceFactory.getInstance();
         switch (activityAction.getSaveAction()){
             case save:
@@ -106,8 +106,8 @@ public class HistoryActivity extends FragmentActivity {
                 activityService.updateActivity(activityToUpdate.getId(), activityToUpdate, new Callback<ActivityDTO>() {
                     @Override
                     public void success(ActivityDTO activityDTO, Response response) {
-                        //ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
-                        //fragment.addActivity(activityDTO);
+                        ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
+                        fragment.insertActivity(activityDTO, activityAction.getPosition());
                     }
 
                     @Override

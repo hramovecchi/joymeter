@@ -6,21 +6,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.joymeter.dto.ActivityAction;
+import com.joymeter.dto.ActivityAction.SaveAction;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.events.bus.EventsBus;
 
 
 public class SingleActivity extends FragmentActivity {
 
-    private String saveAction = "add";
+    private SaveAction saveAction = SaveAction.save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single);
 
-        if (getIntent().getBooleanExtra("updateActivity",Boolean.FALSE)){
-            saveAction = "update";
+        if (getIntent().getBooleanExtra(JoymeterPreferences.JOYMETER_UPDATE_ACTION,Boolean.FALSE)){
+            saveAction = SaveAction.update;
         }
     }
 
@@ -40,13 +41,15 @@ public class SingleActivity extends FragmentActivity {
             SingleActivityFragment fragment = (SingleActivityFragment)getFragmentManager().findFragmentById(R.id.single_joymeter_activity);
             final ActivityDTO activity = fragment.getActivityDTO();
 
-            if (saveAction.equals("add")) {
-                EventsBus.getInstance().post(new ActivityAction(activity, ActivityAction.SaveAction.save));
-
-            } else if (saveAction.equals("update")){
-                EventsBus.getInstance().post(new ActivityAction(activity, ActivityAction.SaveAction.update));
+            switch (saveAction){
+                case save:
+                    EventsBus.getInstance().post(new ActivityAction(activity, saveAction));
+                    break;
+                case update:
+                    int position = getIntent().getIntExtra(JoymeterPreferences.JOYMETER_ACTIVITY_POSITION, -1);
+                    EventsBus.getInstance().post(new ActivityAction(activity, saveAction, position));
+                    break;
             }
-
             finish();
 
             return true;

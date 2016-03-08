@@ -69,7 +69,7 @@ public class SingleActivityFragment extends Fragment {
 
     private void populateActivity() {
 
-        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
+        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
 
         if (activity != null){
             DateUtils util = DateUtils.getInstance();

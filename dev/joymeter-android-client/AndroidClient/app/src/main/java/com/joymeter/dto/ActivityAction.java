@@ -7,10 +7,16 @@ public class ActivityAction {
 
     private ActivityDTO activity;
     private SaveAction saveAction;
+    private int position;
 
     public ActivityAction(ActivityDTO activity, SaveAction saveAction){
-        this.activity = activity;
-        this.saveAction = saveAction;
+        this.setActivity(activity);
+        this.setSaveAction(saveAction);
+    }
+
+    public ActivityAction(ActivityDTO activity, SaveAction update, int position) {
+        this(activity, update);
+        this.setPosition(position);
     }
 
     public ActivityDTO getActivity() {
@@ -27,6 +33,14 @@ public class ActivityAction {
 
     public void setSaveAction(SaveAction saveAction) {
         this.saveAction = saveAction;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public enum SaveAction {
