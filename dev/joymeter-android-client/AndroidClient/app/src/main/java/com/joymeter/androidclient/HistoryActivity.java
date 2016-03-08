@@ -7,10 +7,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.joymeter.dto.ActivityAction;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.events.bus.EventsBus;
+import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.UserService;
+import com.joymeter.rest.factory.ActivityServiceFactory;
 import com.joymeter.rest.factory.UserServiceFactory;
+import com.squareup.otto.Subscribe;
 
+import retrofit.Callback;
 import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -18,14 +24,18 @@ import retrofit.client.Response;
 /**
  * Created by hramovecchi on 15/09/2015.
  */
-public class HistoryActivity extends FragmentActivity{
-
-    private final int ADD_ACTIVITY = 1;
+public class HistoryActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history_activity);
+        EventsBus.getInstance().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -37,15 +47,11 @@ public class HistoryActivity extends FragmentActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_add) {
             Intent i = new Intent(getApplicationContext(), SingleActivity.class);
-            startActivityForResult(i, ADD_ACTIVITY);
+            startActivity(i);
             return true;
         }
 
@@ -63,7 +69,6 @@ public class HistoryActivity extends FragmentActivity{
                 }
             });
 
-
             Intent i = new Intent(getApplicationContext(), ChartActivity.class);
             startActivity(i);
             return true;
@@ -73,15 +78,71 @@ public class HistoryActivity extends FragmentActivity{
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ADD_ACTIVITY){
-            if (resultCode == RESULT_OK){
-                ActivityDTO activity = (ActivityDTO)data.getSerializableExtra("ACTIVITY_ADDED");
-                ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
-                fragment.addActivity(activity);
-            }else if (resultCode == RESULT_CANCELED){
+    protected void onDestroy() {
+        EventsBus.getInstance().unregister(this);
+        super.onDestroy();
+    }
 
-            }
+    @Subscribe
+    public void activityCallback(ActivityAction activityAction){
+        ActivityService activityService = ActivityServiceFactory.getInstance();
+        switch (activityAction.getSaveAction()){
+            case save:
+                activityService.addActivity(activityAction.getActivity(), new Callback<ActivityDTO>() {
+                    @Override
+                    public void success(ActivityDTO activityDTO, Response response) {
+                        ActivityListFragment fragment = (ActivityListFragment) getFragmentManager().findFragmentById(R.id.activity_history_fragment);
+                        fragment.addActivity(activityDTO);
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+                break;
+            case update:
+                ActivityDTO activityToUpdate = activityAction.getActivity();
+                activityService.updateActivity(activityToUpdate.getId(), activityToUpdate, new Callback<ActivityDTO>() {
+                    @Override
+                    public void success(ActivityDTO activityDTO, Response response) {
+                        //ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
+                        //fragment.addActivity(activityDTO);
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+                break;
         }
+
+        /*if (!activityAction.getActivity().isClassified()){
+            FacebookSdk.sdkInitialize(getApplicationContext());
+            CallbackManager callbackManager = CallbackManager.Factory.create();
+            ShareDialog shareDialog = new ShareDialog(this);
+            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                @Override
+                public void onSuccess(Sharer.Result result) {}
+
+                @Override
+                public void onCancel() {}
+
+                @Override
+                public void onError(FacebookException error) {}
+            });
+
+            if (ShareDialog.canShow(ShareLinkContent.class)) {
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setContentTitle("Hello Facebook")
+                        .setContentDescription(
+                                "The 'Hello Facebook' sample  showcases simple Facebook integration")
+                        .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                        .build();
+
+                shareDialog.show(linkContent);
+            }
+        }*/
     }
 }
