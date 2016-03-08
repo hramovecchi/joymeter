@@ -1,17 +1,27 @@
 package com.joymeter.androidclient;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareContent;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.joymeter.dto.ActivityAction;
 import com.joymeter.dto.ActivityAction.SaveAction;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.events.bus.EventsBus;
 import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.factory.ActivityServiceFactory;
+import com.joymeter.utils.ShareUtils;
 import com.squareup.otto.Subscribe;
 
 import retrofit.Callback;
@@ -23,6 +33,7 @@ public class SingleActivity extends FragmentActivity {
 
     private SaveAction saveAction = SaveAction.save;
     private boolean notificationCall = Boolean.FALSE;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,23 +90,60 @@ public class SingleActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (callbackManager != null) {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     @Subscribe
     public void activityCallback(final ActivityAction activityAction){
         ActivityService activityService = ActivityServiceFactory.getInstance();
         activityService.addActivity(activityAction.getActivity(), new Callback<ActivityDTO>() {
             @Override
             public void success(ActivityDTO activityDTO, Response response) {
-                Intent intent =  new Intent(getApplicationContext(), HistoryActivity.class);
-                startActivity(intent);
-                finish();
+                if (!activityAction.getActivity().isClassified()) {
+                    FacebookSdk.sdkInitialize(getApplicationContext());
+                    callbackManager = CallbackManager.Factory.create();
+                    ShareDialog shareDialog = new ShareDialog(SingleActivity.this);
+                    shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                        @Override
+                        public void onSuccess(Sharer.Result result) {
+                            Intent intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            Intent intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onError(FacebookException error) {
+                        }
+                    });
+
+                    if (ShareDialog.canShow(ShareLinkContent.class)) {
+                        ShareContent linkContent = ShareUtils.joymeterShareLinkContent(activityDTO);
+                        shareDialog.show(linkContent);
+                    }
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                Intent intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
-
-        //TODO share on facebook
     }
 }

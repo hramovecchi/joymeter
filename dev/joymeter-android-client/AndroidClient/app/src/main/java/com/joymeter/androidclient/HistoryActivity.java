@@ -7,6 +7,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.ShareContent;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.joymeter.dto.ActivityAction;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.events.bus.EventsBus;
@@ -14,6 +22,7 @@ import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.UserService;
 import com.joymeter.rest.factory.ActivityServiceFactory;
 import com.joymeter.rest.factory.UserServiceFactory;
+import com.joymeter.utils.ShareUtils;
 import com.squareup.otto.Subscribe;
 
 import retrofit.Callback;
@@ -25,6 +34,8 @@ import retrofit.client.Response;
  * Created by hramovecchi on 15/09/2015.
  */
 public class HistoryActivity extends FragmentActivity {
+
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +94,13 @@ public class HistoryActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (callbackManager != null) {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     @Subscribe
     public void activityCallback(final ActivityAction activityAction){
         activityAction.getView().finish();
@@ -119,31 +137,28 @@ public class HistoryActivity extends FragmentActivity {
                 break;
         }
 
-        /*if (!activityAction.getActivity().isClassified()){
+        if (!activityAction.getActivity().isClassified()) {
             FacebookSdk.sdkInitialize(getApplicationContext());
-            CallbackManager callbackManager = CallbackManager.Factory.create();
-            ShareDialog shareDialog = new ShareDialog(this);
+            callbackManager = CallbackManager.Factory.create();
+            ShareDialog shareDialog = new ShareDialog(HistoryActivity.this);
             shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
                 @Override
-                public void onSuccess(Sharer.Result result) {}
+                public void onSuccess(Sharer.Result result) {
+                }
 
                 @Override
-                public void onCancel() {}
+                public void onCancel() {
+                }
 
                 @Override
-                public void onError(FacebookException error) {}
+                public void onError(FacebookException error) {
+                }
             });
 
             if (ShareDialog.canShow(ShareLinkContent.class)) {
-                ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                        .setContentTitle("Hello Facebook")
-                        .setContentDescription(
-                                "The 'Hello Facebook' sample  showcases simple Facebook integration")
-                        .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
-                        .build();
-
+                ShareContent linkContent = ShareUtils.joymeterShareLinkContent(activityAction.getActivity());
                 shareDialog.show(linkContent);
             }
-        }*/
+        }
     }
 }
