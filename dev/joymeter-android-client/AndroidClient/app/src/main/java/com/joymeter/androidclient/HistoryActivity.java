@@ -85,6 +85,7 @@ public class HistoryActivity extends FragmentActivity {
 
     @Subscribe
     public void activityCallback(final ActivityAction activityAction){
+        activityAction.getView().finish();
         ActivityService activityService = ActivityServiceFactory.getInstance();
         switch (activityAction.getSaveAction()){
             case save:

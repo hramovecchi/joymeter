@@ -13,4 +13,6 @@ public class JoymeterPreferences {
     public static final String JOYMETER_ACTIVITY = "joymeterActivity";
     public static final String JOYMETER_ACTIVITY_POSITION = "joymeterActivityPosition";
     public static final String JOYMETER_UPDATE_ACTION = "updateAction";
+
+    public static final String JOYMETER_NOTIFICATION_CALL = "notificationCall";
 }
