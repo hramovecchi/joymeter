@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
+import com.joymeter.androidclient.JoymeterPreferences;
 import com.joymeter.androidclient.R;
 import com.joymeter.androidclient.SingleActivity;
 import com.joymeter.dto.ActivityDTO;
@@ -51,7 +52,8 @@ public class MyGcmListenerService extends GcmListenerService{
      */
     private void sendNotification(ActivityDTO activity) {
         Intent intent = new Intent(this, SingleActivity.class);
-        intent.putExtra("joymeterActivity",activity);
+        intent.putExtra(JoymeterPreferences.JOYMETER_ACTIVITY,activity);
+        intent.putExtra(JoymeterPreferences.JOYMETER_NOTIFICATION_CALL, Boolean.TRUE);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
