@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ActivityDTO {
+	private Long id;
 	private String type;
 	private String summary; 
 	private String description;
@@ -16,6 +17,12 @@ public class ActivityDTO {
 	private String endDateTime;
 	private Boolean classified;
 	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getType() {
 		return type;
 	}

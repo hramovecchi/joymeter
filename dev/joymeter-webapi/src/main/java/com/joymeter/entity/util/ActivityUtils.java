@@ -29,6 +29,10 @@ public class ActivityUtils {
 									(dto.getEndDate() != null ? 
 											Long.parseLong(dto.getEndDate()) : 
 											activity.getEndDate()));
+		
+		if (dto.getId() != null){
+			activity.setId(dto.getId());
+		}
 
 		return activity;
 	}

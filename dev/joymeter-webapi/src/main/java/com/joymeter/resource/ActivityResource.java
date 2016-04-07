@@ -69,8 +69,8 @@ public class ActivityResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RequiresAuthentication
-	public Response addActivity(ActivityDTO activityDTO) {
-		log.info("addActivity entered");
+	public Response addOrUpdateActivity(ActivityDTO activityDTO) {
+		log.info("addOrUpdateActivity entered");
 		
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
 
@@ -79,7 +79,12 @@ public class ActivityResource {
 		activity.setUser(owner);
 		
 		levelOfJoyHistoricalService.updateHistoryNewActivity(activity);
-		activityService.save(activity);
+		
+		if (activityDTO.getId() == null){
+			activityService.save(activity);
+		} else {
+			activityService.update(activity);
+		}
 		
 		return Response.ok(activity).build();
 	}
