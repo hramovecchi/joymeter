@@ -15,17 +15,16 @@ import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareContent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
-import com.joymeter.dto.ActivityAction;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.events.bus.ActivityAddedEvent;
+import com.joymeter.events.bus.ActivityDeletedEvent;
+import com.joymeter.events.bus.ActivityUpdatedEvent;
 import com.joymeter.events.bus.EventsBus;
-import com.joymeter.rest.ActivityService;
 import com.joymeter.rest.UserService;
-import com.joymeter.rest.factory.ActivityServiceFactory;
 import com.joymeter.rest.factory.UserServiceFactory;
 import com.joymeter.utils.ShareUtils;
 import com.squareup.otto.Subscribe;
 
-import retrofit.Callback;
 import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -102,42 +101,27 @@ public class HistoryActivity extends FragmentActivity {
     }
 
     @Subscribe
-    public void activityCallback(final ActivityAction activityAction){
-        activityAction.getView().finish();
-        ActivityService activityService = ActivityServiceFactory.getInstance();
-        switch (activityAction.getSaveAction()){
-            case save:
-                activityService.addActivity(activityAction.getActivity(), new Callback<ActivityDTO>() {
-                    @Override
-                    public void success(ActivityDTO activityDTO, Response response) {
-                        ActivityListFragment fragment = (ActivityListFragment) getFragmentManager().findFragmentById(R.id.activity_history_fragment);
-                        fragment.addActivity(activityDTO);
-                    }
+    public void onActivityDeleted(ActivityDeletedEvent event){
+        ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
+        fragment.deleteActivity(event.getActivity());
+    }
 
-                    @Override
-                    public void failure(RetrofitError error) {
+    @Subscribe
+    public void onActivityAdded(ActivityAddedEvent event){
+        ActivityListFragment fragment = (ActivityListFragment) getFragmentManager().findFragmentById(R.id.activity_history_fragment);
+        fragment.addActivity(event.getActivity());
+        shareOnFacebook(event.getActivity());
+    }
 
-                    }
-                });
-                break;
-            case update:
-                ActivityDTO activityToUpdate = activityAction.getActivity();
-                activityService.updateActivity(activityToUpdate.getId(), activityToUpdate, new Callback<ActivityDTO>() {
-                    @Override
-                    public void success(ActivityDTO activityDTO, Response response) {
-                        ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
-                        fragment.insertActivity(activityDTO, activityAction.getPosition());
-                    }
+    @Subscribe
+    public void onActivityUpdated(ActivityUpdatedEvent event){
+        ActivityListFragment fragment = (ActivityListFragment)getFragmentManager().findFragmentById(R.id.activity_history_fragment);
+        fragment.insertActivity(event.getActivity(), event.getPosition());
+        shareOnFacebook(event.getActivity());
+    }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                    }
-                });
-                break;
-        }
-
-        if (!activityAction.getActivity().isClassified()) {
+    public void shareOnFacebook(ActivityDTO activity){
+        if (!activity.isClassified()) {
             FacebookSdk.sdkInitialize(getApplicationContext());
             callbackManager = CallbackManager.Factory.create();
             ShareDialog shareDialog = new ShareDialog(HistoryActivity.this);
@@ -156,7 +140,7 @@ public class HistoryActivity extends FragmentActivity {
             });
 
             if (ShareDialog.canShow(ShareLinkContent.class)) {
-                ShareContent linkContent = ShareUtils.joymeterShareLinkContent(activityAction.getActivity());
+                ShareContent linkContent = ShareUtils.joymeterShareLinkContent(activity);
                 shareDialog.show(linkContent);
             }
         }

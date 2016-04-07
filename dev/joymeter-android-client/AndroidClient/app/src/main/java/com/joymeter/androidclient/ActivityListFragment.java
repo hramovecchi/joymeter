@@ -1,11 +1,8 @@
 package com.joymeter.androidclient;
 
-import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,19 +12,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.joymeter.androidclient.cursor.ActivityArrayAdapter;
-import com.joymeter.dto.Activities;
 import com.joymeter.dto.ActivityDTO;
-import com.joymeter.rest.ActivityService;
-import com.joymeter.rest.factory.ActivityServiceFactory;
+import com.joymeter.events.bus.ActivitiesLoadedEvent;
+import com.joymeter.events.bus.DeleteActivityEvent;
+import com.joymeter.events.bus.EventsBus;
+import com.joymeter.events.bus.LoadActivitiesEvent;
 import com.joymeter.utils.ActivityComparator;
+import com.squareup.otto.Subscribe;
 
 import java.util.Collections;
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.ResponseCallback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by hramovecchi on 24/08/2015.
@@ -37,35 +31,16 @@ public class ActivityListFragment extends ListFragment {
     private final int UPDATE_ACTIVITY = 2;
 
     private List<ActivityDTO> userActivities;
-    private SharedPreferences preferences;
     private ActivityArrayAdapter activityArrayAdapter;
     private ActivityComparator comparator;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
         comparator = new ActivityComparator();
 
-        ActivityServiceFactory.getInstance().getActivities(new Callback<Activities>() {
-            @Override
-            public void success(Activities activities, Response response) {
-
-                userActivities = activities.getActivities();
-                Collections.sort(userActivities, comparator);
-                activityArrayAdapter = new ActivityArrayAdapter(getActivity(), userActivities);
-                setListAdapter(activityArrayAdapter);
-
-                registerForContextMenu(getListView());
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
+        EventsBus.getInstance().register(this);
+        EventsBus.getInstance().post(new LoadActivitiesEvent());
     }
 
     @Override
@@ -101,24 +76,17 @@ public class ActivityListFragment extends ListFragment {
                 startActivityForResult(i, UPDATE_ACTIVITY);
                 return true;
             case R.id.remove:
-                ActivityService activityService = ActivityServiceFactory.getInstance();
-                activityService.deleteActivity(activity.getId(), new ResponseCallback() {
-                    @Override
-                    public void success(Response response) {
-                        Toast.makeText(getActivity(), "Remove sucessfull", Toast.LENGTH_SHORT).show();
-                        activityArrayAdapter.remove(activity);
-                        activityArrayAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Toast.makeText(getActivity(), "Remove failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                EventsBus.getInstance().post(new DeleteActivityEvent(activity));
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        EventsBus.getInstance().unregister(this);
+        super.onDestroy();
     }
 
     public void addActivity(ActivityDTO activity){
@@ -132,5 +100,21 @@ public class ActivityListFragment extends ListFragment {
         activityArrayAdapter.insert(activity, position);
         activityArrayAdapter.sort(comparator);
         activityArrayAdapter.notifyDataSetChanged();
+    }
+
+    public void deleteActivity(ActivityDTO activity){
+        Toast.makeText(getActivity(), "Remove sucessfull", Toast.LENGTH_SHORT).show();
+        activityArrayAdapter.remove(activity);
+        activityArrayAdapter.notifyDataSetChanged();
+    }
+
+    @Subscribe
+    public void onActivitiesLoaded(ActivitiesLoadedEvent event){
+        userActivities = event.getActivities();
+        Collections.sort(userActivities, comparator);
+        activityArrayAdapter = new ActivityArrayAdapter(getActivity(), userActivities);
+        setListAdapter(activityArrayAdapter);
+
+        registerForContextMenu(getListView());
     }
 }

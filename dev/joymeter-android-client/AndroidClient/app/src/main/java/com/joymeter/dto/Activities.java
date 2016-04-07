@@ -12,6 +12,12 @@ public class Activities {
     @Expose
     private List<ActivityDTO> activities;
 
+    public Activities(){}
+
+    public Activities(List<ActivityDTO> activities){
+        this.activities = activities;
+    }
+
     /**
      *
      * @return
