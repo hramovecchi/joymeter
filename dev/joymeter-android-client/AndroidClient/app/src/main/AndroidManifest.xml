@@ -30,6 +30,10 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <provider android:authorities="com.facebook.app.FacebookContentProvider1460864510848745"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"

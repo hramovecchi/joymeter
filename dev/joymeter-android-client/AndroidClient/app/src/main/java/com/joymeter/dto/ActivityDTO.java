@@ -102,7 +102,7 @@ public class ActivityDTO implements Serializable {
      * @return
      * The classified
      */
-    public Boolean getClassified() {
+    public Boolean isClassified() {
         return classified;
     }
 

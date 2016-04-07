@@ -94,9 +94,9 @@ public class ActivityListFragment extends ListFragment {
 
             case R.id.edit:
                 Intent i = new Intent(getActivity(), SingleActivity.class);
-                i.putExtra("updateActivity", Boolean.TRUE);
-                i.putExtra("joymeterActivity", activity);
-                i.putExtra("position", info.position);
+                i.putExtra(JoymeterPreferences.JOYMETER_UPDATE_ACTION, Boolean.TRUE);
+                i.putExtra(JoymeterPreferences.JOYMETER_ACTIVITY, activity);
+                i.putExtra(JoymeterPreferences.JOYMETER_ACTIVITY_POSITION, info.position);
 
                 startActivityForResult(i, UPDATE_ACTIVITY);
                 return true;
@@ -121,27 +121,15 @@ public class ActivityListFragment extends ListFragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == UPDATE_ACTIVITY){
-            if (resultCode == Activity.RESULT_OK){
-                int position = data.getIntExtra("position", -1);
-                ActivityDTO activity = (ActivityDTO)data.getSerializableExtra("ACTIVITY_UPDATED");
-                activityArrayAdapter.remove(activityArrayAdapter.getItem(position));
-                activityArrayAdapter.insert(activity, position);
-                activityArrayAdapter.sort(comparator);
-                activityArrayAdapter.notifyDataSetChanged();
-
-            }else if (resultCode == Activity.RESULT_CANCELED){
-
-            }
-        }
-    }
-
     public void addActivity(ActivityDTO activity){
         activityArrayAdapter.add(activity);
+        activityArrayAdapter.sort(comparator);
+        activityArrayAdapter.notifyDataSetChanged();
+    }
+
+    public void insertActivity(ActivityDTO activity, int position){
+        activityArrayAdapter.remove(activityArrayAdapter.getItem(position));
+        activityArrayAdapter.insert(activity, position);
         activityArrayAdapter.sort(comparator);
         activityArrayAdapter.notifyDataSetChanged();
     }

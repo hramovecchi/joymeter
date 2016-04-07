@@ -69,7 +69,7 @@ public class SingleActivityFragment extends Fragment {
 
     private void populateActivity() {
 
-        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra("joymeterActivity");
+        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
 
         if (activity != null){
             DateUtils util = DateUtils.getInstance();
@@ -88,7 +88,7 @@ public class SingleActivityFragment extends Fragment {
 
             description.setText(activity.getDescription());
             loj.setRating(Long.valueOf(activity.getLevelOfJoy()));
-            share.setChecked(!activity.getClassified());
+            share.setChecked(!activity.isClassified());
             id = activity.getId();
         }
 
