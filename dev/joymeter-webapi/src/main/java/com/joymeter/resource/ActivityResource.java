@@ -1,7 +1,5 @@
 package com.joymeter.resource;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,31 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.joymeter.entity.Activities;
 import com.joymeter.entity.Activity;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.ActivityDTO;
-import com.joymeter.entity.util.ActivityUtils;
 import com.joymeter.security.JoymeterContextHolder;
-import com.joymeter.security.JoymeterUnauthorizedException;
 import com.joymeter.security.RequiresAuthentication;
 import com.joymeter.service.ActivityService;
-import com.joymeter.service.LevelOfJoyHistoricalService;
-import com.joymeter.service.UserService;
 
 @Component
 @Path("/activities")
 @Scope("request")
 public class ActivityResource {
+
 	
 	@Autowired
 	ActivityService activityService;
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	LevelOfJoyHistoricalService levelOfJoyHistoricalService;
 	
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -58,9 +46,7 @@ public class ActivityResource {
 		log.info("getActivities entered");
 		log.info("userId: "+user.getId());
 		
-		List<Activity> activities = activityService.getByUserId(user.getId());
-		
-		return Response.ok(new Activities(activities)).build();
+		return Response.ok(activityService.getActivities(user)).build();
 	}
 
 	/*
@@ -73,20 +59,8 @@ public class ActivityResource {
 		log.info("addOrUpdateActivity entered");
 		
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
-
-		Activity activity = new Activity();
-		activity = ActivityUtils.mappedToActivity(activity, activityDTO);
-		activity.setUser(owner);
 		
-		levelOfJoyHistoricalService.updateHistoryNewActivity(activity);
-		
-		if (activityDTO.getId() == null){
-			activityService.save(activity);
-		} else {
-			activityService.update(activity);
-		}
-		
-		return Response.ok(activity).build();
+		return Response.ok(activityService.addActivity(owner, activityDTO)).build();
 	}
 
 	@GET
@@ -97,15 +71,7 @@ public class ActivityResource {
 		log.info("getActivity entered");
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
 		
-		Activity activity = activityService.getById(activityId);
-		
-		if (activity == null){
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (owner.getId() != activity.getUser().getId()){
-			throw new JoymeterUnauthorizedException();
-		}
+		Activity activity = activityService.getActivity(activityId, owner);
 		
 		return Response.ok(activity).build();
 	}
@@ -118,17 +84,7 @@ public class ActivityResource {
 		log.info("Delete Activity Id: " + activityId);
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
 		
-		Activity activity = activityService.getById(activityId);
-		
-		if (activity == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (owner.getId() != activity.getUser().getId()){
-			throw new JoymeterUnauthorizedException();
-		}
-		activityService.delete(activity);
-		levelOfJoyHistoricalService.updateHistoryDeleteActivity(activity);
+		activityService.deleteActivity(activityId, owner);
 		
 		return Response.ok().build();
 	}
@@ -147,20 +103,6 @@ public class ActivityResource {
 		
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
 		
-		Activity activity = activityService.getById(activityId);
-		if (activity == null) {
-			return Response.status(Status.BAD_REQUEST).build();
-		}
-		
-		if (owner.getId() != activity.getUser().getId()){
-			throw new JoymeterUnauthorizedException();
-		}
-		
-		activity = ActivityUtils.mappedToActivity(activity, activityDTO);
-		
-		activityService.update(activity);
-		levelOfJoyHistoricalService.updateHistoryUpdateActivity(activity);
-		
-		return Response.ok(activity).build();
+		return Response.ok(activityService.updateActivity(activityId, owner, activityDTO)).build();
 	}
 }

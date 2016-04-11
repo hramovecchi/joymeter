@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.joymeter.entity.User;
-import com.joymeter.service.UserService;
+import com.joymeter.repository.UserRepository;
 
 public class UserDataLoader {
 	private List<User> users = new ArrayList<User>();
-	private UserService userService;
+	private UserRepository userService;
 	
 	public void loadData() {
 		for (User user : users) {
@@ -24,7 +24,7 @@ public class UserDataLoader {
 		this.users = users;
 	}
 	@Autowired
-	public void setUserService(UserService userService) {
+	public void setUserService(UserRepository userService) {
 		this.userService = userService;
 	}
 	

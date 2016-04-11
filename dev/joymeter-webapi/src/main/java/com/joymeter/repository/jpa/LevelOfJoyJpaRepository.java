@@ -1,4 +1,4 @@
-package com.joymeter.service.jpa;
+package com.joymeter.repository.jpa;
 
 import java.util.List;
 
@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.joymeter.entity.LevelOfJoy;
 import com.joymeter.entity.User;
-import com.joymeter.service.LevelOfJoyService;
+import com.joymeter.repository.LevelOfJoyRepository;
 
-@Service("levelOfJoyService")
-public class LevelOfJoyServiceJpa implements LevelOfJoyService{
+@Service("levelOfJoyRepository")
+public class LevelOfJoyJpaRepository implements LevelOfJoyRepository{
 
 	private Logger log = Logger.getLogger(this.getClass());
 	private EntityManager entityManager;

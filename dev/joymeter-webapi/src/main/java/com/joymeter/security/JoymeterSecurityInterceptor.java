@@ -7,7 +7,7 @@ import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 
 import com.joymeter.entity.Session;
-import com.joymeter.service.SessionService;
+import com.joymeter.repository.SessionRepository;
 
 public class JoymeterSecurityInterceptor implements Ordered {
 	
@@ -16,7 +16,7 @@ public class JoymeterSecurityInterceptor implements Ordered {
 	private final static Logger logger = Logger.getLogger(JoymeterSecurityInterceptor.class);
 	
 	@Autowired
-	private SessionService sessionService;
+	private SessionRepository sessionService;
 
 	public int getOrder() {
 		return ORDER;

@@ -1,14 +1,10 @@
 package com.joymeter.resource;
 
 
-import java.util.Calendar;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -19,21 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.joymeter.entity.Activity;
-import com.joymeter.entity.HistoricalLevel;
-import com.joymeter.entity.LevelOfJoy;
 import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.UserDTO;
-import com.joymeter.entity.util.ActivityUtils;
-import com.joymeter.entity.util.UserUtils;
 import com.joymeter.security.JoymeterContextHolder;
-import com.joymeter.security.JoymeterUnauthorizedException;
 import com.joymeter.security.RequiresAuthentication;
-
-import com.joymeter.service.ActivityService;
-import com.joymeter.service.NotificationService;
-import com.joymeter.service.LevelOfJoyHistoricalService;
 import com.joymeter.service.UserService;
 
 @Component
@@ -43,15 +29,6 @@ public class UserResource{
 	
 	@Autowired
 	UserService userService;
-	
-	@Autowired
-	ActivityService activityService;
-	
-	@Autowired
-	NotificationService notificationService;
-
-	@Autowired
-	LevelOfJoyHistoricalService levelOfJoyHistoricalService;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -80,10 +57,8 @@ public class UserResource{
 		log.info("updateUser entered");
 		
 		User user = JoymeterContextHolder.get().getJoymeterSession().getUser();
-
-		user = UserUtils.mappedToUser(user, userDTO);
-		userService.update(user);
-		return Response.ok(user).build();
+		
+		return Response.ok(userService.updateUser(user, userDTO)).build();
 	}
 	
 	@GET
@@ -91,19 +66,8 @@ public class UserResource{
 	@RequiresAuthentication
 	public Response suggestActivity(){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
-		
-		long userId = session.getUser().getId();
-		Activity activityToSuggest = activityService.suggestActivity(userId);
-		
-		Activity aux = new Activity();
-		aux.clone(activityToSuggest);
-		
-		long now = Calendar.getInstance().getTimeInMillis();
-		
-		aux.setStartDate(now);
-		aux.setEndDate(now + ActivityUtils.durationToSuggest());
-		
-		notificationService.sendNotificationMessage(session.getGcmToken(), aux);
+
+		userService.suggestActivity(session.getUser().getId(), session.getGcmToken());
 		
 		return Response.ok("{}").build();
     }
@@ -120,9 +84,7 @@ public class UserResource{
 		log.info("getLevelOfJoy entered");
 		
 		User user = JoymeterContextHolder.get().getJoymeterSession().getUser();
-		
-		List<LevelOfJoy> historical = levelOfJoyHistoricalService.getLastEntriesByUser(user, days);
-		
-		return Response.ok(new HistoricalLevel(historical)).build();
+
+		return Response.ok(userService.getLevelOfJoy(user, days)).build();
 	}
 }
