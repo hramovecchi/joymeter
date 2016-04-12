@@ -32,6 +32,9 @@ public class ActivityService {
 	}
 	
 	public Activity addActivity(User owner, ActivityDTO activityDTO) {
+		if (activityDTO.getId() != null){
+			return updateActivity(activityDTO.getId(), owner, activityDTO);
+		}
 
 		Activity activity = new Activity();
 		activity = ActivityUtils.mappedToActivity(activity, activityDTO);
