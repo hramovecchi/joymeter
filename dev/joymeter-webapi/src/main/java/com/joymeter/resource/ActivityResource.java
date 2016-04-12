@@ -55,7 +55,7 @@ public class ActivityResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@RequiresAuthentication
-	public Response addOrUpdateActivity(ActivityDTO activityDTO) {
+	public Response addActivity(ActivityDTO activityDTO) {
 		log.info("addOrUpdateActivity entered");
 		
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
