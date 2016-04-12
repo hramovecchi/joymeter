@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @NamedQueries( { @NamedQuery(name = "LevelOfJoy.findAllByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID"),
 				 @NamedQuery(name = "LevelOfJoy.findLastEntriesByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID AND a.milliseconds >= :millis AND a.milliseconds <= :today"),
 				 @NamedQuery(name = "LevelOfJoy.findByDateUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id=:userID AND a.milliseconds = :millis"),
-				 @NamedQuery(name = "LevelOfJoy.findLastByUser", query = "SELECT a FROM LevelOfJoy a WHERE user.id = :userID ORDER BY milliseconds DESC")})
+				 @NamedQuery(name = "LevelOfJoy.findLastByUser", query = "SELECT a FROM LevelOfJoy a WHERE a.user.id = :userID ORDER BY a.milliseconds DESC")})
 public class LevelOfJoy implements Serializable{
 	
 	private static final long serialVersionUID = -3597156974325366320L;
