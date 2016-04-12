@@ -6,11 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.joymeter.entity.Session;
-import com.joymeter.service.SessionService;
+import com.joymeter.repository.SessionRepository;
 
 public class SessionDataLoader {
 	private List<Session> sessions = new ArrayList<Session>();
-	private SessionService sessionService;
+	private SessionRepository sessionService;
 	
 	public void loadData() {
 		for (Session session : sessions) {
@@ -24,7 +24,7 @@ public class SessionDataLoader {
 		this.sessions = sessions;
 	}
 	@Autowired
-	public void setSessionService(SessionService sessionService) {
+	public void setSessionService(SessionRepository sessionService) {
 		this.sessionService = sessionService;
 	}
 	

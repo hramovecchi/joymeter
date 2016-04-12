@@ -1,4 +1,4 @@
-package com.joymeter.service.jpa;
+package com.joymeter.repository.jpa;
 
 import java.util.List;
 
@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.joymeter.entity.Activity;
-import com.joymeter.service.ActivityService;
+import com.joymeter.repository.ActivityRepository;
 
-@Service("activityService")
-public class ActivityServiceJpa implements ActivityService {
+@Service("activityRepository")
+public class ActivityJpaRepository implements ActivityRepository {
 	private Logger log = Logger.getLogger(this.getClass());
 	private EntityManager entityManager;
 

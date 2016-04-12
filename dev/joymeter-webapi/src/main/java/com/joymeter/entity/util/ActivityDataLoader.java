@@ -7,17 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.joymeter.entity.Activity;
 import com.joymeter.entity.User;
-import com.joymeter.service.ActivityService;
-import com.joymeter.service.UserService;
+import com.joymeter.repository.ActivityRepository;
+import com.joymeter.repository.UserRepository;
 
 public class ActivityDataLoader {
 	private List<ActivityDBRow> activitys = new ArrayList<ActivityDBRow>();
-	private ActivityService activityService;
-	private UserService userService;
+	private ActivityRepository activityRepository;
+	private UserRepository userRepository;
 	
 	public void loadData() {
 		for (ActivityDBRow activity : activitys) {
-			User user = userService.getById(activity.getUserId());
+			User user = userRepository.getById(activity.getUserId());
 			
 			Activity activityToStore= new Activity();
 			activityToStore.setClassified(activity.isClassified());
@@ -29,7 +29,7 @@ public class ActivityDataLoader {
 			activityToStore.setType(activity.getType());
 			activityToStore.setUser(user);
 			
-			activityService.save(activityToStore);
+			activityRepository.save(activityToStore);
 		}
 		activitys.clear();
 		activitys = null;
@@ -39,13 +39,13 @@ public class ActivityDataLoader {
 		this.activitys = activities;
 	}
 	@Autowired
-	public void setActivityService(ActivityService activityService) {
-		this.activityService = activityService;
+	public void setActivityRepository(ActivityRepository activityRepository) {
+		this.activityRepository = activityRepository;
 	}
 	
 	@Autowired
-	public void setUserService(UserService userService) {
-		this.userService = userService;
+	public void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
 	}
 	
 	public void init() {
