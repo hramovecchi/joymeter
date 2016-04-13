@@ -119,7 +119,7 @@ public class LevelOfJoyJpaRepository implements LevelOfJoyRepository{
 			return null;
 		}
 		long today = DateTime.now().withTimeAtStartOfDay().getMillis();
-		long millis = DateTime.now().plusDays(-days).withTimeAtStartOfDay().getMillis();//rest the number of days to today
+		long millis = DateTime.now().plusDays(-(days-1)).withTimeAtStartOfDay().getMillis();//rest the number of days to today
 		
 		Query queryFindHistory = entityManager.createNamedQuery("LevelOfJoy.findLastEntriesByUser");
 		queryFindHistory.setParameter("userID", user.getId());
