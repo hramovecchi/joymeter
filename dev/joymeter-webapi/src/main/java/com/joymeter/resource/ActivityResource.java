@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import com.joymeter.entity.Activity;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.ActivityDTO;
+import com.joymeter.entity.dto.SyncupActions;
 import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.RequiresAuthentication;
 import com.joymeter.service.ActivityService;
@@ -104,5 +105,23 @@ public class ActivityResource {
 		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
 		
 		return Response.ok(activityService.updateActivity(activityId, owner, activityDTO)).build();
+	}
+	/*
+	 * This method is used from the client side to syncup with the server 
+	 * when there was connectivity issues
+	 * 
+	 * @param the SyncupActions to syncup 
+	 * 
+	 * */
+	@POST
+	@Path("")
+	@Produces(MediaType.APPLICATION_JSON)
+	@RequiresAuthentication
+	public Response syncup(SyncupActions syncupActions){
+		User owner = JoymeterContextHolder.get().getJoymeterSession().getUser();
+		
+		activityService.syncup(syncupActions, owner);
+		
+		return Response.ok().build();
 	}
 }

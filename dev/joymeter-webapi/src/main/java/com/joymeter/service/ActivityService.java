@@ -9,6 +9,8 @@ import com.joymeter.entity.Activities;
 import com.joymeter.entity.Activity;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.ActivityDTO;
+import com.joymeter.entity.dto.SyncupActionDTO;
+import com.joymeter.entity.dto.SyncupActions;
 import com.joymeter.entity.util.ActivityUtils;
 import com.joymeter.exception.ErrorCode;
 import com.joymeter.repository.ActivityRepository;
@@ -89,6 +91,23 @@ public class ActivityService {
 		levelOfJoyService.updateHistoryUpdateActivity(activity);
 		
 		return activity;
+	}
+
+	public void syncup(SyncupActions syncupActions, User owner) {
+		for (SyncupActionDTO action: syncupActions.getSyncupActions()){
+			switch (action.getSyncupActionMethod()){
+			case save:
+				addActivity(owner, action.getActivity());
+				break;
+			case update:
+				updateActivity(action.getActivity().getId(), owner, action.getActivity());
+				break;
+			case delete:
+				deleteActivity(action.getActivity().getId(), owner);
+				break;
+			}
+		}
+		
 	}
 
 }
