@@ -22,6 +22,7 @@ import com.joymeter.events.bus.ActivityUpdatedEvent;
 import com.joymeter.events.bus.EventsBus;
 import com.joymeter.rest.UserService;
 import com.joymeter.rest.factory.UserServiceFactory;
+import com.joymeter.service.helper.ConnectivityHelper;
 import com.joymeter.utils.ShareUtils;
 import com.squareup.otto.Subscribe;
 
@@ -129,7 +130,7 @@ public class HistoryActivity extends FragmentActivity {
     }
 
     public void shareOnFacebook(ActivityDTO activity){
-        if (!activity.isClassified()) {
+        if (!activity.isClassified() && ConnectivityHelper.getHelper().hasInternetAccess()) {
             FacebookSdk.sdkInitialize(getApplicationContext());
             callbackManager = CallbackManager.Factory.create();
             ShareDialog shareDialog = new ShareDialog(HistoryActivity.this);
