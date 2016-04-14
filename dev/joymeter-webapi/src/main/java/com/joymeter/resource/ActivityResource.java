@@ -114,7 +114,7 @@ public class ActivityResource {
 	 * 
 	 * */
 	@POST
-	@Path("")
+	@Path("/syncup")
 	@Produces(MediaType.APPLICATION_JSON)
 	@RequiresAuthentication
 	public Response syncup(SyncupActions syncupActions){
