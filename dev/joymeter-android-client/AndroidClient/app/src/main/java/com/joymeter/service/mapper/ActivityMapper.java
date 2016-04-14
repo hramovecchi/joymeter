@@ -95,7 +95,7 @@ public class ActivityMapper {
         return activityDTO;
     }
 
-    public static List<SyncupActionDTO> maptoSyncupActions(List<SyncupAction> activitiesToSyncup) {
+    public static List<SyncupActionDTO> mapToSyncupActions(List<SyncupAction> activitiesToSyncup) {
         List<SyncupActionDTO> syncupActions = new ArrayList<SyncupActionDTO>();
         for (SyncupAction syncupAction: activitiesToSyncup){
             syncupActions.add(ActivityMapper.maptoSyncupActionDTO(syncupAction));

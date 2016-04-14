@@ -18,6 +18,7 @@ import com.joymeter.events.bus.DeleteActivityEvent;
 import com.joymeter.events.bus.LoadActivitiesEvent;
 import com.joymeter.events.bus.UpdateActivityEvent;
 import com.joymeter.rest.ActivityService;
+import com.joymeter.service.helper.ConnectivityHelper;
 import com.joymeter.service.mapper.ActivityMapper;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -25,6 +26,7 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 import java.util.UUID;
 
+import de.greenrobot.dao.query.Query;
 import retrofit.Callback;
 import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
@@ -61,8 +63,6 @@ public class JActivityService {
 
     @Subscribe
     public void onLoadActivities(LoadActivitiesEvent event){
-        boolean hasInternetConnection = true;
-
         //getDBActivities
         List<UserActivity> activities = activityDao.loadAll();
 
@@ -92,14 +92,13 @@ public class JActivityService {
     public void onUpdateActivity(UpdateActivityEvent event){
         event.getView().finish();
         final ActivityDTO activityToUpdate = event.getActivity();
-        boolean hastInternetConnection = true;
 
         //updateOnDB
         activityDao.insertOrReplace(ActivityMapper.mapToDB(activityToUpdate));
 
         //updateOnServer or saveForLater
-        if (hastInternetConnection){
-            api.addOrUpdateActivity(activityToUpdate, new Callback<ActivityDTO>() {
+        if (ConnectivityHelper.getHelper().hasInternetAccess()){
+            api.updateActivity(activityToUpdate.getId(), activityToUpdate, new Callback<ActivityDTO>() {
                 @Override
                 public void success(ActivityDTO activityDTO, Response response) {
 
@@ -123,13 +122,12 @@ public class JActivityService {
     @Subscribe
     public void onDeleteActivity(DeleteActivityEvent event){
         final ActivityDTO activityToDelete = event.getActivity();
-        boolean hasInternetConnection = true;
 
         //deleteOnDB
         activityDao.delete(ActivityMapper.mapToDB(activityToDelete));
 
         //deleteOnServer or saveForLater
-        if (hasInternetConnection) {
+        if (ConnectivityHelper.getHelper().hasInternetAccess()) {
             api.deleteActivity(activityToDelete.getId(), new ResponseCallback() {
                 @Override
                 public void success(Response response) {
@@ -157,14 +155,12 @@ public class JActivityService {
         final ActivityDTO activityToAdd = event.getActivity();
         activityToAdd.setId(UUID.randomUUID().getLeastSignificantBits());
 
-        boolean hasInternetConnection = true;
-
         //addOnDB
         activityDao.insert(ActivityMapper.mapToDB(activityToAdd));
 
         //addOnServer or saveForLater
-        if (hasInternetConnection){
-            api.addOrUpdateActivity(activityToAdd, new Callback<ActivityDTO>() {
+        if (ConnectivityHelper.getHelper().hasInternetAccess()){
+            api.addActivity(activityToAdd, new Callback<ActivityDTO>() {
                 @Override
                 public void success(ActivityDTO activityDTO, Response response) {
 
@@ -187,31 +183,95 @@ public class JActivityService {
 
 
 
-    private void storeInBackupAction(ActivityDTO activityToSave, SyncupActionMethod SyncupActionMethod) {
-        SyncupActivity syncupActivity = ActivityMapper.mapToSyncupActivity(activityToSave);
-        syncupActivityDao.insert(syncupActivity);
+    private void storeInBackupAction(ActivityDTO activityToSave, SyncupActionMethod syncupActionMethod) {
+        Query<SyncupAction> query = syncupActionDao.queryBuilder()
+                .where(SyncupActionDao.Properties.ActivityId.eq(activityToSave.getId())).build();
 
-        SyncupAction syncupAction = new SyncupAction();
-        syncupAction.setActivityId(syncupActivity.getId());
-        syncupAction.setAction(SyncupActionMethod.toString());
-        syncupActionDao.insert(syncupAction);
+        List<SyncupAction> actions = query.list();
+
+        //new activity to store in backup action
+        if (actions.size() == 0){
+            SyncupActivity syncupActivity = ActivityMapper.mapToSyncupActivity(activityToSave);
+            syncupActivityDao.insert(syncupActivity);
+
+            SyncupAction syncupAction = new SyncupAction();
+            syncupAction.setActivityId(syncupActivity.getId());
+            syncupAction.setAction(syncupActionMethod.toString());
+            syncupActionDao.insert(syncupAction);
+        } else {//the activity is already present in backup action
+            SyncupAction syncupAction = actions.get(0);
+            switch (SyncupActionMethod.valueOf(syncupAction.getAction())){
+                case save:
+                    switch (syncupActionMethod){
+                        case save:
+                            break;
+                        case update:
+                            SyncupActivity activityToBackup = syncupAction.getSyncupActivity();
+                            activityToBackup.setStartDate(activityToSave.getStartDate());
+                            activityToBackup.setClassified(activityToSave.isClassified());
+                            activityToBackup.setEndDate(activityToSave.getEndDate());
+                            activityToBackup.setDescription(activityToSave.getDescription());
+                            activityToBackup.setLevelOfJoy(activityToSave.getLevelOfJoy());
+                            activityToBackup.setSummary(activityToSave.getSummary());
+                            activityToBackup.setType(activityToSave.getType());
+
+                            syncupActivityDao.insertOrReplace(activityToBackup);
+                            break;
+                        case delete:
+                            syncupActionDao.delete(syncupAction);
+                            break;
+                    }
+                    break;
+                case update:
+                   switch (syncupActionMethod){
+                       case save:
+                           break;
+                       case update:
+                           SyncupActivity activityToBackup = syncupAction.getSyncupActivity();
+                           activityToBackup.setStartDate(activityToSave.getStartDate());
+                           activityToBackup.setClassified(activityToSave.isClassified());
+                           activityToBackup.setEndDate(activityToSave.getEndDate());
+                           activityToBackup.setDescription(activityToSave.getDescription());
+                           activityToBackup.setLevelOfJoy(activityToSave.getLevelOfJoy());
+                           activityToBackup.setSummary(activityToSave.getSummary());
+                           activityToBackup.setType(activityToSave.getType());
+
+                           syncupActivityDao.insertOrReplace(activityToBackup);
+                           break;
+                       case delete:
+                           syncupAction.setAction(SyncupActionMethod.delete.name());
+                           syncupActionDao.insertOrReplace(syncupAction);
+                           break;
+                   }
+                    break;
+                case delete:
+                    break;
+            }
+        }
     }
 
     public void syncupToServer() {
-        boolean hasInternetConnection = true;
+        if (ConnectivityHelper.getHelper().hasInternetAccess()){
+            new Thread(new SyncupThread()).run();
+        }
+    }
 
-        if (hasInternetConnection){
+    private class SyncupThread implements  Runnable{
+
+        @Override
+        public void run() {
             //getDBSyncupActivities
             List<SyncupAction> activitiesToSyncup = syncupActionDao.loadAll();
 
             if (activitiesToSyncup.size() > 0){
-                SyncupActions syncupActions = new SyncupActions(ActivityMapper.maptoSyncupActions(activitiesToSyncup));
+                SyncupActions syncupActions = new SyncupActions(ActivityMapper.mapToSyncupActions(activitiesToSyncup));
 
                 //syncup with server
                 api.syncupToServer(syncupActions, new ResponseCallback() {
                     @Override
                     public void success(Response response) {
-
+                        syncupActionDao.deleteAll();
+                        syncupActivityDao.deleteAll();
                     }
 
                     @Override

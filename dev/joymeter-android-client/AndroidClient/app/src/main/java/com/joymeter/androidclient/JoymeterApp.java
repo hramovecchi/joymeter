@@ -1,7 +1,10 @@
 package com.joymeter.androidclient;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.joymeter.dao.DaoMaster;
@@ -23,10 +26,13 @@ public class JoymeterApp extends Application {
 
     private static JActivityService activityService;
     private static Bus eventBus;
+    private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        context = getApplicationContext();
 
         eventBus = EventsBus.getInstance();
 
@@ -44,8 +50,12 @@ public class JoymeterApp extends Application {
         //listen for global events
         eventBus.register(this);
 
-        //TODO must be logged to do this
-        //activityService.syncupToServer();
+        //must be logged to do this
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String sessionToken = sharedPreferences.getString(JoymeterPreferences.JOYMETER_TOKEN, null);
+        if (sessionToken != null) {
+            activityService.syncupToServer();
+        }
     }
 
     @Subscribe
@@ -56,4 +66,6 @@ public class JoymeterApp extends Application {
     public static JActivityService getActivityService(){
         return activityService;
     }
+
+    public static Context getAppContext() {return context; }
 }

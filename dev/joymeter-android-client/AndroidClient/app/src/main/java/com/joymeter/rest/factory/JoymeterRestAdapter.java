@@ -3,8 +3,8 @@ package com.joymeter.rest.factory;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.joymeter.androidclient.JoymeterApp;
 import com.joymeter.androidclient.JoymeterPreferences;
-import com.joymeter.androidclient.LoginActivity;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -25,7 +25,7 @@ public class JoymeterRestAdapter {
                     .setRequestInterceptor(new RequestInterceptor() {
                         @Override
                         public void intercept(RequestFacade request) {
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.getAppContext());
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(JoymeterApp.getAppContext());
                             String sessionToken = sharedPreferences.getString(JoymeterPreferences.JOYMETER_TOKEN, null);
                             if (sessionToken != null) {
                                 request.addHeader("Authorization", "Bearer " + sessionToken);
