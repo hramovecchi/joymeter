@@ -41,6 +41,14 @@ public class HistoryActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history_activity);
         EventsBus.getInstance().register(this);
+
+        ActivityDTO activity = (ActivityDTO)getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
+        if (activity != null){
+            Intent i = new Intent(getApplicationContext(), SingleActivity.class);
+            i.putExtra(JoymeterPreferences.JOYMETER_ACTIVITY,activity);
+            startActivity(i);
+        }
+
     }
 
     @Override
