@@ -96,7 +96,7 @@ public abstract class LevelOfJoyService {
 	public List<LevelOfJoy> getLastEntriesByUser(User user, int days) {
 		
 		List<LevelOfJoy> historical = levelOfJoyRepository.getLastEntriesByUser(user, days);
-		if( historical != null && days+1 != historical.size()) {
+		if( historical != null && days != historical.size()) {
 			calculateToday(user); //Calculates todays level and update the missing entries - it happens when the last activity entry is older than today.
 			historical = levelOfJoyRepository.getLastEntriesByUser(user, days);
 		}

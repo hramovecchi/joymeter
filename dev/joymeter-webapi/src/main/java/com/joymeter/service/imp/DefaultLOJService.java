@@ -17,12 +17,13 @@ public class DefaultLOJService extends LevelOfJoyService{
 	
 	@Override
 	protected double calculateAverage(Double actual, List<LevelOfJoy> activities) {
-		int size = (actual == 0) ? activities.size() : activities.size() + 1;
+
+		Double activitiesAvr = Double.valueOf(0);
 		if (!activities.isEmpty()) {
 			for (LevelOfJoy mark : activities) {
-				actual += mark.getLevel();
+				activitiesAvr += mark.getLevel();
 			}
-			return actual.doubleValue() / size;
+			return (activitiesAvr / activities.size()) + actual;
 		}
 		return actual;
 	}
