@@ -1,5 +1,6 @@
 package com.joymeter.rest;
 
+import com.joymeter.dto.LevelOfJoyHistory;
 import com.joymeter.dto.UserDTO;
 
 import retrofit.Callback;
@@ -7,6 +8,7 @@ import retrofit.ResponseCallback;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.PUT;
+import retrofit.http.Query;
 
 /**
  * Created by hramovecchi on 09/08/2015.
@@ -23,4 +25,7 @@ public interface UserService {
 
     @GET(userPath + "/me/suggest")
     void suggestActivity(ResponseCallback callback);
+
+    @GET(userPath + "/me/loj")
+    void getLevelOfJoy(@Query("days") String days, Callback<LevelOfJoyHistory> callback);
 }
