@@ -14,3 +14,5 @@ dev/joymeter-core/.project
 dev/joymeter-core/.settings
 dev/joymeter-core/.metadata
 dev/joymeter-android-client/AndroidClient/.idea/*.*
+dev/joymeter-android-client/AndroidClient/.idea/
+dev/joymeter-android-client/AndroidClient/joymeterdaogenerator/joymeterdaogenerator.iml
