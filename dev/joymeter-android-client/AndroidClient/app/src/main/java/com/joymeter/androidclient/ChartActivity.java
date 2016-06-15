@@ -6,21 +6,32 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.joymeter.rest.UserService;
+import com.joymeter.rest.factory.UserServiceFactory;
 
 import java.util.ArrayList;
+
+import retrofit.ResponseCallback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ChartActivity extends Activity {
 
     private LineChart mChart;
     private Typeface mTf;
+    private Button suggestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +44,30 @@ public class ChartActivity extends Activity {
 
         mTf = Typeface.createFromAsset(getAssets(), "OpenSans-Bold.ttf");
 
-        LineData data = getData(36, 100);
+        LineData data = getData(10, 5);
         data.setValueTypeface(mTf);
 
         setupChart(mChart, data, Color.rgb(239, 239, 239));
+
+        suggestButton = (Button) findViewById(R.id.suggestButton);
+
+        suggestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserService userService = UserServiceFactory.getInstance();
+                userService.suggestActivity(new ResponseCallback() {
+                    @Override
+                    public void success(Response response) {
+                        Toast.makeText(getApplicationContext(), "Calling Joymeter API to suggest an activity", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(getApplicationContext(), "Something went wrong calling suggest on Joymeter API", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
 
     private String[] mMonths = new String[] {
@@ -112,7 +143,7 @@ public class ChartActivity extends Activity {
         set1.setHighLightColor(Color.rgb(0, 160, 198));
         set1.setDrawValues(true);
 
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(set1); // add the datasets
 
         // create a data object with the datasets
