@@ -12,4 +12,5 @@
     <string name="action_chart">Chart</string>
     <string name="title_activity_chart">Level of joy chart</string>
     <string name="title_history_chart">History</string>
+    <string name="suggest_button">Suggest Me!</string>
 </resources>

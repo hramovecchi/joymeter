@@ -75,19 +75,6 @@ public class HistoryActivity extends FragmentActivity {
         }
 
         if (id == R.id.action_chart) {
-            UserService userService = UserServiceFactory.getInstance();
-            userService.suggestActivity(new ResponseCallback() {
-                @Override
-                public void success(Response response) {
-                    Toast.makeText(getApplicationContext(), "Calling Joymeter API to suggest an activity", Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong calling suggest on Joymeter API", Toast.LENGTH_LONG).show();
-                }
-            });
-
             Intent i = new Intent(getApplicationContext(), ChartActivity.class);
             startActivity(i);
             return true;

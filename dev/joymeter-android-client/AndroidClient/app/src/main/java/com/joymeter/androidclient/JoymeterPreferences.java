@@ -14,5 +14,5 @@ public class JoymeterPreferences {
     public static final String JOYMETER_ACTIVITY_POSITION = "joymeterActivityPosition";
     public static final String JOYMETER_UPDATE_ACTION = "updateAction";
 
-    public static final String JOYMETER_NOTIFICATION_CALL = "notificationCall";
+    public static final int LOJ_WINDOW_SIZE = 10;
 }
