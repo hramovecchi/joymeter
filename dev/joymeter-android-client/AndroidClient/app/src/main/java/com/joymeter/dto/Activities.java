@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import java.util.List;
 
 /**
- * Created by PwifiUser on 25/08/2015.
+ * Created by hramovecchi on 25/08/2015.
  */
 public class Activities {
 

@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import java.util.List;
 
 /**
- * Created by PwifiUser on 10/06/2016.
+ * Created by hramovecchi on 10/06/2016.
  */
 public class LevelOfJoyHistory {
 

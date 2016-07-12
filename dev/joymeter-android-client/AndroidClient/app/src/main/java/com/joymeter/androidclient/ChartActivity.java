@@ -6,21 +6,40 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.joymeter.dto.LevelOfJoyRow;
+import com.joymeter.events.bus.EventsBus;
+import com.joymeter.events.bus.LevelOfJoyLoadedEvent;
+import com.joymeter.events.bus.LoadLevelOfJoyEvent;
+import com.joymeter.events.bus.SuggestActivityEvent;
+import com.joymeter.events.bus.SuggestActivityLoaded;
+import com.joymeter.rest.UserService;
+import com.joymeter.rest.factory.UserServiceFactory;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.ResponseCallback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ChartActivity extends Activity {
 
     private LineChart mChart;
     private Typeface mTf;
+    private Button suggestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +48,24 @@ public class ChartActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_chart);
 
+        EventsBus.getInstance().register(this);
+
         mChart = (LineChart) findViewById(R.id.chart);
 
         mTf = Typeface.createFromAsset(getAssets(), "OpenSans-Bold.ttf");
 
-        LineData data = getData(36, 100);
-        data.setValueTypeface(mTf);
+        suggestButton = (Button) findViewById(R.id.suggestButton);
 
-        setupChart(mChart, data, Color.rgb(239, 239, 239));
+        suggestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                suggestButton.setEnabled(Boolean.FALSE);
+
+                EventsBus.getInstance().post(new SuggestActivityEvent());
+            }
+        });
+
+        EventsBus.getInstance().post(new LoadLevelOfJoyEvent());
     }
 
     private String[] mMonths = new String[] {
@@ -86,18 +115,16 @@ public class ChartActivity extends Activity {
         chart.animateX(2500);
     }
 
-    private LineData getData(int count, float range) {
+    private LineData setData(int count, float range, List<LevelOfJoyRow> history) {
 
         ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < count; i++) {
-            xVals.add(mMonths[i % 12]);
-        }
-
         ArrayList<Entry> yVals = new ArrayList<Entry>();
 
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * range) + 3;
-            yVals.add(new Entry(val, i));
+        int i=0;
+        for (LevelOfJoyRow row: history){
+            xVals.add(row.getDateString().substring(0,5));
+            yVals.add(new Entry((float)row.getLevel(), i));
+            i++;
         }
 
         // create a dataset and give it a type
@@ -112,7 +139,7 @@ public class ChartActivity extends Activity {
         set1.setHighLightColor(Color.rgb(0, 160, 198));
         set1.setDrawValues(true);
 
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(set1); // add the datasets
 
         // create a data object with the datasets
@@ -137,5 +164,25 @@ public class ChartActivity extends Activity {
         int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventsBus.getInstance().unregister(this);
+        super.onDestroy();
+    }
+
+    @Subscribe
+    public void onLevelOfJoyLoaded(LevelOfJoyLoadedEvent event){
+        List<LevelOfJoyRow> history = event.getHistory();
+        LineData data = setData(JoymeterPreferences.LOJ_WINDOW_SIZE, 5, history);
+        data.setValueTypeface(mTf);
+
+        setupChart(mChart, data, Color.rgb(239, 239, 239));
+    }
+
+    @Subscribe
+    public void onSuggestActivityLoaded(SuggestActivityLoaded event){
+        suggestButton.setEnabled(Boolean.TRUE);
     }
 }

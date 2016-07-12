@@ -11,7 +11,7 @@ public class LevelOfJoyRow {
     private long milliseconds;
 
     @Expose
-    private long level;
+    private double level;
 
     @Expose
     private String dateString;
@@ -24,11 +24,11 @@ public class LevelOfJoyRow {
         this.milliseconds = milliseconds;
     }
 
-    public long getLevel() {
+    public double getLevel() {
         return level;
     }
 
-    public void setLevel(long level) {
+    public void setLevel(double level) {
         this.level = level;
     }
 
