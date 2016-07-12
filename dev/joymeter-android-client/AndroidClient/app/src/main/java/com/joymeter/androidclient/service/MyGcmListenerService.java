@@ -15,6 +15,7 @@ import com.joymeter.androidclient.HistoryActivity;
 import com.joymeter.androidclient.JoymeterPreferences;
 import com.joymeter.androidclient.R;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.dto.AdviceDTO;
 
 /**
  * Created by hramovecchi on 02/12/2015.
@@ -34,13 +35,14 @@ public class MyGcmListenerService extends GcmListenerService{
     @Override
     public void onMessageReceived(String from, Bundle data) {
         Gson gson = new Gson();
-        ActivityDTO activity = gson.fromJson(data.getString("activity"), ActivityDTO.class);
+        //TODO must handle advice DTO here
+        AdviceDTO advice = gson.fromJson(data.getString("advice"), AdviceDTO.class);
 
         /**
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        sendNotification(activity);
+        sendNotification(advice.getSuggestedActivity());
         // [END_EXCLUDE]
     }
     // [END receive_message]

@@ -4,7 +4,6 @@ import com.joymeter.dto.LevelOfJoyHistory;
 import com.joymeter.dto.UserDTO;
 
 import retrofit.Callback;
-import retrofit.ResponseCallback;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.PUT;
@@ -22,9 +21,6 @@ public interface UserService {
 
     @PUT(userPath + "/me")
     void updateUser(@Body UserDTO user, Callback<UserDTO> callback);
-
-    @GET(userPath + "/me/suggest")
-    void suggestActivity(ResponseCallback callback);
 
     @GET(userPath + "/me/loj")
     void getLevelOfJoy(@Query("days") String days, Callback<LevelOfJoyHistory> callback);
