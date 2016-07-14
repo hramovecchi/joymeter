@@ -5,6 +5,7 @@ import com.joymeter.dto.AdviceDTO;
 import retrofit.ResponseCallback;
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 
 /**
  * Created by hramovecchi on 09/08/2015.
@@ -16,6 +17,6 @@ public interface RecommendationService {
     @GET(recommendationPath + "/me/suggest")
     void suggestActivity(ResponseCallback callback);
 
-    @GET(recommendationPath + "/me/suggest")
+    @POST(recommendationPath + "/me/accept")
     void acceptAdvice(@Body AdviceDTO advice, ResponseCallback callback);
 }

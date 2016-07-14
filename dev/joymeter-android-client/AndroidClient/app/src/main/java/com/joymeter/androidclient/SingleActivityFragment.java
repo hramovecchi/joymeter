@@ -15,6 +15,7 @@ import android.widget.RatingBar;
 import com.joymeter.androidclient.picker.DatePickerFragment;
 import com.joymeter.androidclient.picker.DurationPickerFragment;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.dto.AdviceDTO;
 import com.joymeter.utils.DateUtils;
 import com.joymeter.utils.DurationUtils;
 
@@ -68,10 +69,10 @@ public class SingleActivityFragment extends Fragment {
     }
 
     private void populateActivity() {
+        AdviceDTO advice = (AdviceDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
 
-        ActivityDTO activity = (ActivityDTO) getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
-
-        if (activity != null){
+        if (advice != null){
+            ActivityDTO activity = advice.getSuggestedActivity();
             DateUtils util = DateUtils.getInstance();
 
             summary.setText(activity.getSummary());

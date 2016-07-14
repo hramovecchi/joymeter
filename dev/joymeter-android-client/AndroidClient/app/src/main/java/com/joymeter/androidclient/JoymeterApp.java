@@ -15,8 +15,10 @@ import com.joymeter.dao.UserActivityDao;
 import com.joymeter.events.bus.AppErrorEvent;
 import com.joymeter.events.bus.EventsBus;
 import com.joymeter.rest.factory.ActivityServiceFactory;
+import com.joymeter.rest.factory.RecommendationServiceFactory;
 import com.joymeter.rest.factory.UserServiceFactory;
 import com.joymeter.service.JActivityService;
+import com.joymeter.service.JRecommendationService;
 import com.joymeter.service.JUserService;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -28,6 +30,7 @@ public class JoymeterApp extends Application {
 
     private static JActivityService activityService;
     private static JUserService userService;
+    private static JRecommendationService recommendationService;
     private static Bus eventBus;
     private static Context context;
 
@@ -52,6 +55,9 @@ public class JoymeterApp extends Application {
 
         userService = new JUserService(UserServiceFactory.getInstance(), eventBus);
         eventBus.register(userService);
+
+        recommendationService = new JRecommendationService(RecommendationServiceFactory.getInstance(), eventBus, activityDao, activityService);
+        eventBus.register(recommendationService);
 
         //listen for global events
         eventBus.register(this);

@@ -1,5 +1,6 @@
 package com.joymeter.androidclient;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,6 +42,7 @@ public class LoginActivity extends FragmentActivity {
     private LoginButton loginBtn;
     private SharedPreferences preferences;
     private static Context context;
+    private ProgressDialog progressDialog = null;
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "LoginActivity";
@@ -65,12 +68,16 @@ public class LoginActivity extends FragmentActivity {
             callbackManager = CallbackManager.Factory.create();
 
             setContentView(R.layout.login_activity);
-
-            loginBtn = (LoginButton) findViewById(R.id.login_button);
-            loginBtn.setReadPermissions(Arrays.asList("email"));
-            loginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            LoginManager loginManager = LoginManager.getInstance();
+            loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+                    progressDialog = new ProgressDialog(LoginActivity.this,
+                            R.style.Base_Theme_AppCompat_Dialog_FixedSize);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage("Creating Account...");
+                    progressDialog.show();
+
                     LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver(mRegistrationBroadcastReceiver,
                             new IntentFilter(JoymeterPreferences.REGISTRATION_COMPLETE));
 
@@ -87,10 +94,13 @@ public class LoginActivity extends FragmentActivity {
                 }
 
                 @Override
-                public void onError(FacebookException error) {
+                public void onError(FacebookException e) {
                     Toast.makeText(context, "Something went wrong calling Facebook API", Toast.LENGTH_LONG).show();
                 }
             });
+            loginManager.logInWithReadPermissions(LoginActivity.this, Arrays.asList("email"));
+
+            loginBtn = (LoginButton) findViewById(R.id.login_button);
         }
     }
 
@@ -151,6 +161,8 @@ public class LoginActivity extends FragmentActivity {
                         editor.putString(JoymeterPreferences.JOYMETER_TOKEN, signupResponseDTO.getSessionToken());
                         editor.putString(JoymeterPreferences.FACEBOOK_TOKEN, signupResponseDTO.getSessionToken());
                         editor.commit();
+
+                        progressDialog.dismiss();
 
                         Intent intent = new Intent(getAppContext(), HistoryActivity.class);
                         startActivity(intent);

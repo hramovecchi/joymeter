@@ -1,22 +1,14 @@
 package com.joymeter.service;
 
-import android.widget.Toast;
-
 import com.joymeter.androidclient.JoymeterPreferences;
 import com.joymeter.dto.LevelOfJoyHistory;
-import com.joymeter.events.bus.ActivitiesLoadedEvent;
 import com.joymeter.events.bus.LevelOfJoyLoadedEvent;
-import com.joymeter.events.bus.LoadActivitiesEvent;
 import com.joymeter.events.bus.LoadLevelOfJoyEvent;
-import com.joymeter.events.bus.SuggestActivityEvent;
-import com.joymeter.events.bus.SuggestActivityLoaded;
 import com.joymeter.rest.UserService;
-import com.joymeter.rest.factory.UserServiceFactory;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import retrofit.Callback;
-import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -40,21 +32,6 @@ public class JUserService {
             public void success(LevelOfJoyHistory levelOfJoyHistory, Response response) {
                 //trigger levelOfJoyLoadedEvent
                 bus.post(new LevelOfJoyLoadedEvent(levelOfJoyHistory.getHistory()));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
-    }
-
-    @Subscribe
-    public void onSuggestActivity(SuggestActivityEvent event){
-        api.suggestActivity(new ResponseCallback() {
-            @Override
-            public void success(Response response) {
-                bus.post(new SuggestActivityLoaded());
             }
 
             @Override

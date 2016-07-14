@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -16,19 +15,14 @@ import com.facebook.share.model.ShareContent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.dto.AdviceDTO;
 import com.joymeter.events.bus.ActivityAddedEvent;
 import com.joymeter.events.bus.ActivityDeletedEvent;
 import com.joymeter.events.bus.ActivityUpdatedEvent;
 import com.joymeter.events.bus.EventsBus;
-import com.joymeter.rest.UserService;
-import com.joymeter.rest.factory.UserServiceFactory;
 import com.joymeter.service.helper.ConnectivityHelper;
 import com.joymeter.utils.ShareUtils;
 import com.squareup.otto.Subscribe;
-
-import retrofit.ResponseCallback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by hramovecchi on 15/09/2015.
@@ -43,10 +37,10 @@ public class HistoryActivity extends FragmentActivity {
         setContentView(R.layout.history_activity);
         EventsBus.getInstance().register(this);
 
-        ActivityDTO activity = (ActivityDTO)getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
-        if (activity != null){
+        AdviceDTO advice = (AdviceDTO)getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
+        if (advice != null){
             Intent i = new Intent(getApplicationContext(), SingleActivity.class);
-            i.putExtra(JoymeterPreferences.JOYMETER_ACTIVITY,activity);
+            i.putExtra(JoymeterPreferences.JOYMETER_ADVICE,advice);
             startActivity(i);
         }
 
