@@ -19,7 +19,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
@@ -134,6 +133,7 @@ public class LoginActivity extends FragmentActivity {
     }
 
     public void onFacebookLoginClick(View view){
+        loginBtn.setEnabled(Boolean.FALSE);
         progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.Base_Theme_AppCompat_Dialog_FixedSize);
         progressDialog.setIndeterminate(true);

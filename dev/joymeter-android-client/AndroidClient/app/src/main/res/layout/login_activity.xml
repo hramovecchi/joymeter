@@ -1,40 +1,45 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
-    android:paddingTop="24dp"
-    android:paddingBottom="24dp"
-    android:background="#2D5B8A"
-    android:orientation="vertical">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
 
-    <ImageView android:src="@drawable/login_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:layout_gravity="center_horizontal" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:background="#ff2f6394"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="21dip"
-        android:textAlignment="center"
-        android:textColor="#ffffff"
-        android:layout_marginBottom="24dp"
-        android:text="@string/eula"/>
+        <ImageView android:src="@drawable/login_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:layout_gravity="center_horizontal" />
 
-    <com.facebook.login.widget.LoginButton
-        android:background="@color/com_facebook_blue"
-        android:id="@+id/login_btn_facebook"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_gravity="center"
-        android:textSize="7pt"
-        android:onClick="onFacebookLoginClick"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="21dip"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:layout_marginBottom="150dp"
+            android:text="@string/eula"/>
 
-</LinearLayout>
+        <com.facebook.login.widget.LoginButton
+            android:background="@color/com_facebook_blue"
+            android:id="@+id/login_btn_facebook"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:textSize="7pt"
+            android:onClick="onFacebookLoginClick"/>
+
+    </LinearLayout>
+</ScrollView>
