@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -68,20 +69,16 @@ public class LoginActivity extends FragmentActivity {
             callbackManager = CallbackManager.Factory.create();
 
             setContentView(R.layout.login_activity);
-            LoginManager loginManager = LoginManager.getInstance();
-            loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+            loginBtn = (LoginButton) findViewById(R.id.login_btn_facebook);
+            loginBtn.setReadPermissions(Arrays.asList("email"));
+            loginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    progressDialog = new ProgressDialog(LoginActivity.this,
-                            R.style.Base_Theme_AppCompat_Dialog_FixedSize);
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setMessage("Creating Account...");
-                    progressDialog.show();
-
                     LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver(mRegistrationBroadcastReceiver,
                             new IntentFilter(JoymeterPreferences.REGISTRATION_COMPLETE));
 
-                    if (checkPlayServices()){
+                    if (checkPlayServices()) {
                         Intent intent = new Intent(LoginActivity.this, RegistrationIntentService.class);
                         intent.putExtra(JoymeterPreferences.FACEBOOK_TOKEN, loginResult.getAccessToken().getToken());
                         startService(intent);
@@ -94,13 +91,10 @@ public class LoginActivity extends FragmentActivity {
                 }
 
                 @Override
-                public void onError(FacebookException e) {
+                public void onError(FacebookException error) {
                     Toast.makeText(context, "Something went wrong calling Facebook API", Toast.LENGTH_LONG).show();
                 }
             });
-            loginManager.logInWithReadPermissions(LoginActivity.this, Arrays.asList("email"));
-
-            loginBtn = (LoginButton) findViewById(R.id.login_button);
         }
     }
 
@@ -137,6 +131,14 @@ public class LoginActivity extends FragmentActivity {
             return false;
         }
         return true;
+    }
+
+    public void onFacebookLoginClick(View view){
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.Base_Theme_AppCompat_Dialog_FixedSize);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Creating Account...");
+        progressDialog.show();
     }
 
     private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
