@@ -1,5 +1,6 @@
 package com.joymeter.androidclient;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -40,6 +42,7 @@ public class LoginActivity extends FragmentActivity {
     private LoginButton loginBtn;
     private SharedPreferences preferences;
     private static Context context;
+    private ProgressDialog progressDialog = null;
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "LoginActivity";
@@ -66,7 +69,7 @@ public class LoginActivity extends FragmentActivity {
 
             setContentView(R.layout.login_activity);
 
-            loginBtn = (LoginButton) findViewById(R.id.login_button);
+            loginBtn = (LoginButton) findViewById(R.id.login_btn_facebook);
             loginBtn.setReadPermissions(Arrays.asList("email"));
             loginBtn.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
@@ -74,7 +77,7 @@ public class LoginActivity extends FragmentActivity {
                     LocalBroadcastManager.getInstance(LoginActivity.this).registerReceiver(mRegistrationBroadcastReceiver,
                             new IntentFilter(JoymeterPreferences.REGISTRATION_COMPLETE));
 
-                    if (checkPlayServices()){
+                    if (checkPlayServices()) {
                         Intent intent = new Intent(LoginActivity.this, RegistrationIntentService.class);
                         intent.putExtra(JoymeterPreferences.FACEBOOK_TOKEN, loginResult.getAccessToken().getToken());
                         startService(intent);
@@ -129,6 +132,15 @@ public class LoginActivity extends FragmentActivity {
         return true;
     }
 
+    public void onFacebookLoginClick(View view){
+        loginBtn.setEnabled(Boolean.FALSE);
+        progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.Base_Theme_AppCompat_Dialog_FixedSize);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Creating Account...");
+        progressDialog.show();
+    }
+
     private BroadcastReceiver mRegistrationBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -151,6 +163,8 @@ public class LoginActivity extends FragmentActivity {
                         editor.putString(JoymeterPreferences.JOYMETER_TOKEN, signupResponseDTO.getSessionToken());
                         editor.putString(JoymeterPreferences.FACEBOOK_TOKEN, signupResponseDTO.getSessionToken());
                         editor.commit();
+
+                        progressDialog.dismiss();
 
                         Intent intent = new Intent(getAppContext(), HistoryActivity.class);
                         startActivity(intent);

@@ -3,7 +3,7 @@ package com.joymeter.rest.factory;
 import com.joymeter.rest.UserService;
 
 /**
- * Created by PwifiUser on 24/08/2015.
+ * Created by hramovecchi on 24/08/2015.
  */
 public class UserServiceFactory {
 
