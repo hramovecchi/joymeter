@@ -14,11 +14,16 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.joymeter.entity.dto.ActivityDTO;
 
+@JsonInclude(Include.NON_EMPTY)
 @JsonIgnoreProperties
 @Entity
 @Table(name = "ACTIVITY")
 @NamedQueries( { @NamedQuery(name = "Activity.findAllByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID"),
+				 @NamedQuery(name = "Activity.fetchByUserAndDeleteState", query = "SELECT a FROM Activity a WHERE a.user.id=:userID AND a.deleted=:deletestate"),
 				 @NamedQuery(name = "Activity.findDayActivitiesByUser", query = "SELECT a FROM Activity a WHERE a.user.id=:userID AND a.start_date <= :endday AND a.end_date >= :startday")})
 
 public class Activity implements Serializable{
@@ -41,6 +46,8 @@ public class Activity implements Serializable{
 	private User user;
 	
 	private boolean classified;
+	@Column(name="deleted", columnDefinition="boolean default false")
+	private boolean deleted;
 	
 	
 	public long getId() {
@@ -97,15 +104,10 @@ public class Activity implements Serializable{
 	public void setClassified(boolean classified) {
 		this.classified = classified;
 	}
-	public void clone(Activity activityToClone) {
-		this.type = activityToClone.getType();
-		this.summary = activityToClone.getSummary();
-		this.description = activityToClone.getDescription();
-		this.level_of_joy = activityToClone.getLevelOfJoy();
-		this.start_date = activityToClone.getStartDate();
-		this.end_date = activityToClone.getEndDate();
-		this.user = activityToClone.getUser();
-		this.classified = activityToClone.isClassified();
+	public boolean isDeleted() {
+		return deleted;
 	}
-
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 }
