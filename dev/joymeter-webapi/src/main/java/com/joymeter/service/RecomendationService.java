@@ -1,9 +1,9 @@
 package com.joymeter.service;
 
-import com.joymeter.entity.Activity;
+import com.joymeter.entity.Advice;
 
 public interface RecomendationService {
 	
-	Activity suggestActivity(long userId);
+	Advice suggestActivity(long userId);
 
 }

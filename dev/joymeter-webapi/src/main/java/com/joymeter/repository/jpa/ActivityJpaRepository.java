@@ -35,10 +35,30 @@ public class ActivityJpaRepository implements ActivityRepository {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<Activity> getByUserId(long userID) {
+	public List<Activity> getAllActivitiesByUserId(long userID) {
 		Query queryFindPerson = entityManager.createNamedQuery("Activity.findAllByUser");
 		queryFindPerson.setParameter("userID", userID);
 		List<Activity> activities = queryFindPerson.getResultList();
+		return activities;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<Activity> fetchActiveActivitiesByUserId(long userID){
+		Query fetchByUserAndDeleteState = entityManager.createNamedQuery("Activity.fetchByUserAndDeleteState");
+		fetchByUserAndDeleteState.setParameter("userID", userID);
+		fetchByUserAndDeleteState.setParameter("deletestate", false);
+		List<Activity> activities = fetchByUserAndDeleteState.getResultList();
+		return activities;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<Activity> fetchDeletedActivitiesByUserId(long userID){
+		Query fetchByUserAndDeleteState = entityManager.createNamedQuery("Activity.fetchByUserAndDeleteState");
+		fetchByUserAndDeleteState.setParameter("userID", userID);
+		fetchByUserAndDeleteState.setParameter("deletestate", true);
+		List<Activity> activities = fetchByUserAndDeleteState.getResultList();
 		return activities;
 	}
 
@@ -48,12 +68,19 @@ public class ActivityJpaRepository implements ActivityRepository {
 	}
 
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
-	public boolean delete(Activity activity) {
+	public boolean hardDelete(Activity activity) {
 		activity = entityManager.getReference(Activity.class, activity.getId());
 		if (activity == null){
 			return false;
 		}
 		entityManager.remove(activity);
+		entityManager.flush();
+		return true;
+	}
+	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
+	public boolean delete(Activity activity) {
+		activity.setDeleted(true);
+		entityManager.merge(activity);
 		entityManager.flush();
 		return true;
 	}
@@ -63,29 +90,6 @@ public class ActivityJpaRepository implements ActivityRepository {
 		entityManager.merge(activity);
 		entityManager.flush();
 		return activity;
-	}
-
-	public Activity suggestActivity(long userID) {
-		List<Activity> activities = getByUserId(userID);
-		
-		if (activities.isEmpty()){
-			return getDefaultActivity();
-		}
-		
-		int index = (int)Math.floor(Math.random()*(0-(activities.size()))+(activities.size()+1));
-		
-		return activities.get(index);
-	}
-
-
-	private Activity getDefaultActivity() {
-		Activity a = new Activity();
-		a.setClassified(Boolean.FALSE);
-		a.setDescription("Birra con amigos");
-		a.setLevelOfJoy(5);
-		a.setSummary("Cerveza en Antares");
-		a.setType("Recleación, Salida");
-		return a;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -98,4 +102,6 @@ public class ActivityJpaRepository implements ActivityRepository {
 		List<Activity> activities = queryFindActivities.getResultList();
 		return activities;
 	}
+	
+	
 }
