@@ -15,6 +15,7 @@ import com.joymeter.androidclient.HistoryActivity;
 import com.joymeter.androidclient.JoymeterPreferences;
 import com.joymeter.androidclient.R;
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.dto.AdviceDTO;
 
 /**
  * Created by hramovecchi on 02/12/2015.
@@ -34,13 +35,14 @@ public class MyGcmListenerService extends GcmListenerService{
     @Override
     public void onMessageReceived(String from, Bundle data) {
         Gson gson = new Gson();
-        ActivityDTO activity = gson.fromJson(data.getString("activity"), ActivityDTO.class);
+        //TODO must handle advice DTO here
+        AdviceDTO advice = gson.fromJson(data.getString("advice"), AdviceDTO.class);
 
         /**
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
-        sendNotification(activity);
+        sendNotification(advice);
         // [END_EXCLUDE]
     }
     // [END receive_message]
@@ -50,20 +52,21 @@ public class MyGcmListenerService extends GcmListenerService{
      *
      * @param activity GCM message received.
      */
-    private void sendNotification(ActivityDTO activity) {
+    private void sendNotification(AdviceDTO advice) {
         Intent intent = new Intent(this, HistoryActivity.class);
-        intent.putExtra(JoymeterPreferences.JOYMETER_ACTIVITY,activity);
+        intent.putExtra(JoymeterPreferences.JOYMETER_ADVICE,advice);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        String contentText = activity.getDescription().length() < 25 ? activity.getDescription() :
-                activity.getDescription().substring(0, 24) + "...";
+        String contentText = advice.getSuggestedActivity().getDescription().length() < 25 ?
+                advice.getSuggestedActivity().getDescription() :
+                advice.getSuggestedActivity().getDescription().substring(0, 24) + "...";
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_jm_launcher)
-                .setContentTitle("Joymeter Suggest")
+                .setContentTitle("Joymeter Recommendation")
                 .setContentText(contentText)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

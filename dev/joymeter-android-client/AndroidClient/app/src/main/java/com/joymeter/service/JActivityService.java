@@ -183,7 +183,7 @@ public class JActivityService {
 
 
 
-    private void storeInBackupAction(ActivityDTO activityToSave, SyncupActionMethod syncupActionMethod) {
+    public void storeInBackupAction(ActivityDTO activityToSave, SyncupActionMethod syncupActionMethod) {
         Query<SyncupAction> query = syncupActionDao.queryBuilder()
                 .where(SyncupActionDao.Properties.ActivityId.eq(activityToSave.getId())).build();
 

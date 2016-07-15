@@ -2,6 +2,7 @@ package com.joymeter.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.joymeter.entity.Activity;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true)
@@ -77,5 +78,15 @@ public class ActivityDTO {
 	}
 	public void setEndDateTime(String endDateTime) {
 		this.endDateTime = endDateTime;
+	}
+	public ActivityDTO(Activity act){
+		this.setClassified(act.isClassified());
+		this.setDescription(act.getDescription());
+		this.setEndDate(String.valueOf(act.getEndDate()));
+		this.setId(act.getId());
+		this.setLevelOfJoy(String.valueOf(act.getLevelOfJoy()));
+		this.setStartDate(String.valueOf(act.getStartDate()));
+		this.setSummary(act.getSummary());
+		this.setType(act.getType());
 	}
 }

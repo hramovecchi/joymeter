@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.joymeter.dto.ActivityDTO;
+import com.joymeter.dto.AdviceDTO;
+import com.joymeter.events.bus.AcceptRecommendationEvent;
 import com.joymeter.events.bus.AddActivityEvent;
 import com.joymeter.events.bus.EventsBus;
 import com.joymeter.events.bus.UpdateActivityEvent;
@@ -47,7 +49,13 @@ public class SingleActivity extends FragmentActivity {
 
             switch (saveAction){
                 case save:
-                    EventsBus.getInstance().post(new AddActivityEvent(SingleActivity.this, activity));
+                    AdviceDTO advice = (AdviceDTO)getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
+                    if (advice != null){
+                        advice.setCreatedActivity(activity);
+                        EventsBus.getInstance().post(new AcceptRecommendationEvent(SingleActivity.this,advice));
+                    }else {
+                        EventsBus.getInstance().post(new AddActivityEvent(SingleActivity.this, activity));
+                    }
                     break;
                 case update:
                     int position = getIntent().getIntExtra(JoymeterPreferences.JOYMETER_ACTIVITY_POSITION, -1);

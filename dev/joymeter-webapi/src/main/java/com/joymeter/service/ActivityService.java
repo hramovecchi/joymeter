@@ -28,13 +28,13 @@ public class ActivityService {
 	
 	public Activities getActivities(User user) {
 		
-		List<Activity> activities = activityRepository.getByUserId(user.getId());
+		List<Activity> activities = activityRepository.
+				fetchActiveActivitiesByUserId(user.getId());
 		
 		return new Activities(activities);
 	}
 	
 	public Activity addActivity(User owner, ActivityDTO activityDTO) {
-
 		Activity activity = new Activity();
 		activity = ActivityUtils.mappedToActivity(activity, activityDTO);
 		activity.setUser(owner);
