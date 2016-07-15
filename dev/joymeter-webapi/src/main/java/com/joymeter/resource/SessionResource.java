@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,11 +28,11 @@ public class SessionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response signUp(SignUpRequestDTO signUpRequestDTO){
-		if (!StringUtils.isEmpty(signUpRequestDTO.getFacebookAccessToken()) && 
+		if ((signUpRequestDTO != null) &&
 				!StringUtils.isEmpty(signUpRequestDTO.getFacebookAccessToken())){
 			return Response.ok(sessionService.signUp(signUpRequestDTO)).build();
 		}
 		
-		return Response.noContent().build();
+		return Response.status(Status.BAD_REQUEST).build();
 	}
 }

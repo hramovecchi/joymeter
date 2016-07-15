@@ -42,12 +42,13 @@ public class SessionService {
 			}				
 		}
 		
-		User user = userService.getByEmail(fbProfile.getEmail());
+		String userEmail = (fbProfile.getEmail() != null) ? fbProfile.getEmail(): fbProfile.getId();
+		User user = userService.getByEmail(userEmail);
 		
 		if (user == null){	//it is a new user
 			user = new User();
 			user.setCreationDate(new Date().getTime());
-			user.setEmail(fbProfile.getEmail());
+			user.setEmail(userEmail);
 			user.setFullName(FacebookUtils.getFullName(
 					fbProfile.getFirstName(), fbProfile.getMiddleName(),
 					fbProfile.getLastName()));
