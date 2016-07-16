@@ -18,6 +18,9 @@ public class ActivityDTO {
 	private String endDateTime;
 	private Boolean classified;
 	
+	public ActivityDTO(){	
+	}
+	
 	public Long getId() {
 		return id;
 	}
