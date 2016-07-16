@@ -69,10 +69,16 @@ public class SingleActivityFragment extends Fragment {
     }
 
     private void populateActivity() {
-        AdviceDTO advice = (AdviceDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
+        ActivityDTO activity;
 
-        if (advice != null){
-            ActivityDTO activity = advice.getSuggestedActivity();
+        AdviceDTO advice = (AdviceDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
+        if (advice == null){
+            activity = (ActivityDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
+        } else {
+            activity = advice.getSuggestedActivity();
+        }
+
+        if (activity != null){
             DateUtils util = DateUtils.getInstance();
 
             summary.setText(activity.getSummary());
