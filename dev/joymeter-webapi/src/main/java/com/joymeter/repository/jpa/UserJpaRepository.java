@@ -61,7 +61,7 @@ public class UserJpaRepository implements UserRepository {
 	@Transactional(readOnly=false, propagation=Propagation.REQUIRED)
 	public boolean save(User user) {
 		log.info("Saving: "+user.toString());
-		entityManager.merge(user);
+		entityManager.persist(user);
 		entityManager.flush();
 		return true;
 	}

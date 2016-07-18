@@ -45,7 +45,9 @@ public class SessionService {
 		String userEmail = (fbProfile.getEmail() != null) ? fbProfile.getEmail(): fbProfile.getId();
 		User user = userService.getByEmail(userEmail);
 		
-		if (user == null){	//it is a new user
+		boolean newUser = user == null;
+		
+		if (newUser){	//it is a new user
 			user = new User();
 			user.setCreationDate(new Date().getTime());
 			user.setEmail(userEmail);
@@ -64,7 +66,12 @@ public class SessionService {
 		sessionToStore.setGcmToken(signUpRequestDTO.getGcmToken());
 		sessionToStore.setDeviceId(signUpRequestDTO.getDeviceId());
 		
-		userService.save(user);
+		if (newUser){
+			userService.save(user);
+		} else {
+			userService.update(user);
+		}
+		
 		sessionRepository.save(sessionToStore);
 		
 		return sessionToStore;
