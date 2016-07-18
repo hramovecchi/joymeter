@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -23,16 +22,10 @@ import com.joymeter.events.bus.LevelOfJoyLoadedEvent;
 import com.joymeter.events.bus.LoadLevelOfJoyEvent;
 import com.joymeter.events.bus.SuggestActivityEvent;
 import com.joymeter.events.bus.SuggestActivityLoaded;
-import com.joymeter.rest.UserService;
-import com.joymeter.rest.factory.UserServiceFactory;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.ResponseCallback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public class ChartActivity extends Activity {
@@ -68,15 +61,11 @@ public class ChartActivity extends Activity {
         EventsBus.getInstance().post(new LoadLevelOfJoyEvent());
     }
 
-    private String[] mMonths = new String[] {
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
-    };
-
     private void setupChart(LineChart chart, LineData data, int color) {
 
         // no description text
         chart.setDescription("");
-        chart.setNoDataTextDescription("You need to provide data for the chart.");
+        chart.setNoDataTextDescription("Es necesarion poseer actividades para visualizar el gráfico.");
 
         // mChart.setDrawHorizontalGrid(false);
         //
@@ -128,7 +117,7 @@ public class ChartActivity extends Activity {
         }
 
         // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "Level of Joy");
+        LineDataSet set1 = new LineDataSet(yVals, "Nivel de Felicidad");
         // set1.setFillAlpha(110);
         // set1.setFillColor(Color.RED);
 
