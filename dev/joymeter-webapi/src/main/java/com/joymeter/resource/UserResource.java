@@ -60,18 +60,6 @@ public class UserResource{
 		
 		return Response.ok(userService.updateUser(user, userDTO)).build();
 	}
-	
-	@GET
-	@Path("/me/suggest")
-	@RequiresAuthentication
-	public Response suggestActivity(){
-		Session session = JoymeterContextHolder.get().getJoymeterSession();
-
-		userService.suggestActivity(session.getUser().getId(), session.getGcmToken());
-		
-		return Response.ok("{}").build();
-    }
-		
 
 	/*
 	 */

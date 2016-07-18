@@ -43,9 +43,9 @@ public class UserService {
 		return updatedUser;
 	}
 	
-	public void suggestActivity(long userId, String gsmToken){
+	public void suggestActivity(User user, String gsmToken){
 
-		Advice advice = recomendationService.suggestActivity(userId);
+		Advice advice = recomendationService.suggestActivity(user);
 		
 		long now = Calendar.getInstance().getTimeInMillis();
 		

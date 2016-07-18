@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.joymeter.entity.Activity;
 import com.joymeter.entity.Advice;
+import com.joymeter.entity.User;
 import com.joymeter.repository.ActivityRepository;
 import com.joymeter.repository.AdviceRepository;
+import com.joymeter.service.DefaultAdviceActivityService;
 import com.joymeter.service.RecomendationService;
 
 @Service("recomendationService")
@@ -21,18 +23,23 @@ public class DefaultRecomendationService implements RecomendationService{
 	@Autowired
 	AdviceRepository adviceRepository;
 	
-	public Advice suggestActivity(long userId) {
-		return this.suggestActivityForUser(userId);
+	@Autowired
+	DefaultAdviceActivityService defaultAdviceActService;
+	
+	private boolean defaultActivitiesStored = false;
+	
+	public Advice suggestActivity(User user) {
+		return this.suggestActivityForUser(user);
 	}
 	
-	private Advice suggestActivityForUser(long userID) {
-		List<Activity> activities = activityRepository.getAllActivitiesByUserId(userID);
+	private Advice suggestActivityForUser(User user) {
+		List<Activity> activities = activityRepository.getAllActivitiesByUserId(user.getId());
 		Activity activitytoSuggest;
 		
 		if (activities.isEmpty()){
 			activitytoSuggest =  getDefaultActivity();
 		} else {
-			int index = (int)Math.floor(Math.random()*(0-(activities.size()))+(activities.size()+1));
+			int index = (int)Math.floor(Math.random()*(0-(activities.size()))+(activities.size()));
 			activitytoSuggest = activities.get(index);
 		}
 		
@@ -41,7 +48,7 @@ public class DefaultRecomendationService implements RecomendationService{
 		Advice advice = new Advice();
 		advice.setDate(now);
 		advice.setSuggestedActivity(activitytoSuggest);
-		advice.setUser(activitytoSuggest.getUser());
+		advice.setUser(user);
 		
 		adviceRepository.save(advice);
 		
@@ -49,13 +56,15 @@ public class DefaultRecomendationService implements RecomendationService{
 	}
 	
 	private Activity getDefaultActivity() {
-		Activity a = new Activity();
-		a.setClassified(Boolean.FALSE);
-		a.setDescription("Birra con amigos");
-		a.setLevelOfJoy(5);
-		a.setSummary("Cerveza en Antares");
-		a.setType("Recleación, Salida");
-		return a;
+		if (!defaultActivitiesStored){
+			for (Activity a: defaultAdviceActService.getActivities()){
+				activityRepository.update(a);
+			}
+			defaultActivitiesStored = true;
+		}
+		int index = (int)Math.floor(Math.random()*
+				(0-(defaultAdviceActService.getActivities().size()))+(defaultAdviceActService.getActivities().size()));
+		return defaultAdviceActService.getActivities().get(index);
 	}
 
 }

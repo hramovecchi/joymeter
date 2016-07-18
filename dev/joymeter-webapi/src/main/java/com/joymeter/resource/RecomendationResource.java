@@ -33,7 +33,7 @@ public class RecomendationResource {
 	public Response suggestActivity(){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
 
-		userService.suggestActivity(session.getUser().getId(), session.getGcmToken());
+		userService.suggestActivity(session.getUser(), session.getGcmToken());
 		
 		return Response.ok("{}").build();
     }

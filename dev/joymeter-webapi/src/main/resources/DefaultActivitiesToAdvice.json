@@ -1,0 +1,200 @@
+[
+	{
+			"id":-1,
+            "type": "Ocio",
+            "summary": "cerveza con amigos",
+            "description": "cerveza en si señor con amigos",
+            "classified": true,
+            "deleted": false,
+            "levelOfJoy": 5,
+            "startDate": 1460642089570,
+            "endDate": 1460663689570
+        },
+        {
+            "id":-2,
+            "type": "Deporte",
+            "summary": "caminando",
+            "description": "caminando por el centro",
+            "classified": true,
+            "deleted": false,
+            "levelOfJoy": 3,
+            "startDate": 1466602828202,
+            "endDate": 1466620888202
+        },
+        {
+            "id":-3,
+            "type": "Aire Libre",
+            "summary": "pesca en mardel",
+            "description": "pesca con amigo en la escollera norte de mar del plata",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 5,
+            "startDate": 1468525257813,
+            "endDate": 1468530957813
+        },
+        {
+            "id":-4,
+            "type": "Cine/TV",
+            "summary": "peli el finde vvv",
+            "description": "peli de suspenso del 2014",
+            "classified": true,
+            "deleted": false,
+            "levelOfJoy": 3,
+            "startDate": 1460745421762,
+            "endDate": 1460752861762
+        },
+        {
+            "id":-5,
+            "type": "Profesional",
+            "summary": "trabajando en lo de sol y facu",
+            "description": "codeando la tesis",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 4,
+            "startDate": 1461677698058,
+            "endDate": 1461687838058
+        },
+        {
+            "id":-6,
+            "type": "Aire Libre",
+            "summary": "playa copada edit",
+            "description": "tarde de playa",
+            "classified": true,
+            "deleted": false,
+            "levelOfJoy": 3,
+            "startDate": 1460735580978,
+            "endDate": 1460742300978
+        },
+        {
+            "id":-7,
+            "type": "trabajando en lo de sol y facu",
+            "summary": "coding",
+            "description": "codeando la tesis",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 4,
+            "startDate": 1460679912591,
+            "endDate": 1460684592591
+        },
+        {
+            "id":-8,
+            "type": "Profesional",
+            "summary": "trabajando en lo de sol y facu",
+            "description": "codeando la tesis",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 4,
+            "startDate": 1467374879139,
+            "endDate": 1467382319139
+        },
+        {
+            "id":-9,
+            "type": "Cine/TV",
+            "summary": "peli",
+            "description": "test peli",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 5,
+            "startDate": 1467649547438,
+            "endDate": 1467656927438
+        },
+        {
+            "id":-10,
+            "type": "Aire Libre",
+            "summary": "pesca en mardel",
+            "description": "pesca con amigo en la escollera norte de mar del plata",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 5,
+            "startDate": 1447914521231,
+            "endDate": 1447932041231
+        },
+        {
+            "id":-11,
+            "type": "Comida",
+            "summary": "cafesito",
+            "description": "cafesito en mardel con mi amor",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 5,
+            "startDate": 1441833379004,
+            "endDate": 1441839379004
+        },
+        {
+            "id":-12,
+            "type": "Cine/TV",
+            "summary": "peli el finde",
+            "description": "peli de suspenso del 2001",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 3,
+            "startDate": 1445317223051,
+            "endDate": 1445326343051
+        },
+        {
+            "id":-13,
+            "type": "Aire Libre",
+            "summary": "tarde de mate",
+            "description": "mate en la plaza de las banderas con naty y mariela",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 4,
+            "startDate": 1445230556384,
+            "endDate": 1445241356384
+        },
+        {
+            "id":-14,
+            "type": "Profesional",
+            "summary": "codeandooo",
+            "description": "codeando como un pepe",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 4,
+            "startDate": 1446523973755,
+            "endDate": 1446538073755
+        },
+        {
+            "id":-15,
+            "type": "Deporte",
+            "summary": "caminata",
+            "description": "caminata nocturna por el dique para relajarme",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 5,
+            "startDate": 1424442033849,
+            "endDate": 1424453253849
+        },
+        {
+            "id":-16,
+            "type": "Ocio",
+            "summary": "votar",
+            "description": "yendo a votar",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 1,
+            "startDate": 1445775516555,
+            "endDate": 1445778996555
+        },
+        {
+            "id":-17,
+            "type": "Profesional",
+            "summary": "oficina",
+            "description": "trabajando en la oficina",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 2,
+            "startDate": 1448375052886,
+            "endDate": 1448405052886
+        },
+        {
+            "id":-18,
+            "type": "Comida",
+            "summary": "almuerzo en el shopping",
+            "description": "almuerzo en el shopping con luis, griselda y naty",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 3,
+            "startDate": 1448728641809,
+            "endDate": 1448735841809
+        }
+]
