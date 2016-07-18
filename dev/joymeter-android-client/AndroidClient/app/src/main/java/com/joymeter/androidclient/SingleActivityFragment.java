@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 
 import com.joymeter.androidclient.picker.DatePickerFragment;
 import com.joymeter.androidclient.picker.DurationPickerFragment;
@@ -36,12 +38,14 @@ public class SingleActivityFragment extends Fragment {
     private Long id;
 
     private EditText summary;
-    private EditText type;
+    private Spinner spinnerTypes;
     private EditText initial;
     private EditText duration;
     private EditText description;
     private RatingBar loj;
     private CheckBox share;
+
+    private  ArrayAdapter<CharSequence> typeAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +58,15 @@ public class SingleActivityFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         summary = (EditText)view.findViewById(R.id.summaryInput);
-        type = (EditText)view.findViewById(R.id.typeInput);
+        spinnerTypes = (Spinner)view.findViewById(R.id.types_spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        typeAdapter = ArrayAdapter.createFromResource(this.getActivity(),
+                R.array.activities_types, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinnerTypes.setAdapter(typeAdapter);
+
         initial = (EditText)view.findViewById(R.id.initialInput);
         duration = (EditText)view.findViewById(R.id.durationInput);
         description = (EditText)view.findViewById(R.id.descriptionInput);
@@ -69,14 +81,20 @@ public class SingleActivityFragment extends Fragment {
     }
 
     private void populateActivity() {
-        AdviceDTO advice = (AdviceDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
+        ActivityDTO activity;
 
-        if (advice != null){
-            ActivityDTO activity = advice.getSuggestedActivity();
+        AdviceDTO advice = (AdviceDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ADVICE);
+        if (advice == null){
+            activity = (ActivityDTO)getActivity().getIntent().getSerializableExtra(JoymeterPreferences.JOYMETER_ACTIVITY);
+        } else {
+            activity = advice.getSuggestedActivity();
+        }
+
+        if (activity != null){
             DateUtils util = DateUtils.getInstance();
 
             summary.setText(activity.getSummary());
-            type.setText(activity.getType());
+            spinnerTypes.setSelection(typeAdapter.getPosition(activity.getType()));
 
             initial.setText(util.getFormatedDate(util.getDate(activity.getStartDate())));
             initialDate = activity.getStartDate();
@@ -124,7 +142,7 @@ public class SingleActivityFragment extends Fragment {
     public ActivityDTO getActivityDTO(){
         ActivityDTO activity= new ActivityDTO();
         activity.setSummary(summary.getText().toString());
-        activity.setType(type.getText().toString());
+        activity.setType(spinnerTypes.getSelectedItem().toString());
         activity.setStartDate(initialDate);
         activity.setEndDate(DurationUtils.getInstance().getEndDate(initialDate, hoursDuration, minutesDuration));
         activity.setDescription(description.getText().toString());

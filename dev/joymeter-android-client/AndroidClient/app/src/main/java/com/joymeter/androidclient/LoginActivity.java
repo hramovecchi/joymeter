@@ -137,7 +137,7 @@ public class LoginActivity extends FragmentActivity {
         progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.Base_Theme_AppCompat_Dialog_FixedSize);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
+        progressDialog.setMessage("Espera...");
         progressDialog.show();
     }
 

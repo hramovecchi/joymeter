@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.dto.AdviceDTO;
@@ -46,6 +47,16 @@ public class SingleActivity extends FragmentActivity {
         if (id == R.id.action_save) {
             SingleActivityFragment fragment = (SingleActivityFragment)getFragmentManager().findFragmentById(R.id.single_joymeter_activity);
             final ActivityDTO activity = fragment.getActivityDTO();
+
+            if (activity.getDescription() == null || "".equals(activity.getDescription()) ||
+                    activity.getSummary() == null || "".equals(activity.getSummary()) ||
+                    activity.getStartDate() == null ||
+                    activity.getEndDate() == null ||
+                    activity.getLevelOfJoy() == null || activity.getLevelOfJoy().equals(0) ||
+                    activity.getType() == null){
+                Toast.makeText(this,"Todo el formulario debe estar completo", Toast.LENGTH_SHORT).show();
+               return true;
+            }
 
             switch (saveAction){
                 case save:

@@ -3,14 +3,27 @@
     <string name="eula">Un Sistema de seguimiento de actividades y recomendación a usuarios en dispositivos móviles</string>
 
     <string name="facebook_app_id">1460864510848745</string>
-    <string name="title_activity_single">New</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_save">Save</string>
-    <string name="action_add">Add</string>
-    <string name="edit">Edit</string>
-    <string name="remove">Remove</string>
-    <string name="action_chart">Chart</string>
-    <string name="title_activity_chart">Level of joy chart</string>
-    <string name="title_history_chart">History</string>
-    <string name="suggest_button">Suggest Me!</string>
+    <string name="title_activity_single">Actividad</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_add">Agregar</string>
+    <string name="edit">Editar</string>
+    <string name="remove">Eliminar</string>
+    <string name="action_chart">Gráfico</string>
+    <string name="title_activity_chart">Gráfico Nivel de Felicidad</string>
+    <string name="title_history_chart">Historial</string>
+    <string name="suggest_button">Sugerirme una Actividad!</string>
+
+    <string-array name="activities_types">
+        <item>Amigos</item>
+        <item>Familia</item>
+        <item>Deporte</item>
+        <item>Cine/TV</item>
+        <item>Aire Libre</item>
+        <item>Shopping</item>
+        <item>Comida</item>
+        <item>Lectura</item>
+        <item>Profesional</item>
+        <item>Estudio</item>
+        <item>Ocio</item>
+    </string-array>
 </resources>
