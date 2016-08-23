@@ -28,6 +28,7 @@ public class User implements Serializable{
 	private String email;
 	private String facebook_access_token;
 	private long creation_date;
+	private String gender;
 	
 	public long getId() {
 		return id;
@@ -58,5 +59,11 @@ public class User implements Serializable{
 	}
 	public void setCreationDate(long creationDate) {
 		this.creation_date = creationDate;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 }

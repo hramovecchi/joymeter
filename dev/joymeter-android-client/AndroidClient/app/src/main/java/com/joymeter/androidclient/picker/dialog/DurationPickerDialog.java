@@ -9,8 +9,8 @@ import android.widget.TimePicker;
  */
 public class DurationPickerDialog extends TimePickerDialog {
 
-    public DurationPickerDialog(Context context, TimePickerDialog.OnTimeSetListener callBack, int hourOfDay, int minute, boolean is24HourView){
-        super(context, callBack, hourOfDay, minute, is24HourView);
+    public DurationPickerDialog(Context context, TimePickerDialog.OnTimeSetListener callBack, int hourOfDay, int minute){
+        super(context, callBack, hourOfDay, minute, true);
     }
 
     @Override

@@ -51,6 +51,7 @@ public class SessionService {
 			user = new User();
 			user.setCreationDate(new Date().getTime());
 			user.setEmail(userEmail);
+			user.setGender(fbProfile.getGender());
 			user.setFullName(FacebookUtils.getFullName(
 					fbProfile.getFirstName(), fbProfile.getMiddleName(),
 					fbProfile.getLastName()));
