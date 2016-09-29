@@ -56,8 +56,21 @@
 		<jersey-version>1.18</jersey-version>
 		<log4j.version>1.2.16</log4j.version>
 		<aspectj.version>1.7.4</aspectj.version>
+		<junit-version>4.12</junit-version>
 	</properties>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>${junit-version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable -->
+		<dependency>
+		    <groupId>nz.ac.waikato.cms.weka</groupId>
+		    <artifactId>weka-stable</artifactId>
+		    <version>3.8.0</version>
+		</dependency>
 		<!-- Adding in JPA With It's Requirements -->
 		<dependency>
 			<groupId>joda-time</groupId>

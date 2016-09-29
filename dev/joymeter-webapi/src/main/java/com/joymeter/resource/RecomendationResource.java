@@ -28,7 +28,6 @@ public class RecomendationResource {
 	@RequiresAuthentication
 	public Response suggestActivity(){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
-
 		userService.suggestActivity(session.getUser(), session.getGcmToken());
 		
 		return Response.ok("{}").build();
@@ -39,7 +38,6 @@ public class RecomendationResource {
 	@RequiresAuthentication
 	public Response acceptRecomendation(Advice acceptedAdvice){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
-		
 		userService.acceptAdvice(session.getUser(),acceptedAdvice);
 		
 		return Response.ok("{}").build();

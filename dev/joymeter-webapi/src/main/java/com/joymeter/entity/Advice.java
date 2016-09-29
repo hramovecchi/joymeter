@@ -32,6 +32,7 @@ public class Advice implements Serializable{
 	private long id;
 	private long date;
 	private boolean accepted;
+	private String technique;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
@@ -92,5 +93,13 @@ public class Advice implements Serializable{
 
 	public void setCreatedActivity(Activity createdActivity) {
 		this.createdActivity = createdActivity;
+	}
+
+	public String getTechnique() {
+		return technique;
+	}
+
+	public void setTechnique(String technique) {
+		this.technique = technique;
 	}
 }
