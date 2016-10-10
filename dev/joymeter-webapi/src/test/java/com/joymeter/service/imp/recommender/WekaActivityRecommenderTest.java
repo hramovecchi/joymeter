@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import weka.classifiers.Classifier;
@@ -35,6 +36,7 @@ public class WekaActivityRecommenderTest {
 	}
 
 	@Test
+	@Ignore
 	public void testClassifier() throws Exception{
 		// Deserialize the classifier.
 	    Classifier classifier = new NaiveBayes();
