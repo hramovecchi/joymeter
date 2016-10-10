@@ -79,6 +79,10 @@
 	        <aop:pointcut expression="@annotation(com.joymeter.security.RequiresAuthentication)" id="securedMethods"/>
 	        <aop:around method="checkAccess" pointcut-ref="securedMethods" arg-names="proceedingJoinPoint"/>
 	    </aop:aspect>
+	    <aop:aspect ref="securityInterceptor">
+			<aop:pointcut expression="@annotation(com.joymeter.security.Admin)" id="adminMethods"/>
+			<aop:around method="checkAdminAllowed" pointcut-ref="adminMethods" arg-names="proceedingJoinPoint"/>
+		</aop:aspect>
 	</aop:config>
 	
 </beans>

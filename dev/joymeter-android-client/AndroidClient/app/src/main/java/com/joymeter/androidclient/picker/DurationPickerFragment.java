@@ -29,10 +29,7 @@ public class DurationPickerFragment extends DialogFragment
         int hour = setDuration.getInt("hours");
         int minute = setDuration.getInt("minutes");
 
-       TimePickerDialog durationPicker =  new DurationPickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()));
-
-
+        TimePickerDialog durationPicker =  new DurationPickerDialog(getActivity(), this, hour, minute);
         durationPicker.setTitle("Duration:");
 
         return durationPicker;

@@ -42,6 +42,27 @@ public class AdviceJpaRepository implements AdviceRepository{
 		return advices;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<Advice> getAcceptedAdvicesByType(long userId, String type) {
+		Query queryfetchByUserId = entityManager.createNamedQuery("Advice.findAcceptedByType");
+		queryfetchByUserId.setParameter("userID", userId);
+		queryfetchByUserId.setParameter("type", type);
+		queryfetchByUserId.setParameter("state", Boolean.TRUE);
+		List<Advice> advices = queryfetchByUserId.getResultList();
+		return advices;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<Advice> getAdvicesByType(long userId, String type) {
+		Query queryfetchByUserId = entityManager.createNamedQuery("Advice.findByType");
+		queryfetchByUserId.setParameter("userID", userId);
+		queryfetchByUserId.setParameter("type", type);
+		List<Advice> advices = queryfetchByUserId.getResultList();
+		return advices;
+	}
+
 	@Transactional(readOnly = true)
 	public Advice getById(long id) {
 		return entityManager.find(Advice.class, id);

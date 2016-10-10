@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.joymeter.entity.Activity;
-import com.joymeter.repository.ActivityRepository;
 import com.joymeter.service.DefaultAdviceActivityService;
 
 @Service("defaultAdviceActivityService")

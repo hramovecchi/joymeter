@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown=true)
 @Entity
 @Table(name = "ADVICE")
-@NamedQueries( { @NamedQuery(name = "Advice.findAllByUser", query = "SELECT a FROM Advice a WHERE a.user.id=:userID")})
+@NamedQueries( { @NamedQuery(name = "Advice.findAllByUser", query = "SELECT a FROM Advice a WHERE a.user.id=:userID"),
+				 @NamedQuery(name = "Advice.findAcceptedByType", query = "SELECT a FROM Advice a WHERE a.user.id=:userID AND a.accepted=:state AND a.suggestedActivity.type=:type"),
+				 @NamedQuery(name = "Advice.findByType", query = "SELECT a FROM Advice a WHERE a.user.id=:userID AND a.suggestedActivity.type=:type")})
 
 public class Advice implements Serializable{
 
@@ -32,6 +34,7 @@ public class Advice implements Serializable{
 	private long id;
 	private long date;
 	private boolean accepted;
+	private String technique;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
@@ -92,5 +95,13 @@ public class Advice implements Serializable{
 
 	public void setCreatedActivity(Activity createdActivity) {
 		this.createdActivity = createdActivity;
+	}
+
+	public String getTechnique() {
+		return technique;
+	}
+
+	public void setTechnique(String technique) {
+		this.technique = technique;
 	}
 }

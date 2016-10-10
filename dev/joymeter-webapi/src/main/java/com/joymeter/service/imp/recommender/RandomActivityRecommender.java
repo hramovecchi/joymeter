@@ -1,6 +1,5 @@
-package com.joymeter.service.imp;
+package com.joymeter.service.imp.recommender;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +9,14 @@ import com.joymeter.entity.Activity;
 import com.joymeter.entity.Advice;
 import com.joymeter.entity.User;
 import com.joymeter.repository.ActivityRepository;
-import com.joymeter.repository.AdviceRepository;
 import com.joymeter.service.DefaultAdviceActivityService;
-import com.joymeter.service.RecomendationService;
+import com.joymeter.service.recommender.ActivityRecommender;
 
-@Service("recomendationService")
-public class DefaultRecomendationService implements RecomendationService{
+@Service("randomActivityRecommender")
+public class RandomActivityRecommender implements ActivityRecommender{
 
 	@Autowired
-	ActivityRepository activityRepository;
-	
-	@Autowired
-	AdviceRepository adviceRepository;
+	ActivityRepository activityRepository;	
 	
 	@Autowired
 	DefaultAdviceActivityService defaultAdviceActService;
@@ -34,37 +29,28 @@ public class DefaultRecomendationService implements RecomendationService{
 	
 	private Advice suggestActivityForUser(User user) {
 		List<Activity> activities = activityRepository.getAllActivitiesByUserId(user.getId());
+		activities.addAll(getDefaultActivities());
+		
 		Activity activitytoSuggest;
-		
-		if (activities.isEmpty()){
-			activitytoSuggest =  getDefaultActivity();
-		} else {
-			int index = (int)Math.floor(Math.random()*(0-(activities.size()))+(activities.size()));
-			activitytoSuggest = activities.get(index);
-		}
-		
-		long now = Calendar.getInstance().getTimeInMillis();
-		
+		int index = (int)Math.floor(Math.random()*(0-(activities.size()))+(activities.size()));
+		activitytoSuggest = activities.get(index);
+
 		Advice advice = new Advice();
-		advice.setDate(now);
 		advice.setSuggestedActivity(activitytoSuggest);
 		advice.setUser(user);
-		
-		adviceRepository.save(advice);
 		
 		return advice;
 	}
 	
-	private Activity getDefaultActivity() {
+	private List<Activity> getDefaultActivities() {
 		if (!defaultActivitiesStored){
 			for (Activity a: defaultAdviceActService.getActivities()){
 				activityRepository.update(a);
 			}
 			defaultActivitiesStored = true;
 		}
-		int index = (int)Math.floor(Math.random()*
-				(0-(defaultAdviceActService.getActivities().size()))+(defaultAdviceActService.getActivities().size()));
-		return defaultAdviceActService.getActivities().get(index);
+		
+		return defaultAdviceActService.getActivities();
 	}
 
 }

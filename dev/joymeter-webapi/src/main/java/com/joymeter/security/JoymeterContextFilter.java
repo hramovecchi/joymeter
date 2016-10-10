@@ -29,7 +29,14 @@ public class JoymeterContextFilter implements ContainerRequestFilter{
 		String [] parts = StringUtils.split(request.getHeaderValue(HttpHeaders.AUTHORIZATION), " ");
 		
 		if (parts != null && parts.length == 2 && AUTHORIZATION_DELIMITER.equals(parts[0])){
-			sessionToken = parts[1];
+			String[] bearerParts = StringUtils.split(parts[1], ":");
+			if (bearerParts != null){
+				joymeterContext.setAdminUserName(bearerParts[0]);
+				joymeterContext.setAdminPassword(bearerParts[1]);
+			} else {
+				sessionToken = parts[1];
+			}
+
 		}
 		
 		if (!StringUtils.isEmpty(sessionToken)){

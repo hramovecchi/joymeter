@@ -10,6 +10,8 @@ import com.joymeter.entity.Session;
 public class JoymeterContext {
 	private String sessionToken;
 	private Session joymeterSession;
+	private String adminUserName;
+	private String adminPassword;
 
 	public String getSessionToken() {
 		return sessionToken;
@@ -25,5 +27,21 @@ public class JoymeterContext {
 
 	public void setJoymeterSession(Session joymeterSession) {
 		this.joymeterSession = joymeterSession;
+	}
+
+	public String getAdminUserName() {
+		return adminUserName;
+	}
+
+	public void setAdminUserName(String adminUserName) {
+		this.adminUserName = adminUserName;
+	}
+
+	public String getAdminPassword() {
+		return adminPassword;
+	}
+
+	public void setAdminPassword(String adminPassword) {
+		this.adminPassword = adminPassword;
 	}
 }

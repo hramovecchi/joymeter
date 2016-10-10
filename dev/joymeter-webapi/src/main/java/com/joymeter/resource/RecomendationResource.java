@@ -13,16 +13,12 @@ import com.joymeter.entity.Advice;
 import com.joymeter.entity.Session;
 import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.RequiresAuthentication;
-import com.joymeter.service.RecomendationService;
 import com.joymeter.service.UserService;
 
 @Component
 @Path("/recommendations")
 @Scope("request")
 public class RecomendationResource {
-	
-	@Autowired
-	private RecomendationService recomendationService;
 	
 	@Autowired
 	private UserService userService;
@@ -32,7 +28,6 @@ public class RecomendationResource {
 	@RequiresAuthentication
 	public Response suggestActivity(){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
-
 		userService.suggestActivity(session.getUser(), session.getGcmToken());
 		
 		return Response.ok("{}").build();
@@ -43,7 +38,6 @@ public class RecomendationResource {
 	@RequiresAuthentication
 	public Response acceptRecomendation(Advice acceptedAdvice){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
-		
 		userService.acceptAdvice(session.getUser(),acceptedAdvice);
 		
 		return Response.ok("{}").build();

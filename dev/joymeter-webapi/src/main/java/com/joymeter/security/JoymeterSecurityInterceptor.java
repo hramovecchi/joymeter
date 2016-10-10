@@ -3,6 +3,7 @@ package com.joymeter.security;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 
@@ -15,6 +16,15 @@ public class JoymeterSecurityInterceptor implements Ordered {
 	
 	private final static Logger logger = Logger.getLogger(JoymeterSecurityInterceptor.class);
 	
+	@Value("${admin.username}")
+	private String adminUserName;
+
+	@Value("${admin.password}")
+	private String adminPassword;
+
+	@Value("${gcm.notification.uri}")
+	private String baseUri;
+
 	@Autowired
 	private SessionRepository sessionService;
 
@@ -39,6 +49,22 @@ public class JoymeterSecurityInterceptor implements Ordered {
 		joymeterContext.setJoymeterSession(joymeterSession);
 		JoymeterContextHolder.set(joymeterContext);
 		
+		Object result = pjp.proceed();
+		return result;
+	}
+
+	public Object checkAdminAllowed(ProceedingJoinPoint pjp) throws Throwable {
+		JoymeterContext joymeterContext = JoymeterContextHolder.get();
+		if (StringUtils.isEmpty(joymeterContext.getAdminUserName()) &&
+				StringUtils.isEmpty(joymeterContext.getAdminPassword())){
+			throw new JoymeterUnauthorizedException();
+		}
+
+		if (!joymeterContext.getAdminUserName().equals(adminUserName) ||
+				!joymeterContext.getAdminPassword().equals(adminPassword)){
+			throw new JoymeterUnauthorizedException();
+		}
+
 		Object result = pjp.proceed();
 		return result;
 	}

@@ -1,5 +1,8 @@
 package com.joymeter.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,6 +27,7 @@ import com.joymeter.entity.dto.SyncupActions;
 import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.RequiresAuthentication;
 import com.joymeter.service.ActivityService;
+import com.joymeter.service.imp.recommender.base.ActivityType;
 
 @Component
 @Path("/activities")
@@ -48,6 +52,18 @@ public class ActivityResource {
 		log.info("userId: "+user.getId());
 		
 		return Response.ok(activityService.getActivities(user)).build();
+	}
+	
+	@GET
+	@Path("/types")
+	@Produces(MediaType.APPLICATION_JSON)
+	@RequiresAuthentication
+	public Response getTypes(){
+		List<String> types = new ArrayList<String>();
+		for (ActivityType type: ActivityType.values()){
+			types.add(type.toString());
+		}
+		return Response.ok(types).build();
 	}
 
 	/*
