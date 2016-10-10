@@ -3,6 +3,7 @@ package com.joymeter.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.joymeter.entity.Activity;
 import com.joymeter.entity.Advice;
 import com.joymeter.entity.HistoricalLevel;
 import com.joymeter.entity.User;
@@ -54,10 +55,12 @@ public class UserService {
 
 	public void acceptAdvice(User owner, Advice acceptedAdvice) {
 		ActivityDTO activityToAdd = new ActivityDTO(acceptedAdvice.getCreatedActivity());
-		activityService.addActivity(owner, activityToAdd);
+		Activity addedActivity = activityService.addActivity(owner, activityToAdd);
 
 		acceptedAdvice.setUser(owner);
-		acceptedAdvice.setAccepted(Boolean.TRUE);
+		Activity adviceActivity = adviceRepository.getById(acceptedAdvice.getId()).getSuggestedActivity();
+
+		acceptedAdvice.setAccepted(adviceActivity.getType().equals(addedActivity.getType()));
 		adviceRepository.update(acceptedAdvice);
 	}
 }

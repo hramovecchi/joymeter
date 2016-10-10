@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum ActivityType {
-	Amigos("Amigos"),
+    Amigos("Amigos"),
     Familia("Familia"),
     Deporte("Deporte"),
     CineTV("Cine/TV"),
