@@ -1,6 +1,7 @@
 package com.joymeter.service.imp;
 
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,39 +19,32 @@ public class RecommendationServiceImpl implements RecommendationService {
 
 	@Autowired
 	AdviceRepository adviceRepository;
-	
-	@Autowired
-	ActivityRecommender randomActivityRecommender;
-	
+
 	@Autowired
 	ActivityRecommender wekaActivityRecommender;
 
 	@Autowired
-	ActivityRecommender historyActivityRecommender;//wekaWithFilter
+	ActivityRecommender wekaWithFilterActivityRecommender;
 
-	public Advice suggestActivity(User user) {
+	private Map<Long, AdviceTechnique> userLastRecommendationTechnique = new HashMap<Long, AdviceTechnique>();
+
+	public Advice suggestActivity(User user) throws Exception {
 		Advice advice = null;
 
-//		Random ran = new Random();
-//		switch(AdviceTechnique.values()[ran.nextInt(2)]){
-//		case random:
-//			advice = randomActivityRecommender.suggestActivity(user);
-//			advice.setTechnique(AdviceTechnique.random.name());
-//			break;
-//		case weka:
-//			advice = wekaActivityRecommender.suggestActivity(user);
-//			advice.setTechnique(AdviceTechnique.weka.name());
-//			break;
-//		case wekaWithFilter:
-//			advice = historyActivityRecommender.suggestActivity(user);
-//			advice.setTechnique(AdviceTechnique.wekaWithFilter.name());
-//			break;
-//		}
+		switch(getRecommendationTechnique(user)){
+		case weka:
+			advice = wekaActivityRecommender.suggestActivity(user);
+			advice.setTechnique(AdviceTechnique.weka.name());
+			break;
+		case wekaWithFilter:
+			advice = wekaWithFilterActivityRecommender.suggestActivity(user);
+			advice.setTechnique(AdviceTechnique.wekaWithFilter.name());
+			break;
+		}
 
-		advice = wekaActivityRecommender.suggestActivity(user);
-		advice.setTechnique(AdviceTechnique.weka.name());
 		long now = DateTime.now().getMillis();
 
+		advice.setUser(user);
 		advice.getSuggestedActivity().setStartDate(now);
 		advice.getSuggestedActivity().setEndDate(now + ActivityUtils.durationToSuggest());
 
@@ -59,10 +53,30 @@ public class RecommendationServiceImpl implements RecommendationService {
 		return advice;
 	}
 
-	public enum AdviceTechnique{
-		random,
-		weka,
-		wekaWithFilter;
+	private AdviceTechnique getRecommendationTechnique(User user) {
+		if (userLastRecommendationTechnique.containsKey(user.getId())){
+			AdviceTechnique at = userLastRecommendationTechnique.get(user.getId());
+			userLastRecommendationTechnique.put(user.getId(), at.nextTechnique());
+			return at.nextTechnique();
+		} else {
+			AdviceTechnique at = AdviceTechnique.weka;
+			userLastRecommendationTechnique.put(user.getId(), at);
+			return at;
+		}
 	}
 
+	private enum AdviceTechnique{
+		weka,
+		wekaWithFilter;
+
+		public AdviceTechnique nextTechnique(){
+			switch (this){
+			case weka:
+				return wekaWithFilter;
+			case wekaWithFilter:
+				return weka;
+			}
+			return weka;
+		}
+	}
 }

@@ -15,17 +15,17 @@ import com.joymeter.repository.LevelOfJoyRepository;
 
 @Service("levelOfJoyService")
 public abstract class LevelOfJoyService {
-	
+
 	@Autowired
 	ActivityRepository activityService;
-	
+
 	@Autowired
 	LevelOfJoyRepository levelOfJoyRepository;
-	
+
 	protected abstract double calculateAverage(Double actual, List<LevelOfJoy> activities);
-	
+
 	protected abstract Double decreseLevel(Double prevLevel);
-	
+
 	public LevelOfJoy calculateToday(User user) {
 			LevelOfJoy last = levelOfJoyRepository.getLastByUser(user);
 			if (last != null) {
@@ -41,10 +41,10 @@ public abstract class LevelOfJoyService {
 				}
 				return last;
 			}
-			
+
 			return createActual(user, DateTime.now(), Double.valueOf(0), getActualActivities(user));
 	}
-	
+
 	private LevelOfJoy createActual(User user, DateTime actualDate, Double prevLevel, List<LevelOfJoy> activities) {
 		LevelOfJoy actual = new LevelOfJoy();
 		actual.setDate(actualDate);
@@ -53,15 +53,15 @@ public abstract class LevelOfJoyService {
 		levelOfJoyRepository.save(actual);
 		return actual;
 	}
-	
+
 	private boolean isSameDay(DateTime day1, DateTime day2) {
 		return day1.withTimeAtStartOfDay().isEqual(day2.withTimeAtStartOfDay());
 	}
-	
+
 	private boolean isLaterDay(DateTime day1, DateTime day2) {
 		return day1.withTimeAtStartOfDay().isAfter(day2.withTimeAtStartOfDay());
 	}
-	
+
 	private boolean isPreviousDay(DateTime day1, DateTime day2) {
 		return day1.withTimeAtStartOfDay().isBefore(day2.withTimeAtStartOfDay());
 	}
@@ -83,7 +83,7 @@ public abstract class LevelOfJoyService {
 		levelOfJoy.setMilliseconds(activity.getEndDate() - activity.getStartDate()); //Duration of the activity
 		return levelOfJoy;
 	}
-	
+
 	private Double calculateActualLevel(Double prevLevel, List<LevelOfJoy> activities) {
 		Double actual = decreseLevel(prevLevel);
 		if (activities != null && !activities.isEmpty()) {
@@ -91,8 +91,7 @@ public abstract class LevelOfJoyService {
 		}
 		return actual;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public List<LevelOfJoy> getLastEntriesByUser(User user, int days) {
 		
 		List<LevelOfJoy> historical = levelOfJoyRepository.getLastEntriesByUser(user, days);

@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties(ignoreUnknown=true)
 @Entity
 @Table(name = "ADVICE")
-@NamedQueries( { @NamedQuery(name = "Advice.findAllByUser", query = "SELECT a FROM Advice a WHERE a.user.id=:userID")})
+@NamedQueries( { @NamedQuery(name = "Advice.findAllByUser", query = "SELECT a FROM Advice a WHERE a.user.id=:userID"),
+				 @NamedQuery(name = "Advice.findAcceptedByType", query = "SELECT a FROM Advice a WHERE a.user.id=:userID AND a.accepted=:state AND a.suggestedActivity.type=:type"),
+				 @NamedQuery(name = "Advice.findByType", query = "SELECT a FROM Advice a WHERE a.user.id=:userID AND a.suggestedActivity.type=:type")})
 
 public class Advice implements Serializable{
 

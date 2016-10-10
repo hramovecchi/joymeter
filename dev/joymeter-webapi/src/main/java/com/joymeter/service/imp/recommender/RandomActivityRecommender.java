@@ -1,6 +1,5 @@
 package com.joymeter.service.imp.recommender;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;

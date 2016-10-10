@@ -4,5 +4,5 @@ import com.joymeter.entity.Advice;
 import com.joymeter.entity.User;
 
 public interface ActivityRecommender {
-	Advice suggestActivity(User user);
+	Advice suggestActivity(User user) throws Exception;
 }

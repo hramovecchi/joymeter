@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.joymeter.entity.Session;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.UserDTO;
 import com.joymeter.security.JoymeterContextHolder;

@@ -21,13 +21,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.joymeter.entity.Activity;
-import com.joymeter.entity.ActivityType;
 import com.joymeter.entity.User;
 import com.joymeter.entity.dto.ActivityDTO;
 import com.joymeter.entity.dto.SyncupActions;
 import com.joymeter.security.JoymeterContextHolder;
 import com.joymeter.security.RequiresAuthentication;
 import com.joymeter.service.ActivityService;
+import com.joymeter.service.imp.recommender.base.ActivityType;
 
 @Component
 @Path("/activities")

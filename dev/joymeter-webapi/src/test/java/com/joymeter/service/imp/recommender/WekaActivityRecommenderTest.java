@@ -62,11 +62,6 @@ public class WekaActivityRecommenderTest {
 	        double[] predictionDistribution = 
 	            classifier.distributionForInstance(instances.instance(i));
 	        
-	        double totalSum = 0.0;
-	        for (double value : predictionDistribution){
-	        	totalSum += value;
-	        }
-
 	        // Print out the true label, predicted label, and the distribution.
 	        System.out.printf("%5d: true=%-10s, predicted=%-10s, distribution=", 
 	                          i, trueClassLabel, predictedClassLabel); 
