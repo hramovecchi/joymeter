@@ -32,6 +32,8 @@ import weka.core.Instance;
 @Service("wekaWithFilterActivityRecommender")
 public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 
+	private final Double abcThreshold = 0.7;
+
 	@Autowired
 	ActivityService activityService;
 
@@ -53,8 +55,12 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 		List<ActivityTypeProbability> sortedActivityTypeDistribution = 
 				getActivitytypeDistribution(user, mod, dt, lvlOfSatisfactionTarget);
 
+		//BEGIN ABC
+		List<ActivityTypeProbability> listFiltered = abcFilterList(sortedActivityTypeDistribution);
+		//END ABC
+
 		//BEGIN Feedback FILTER
-		ActivityType activityType = filterByFeedback(user, sortedActivityTypeDistribution);
+		ActivityType activityType = filterByFeedback(user, listFiltered);
 		//END Feedback FILTER
 		List<Activity> activityList = activityService.getActivities(user).getActivities();
 		activityList.removeIf(new ActivityPredicate(activityType.getType()));
@@ -71,6 +77,19 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 		Advice advice = new Advice();
 		advice.setSuggestedActivity(activityList.get(index));
 		return advice;
+	}
+
+	private List<ActivityTypeProbability> abcFilterList(List<ActivityTypeProbability> sortedActivityTypeDistribution) {
+		List<ActivityTypeProbability> filteredList = new ArrayList<ActivityTypeProbability>();
+		Double probSum = 0.0;
+		int index = 0;
+		while (probSum < abcThreshold){
+			filteredList.add(sortedActivityTypeDistribution.get(index));
+			probSum += sortedActivityTypeDistribution.get(index).getProbability();
+			index ++;
+		}
+
+		return filteredList;
 	}
 
 	private ActivityType filterByFeedback(User user, List<ActivityTypeProbability> sortedActivityTypeDistribution) {
@@ -96,10 +115,8 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 			probDistribMap.put(atp.getType(), distribByTypeProb);
 		}
 
-		epsilon = (epsilon - 1)/sortedActivityTypeDistribution.size();
-		
 		for (ActivityType at : probDistribMap.keySet()){
-			double value = probDistribMap.get(at) - epsilon;
+			double value = probDistribMap.get(at) / epsilon;
 			probDistribMap.put(at, value);
 		}
 
