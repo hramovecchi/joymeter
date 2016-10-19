@@ -178,8 +178,8 @@
         {
             "id":-17,
             "type": "Profesional",
-            "summary": "estudiando",
-            "description": "estudiando",
+            "summary": "reunion de trabajo",
+            "description": "reunion de trabajo en la oficina",
             "classified": false,
             "deleted": false,
             "levelOfJoy": 2,
@@ -191,6 +191,17 @@
             "type": "Familia",
             "summary": "visitando a la familia",
             "description": "visitando a la familia",
+            "classified": false,
+            "deleted": false,
+            "levelOfJoy": 3,
+            "startDate": 1448728641809,
+            "endDate": 1448735841809
+        },
+		{
+            "id":-19,
+            "type": "Estudio",
+            "summary": "estudiando",
+            "description": "estudiando",
             "classified": false,
             "deleted": false,
             "levelOfJoy": 3,
