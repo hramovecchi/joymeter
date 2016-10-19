@@ -1,7 +1,11 @@
 package com.joymeter.resource;
 
+import java.util.List;
+
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +35,8 @@ public class AdminResource {
 	@GET
 	@Path("/users/suggest")
 	@Admin
-	public Response adviceAllUsers(){
-		adminService.suggestAllUsers();
+	public Response adviceAllUsers(@QueryParam("users") final List<String> users){
+		adminService.suggestUsers(users);
 
 		return Response.ok("{}").build();
 	}
