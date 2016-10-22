@@ -23,7 +23,7 @@ public class RandomActivityRecommender implements ActivityRecommender{
 	
 	private boolean defaultActivitiesStored = false;
 	
-	public Advice suggestActivity(User user) {
+	public Advice suggestActivity(User user, long instant) {
 		return this.suggestActivityForUser(user);
 	}
 	

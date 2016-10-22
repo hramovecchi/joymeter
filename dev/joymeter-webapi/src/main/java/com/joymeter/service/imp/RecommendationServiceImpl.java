@@ -28,16 +28,16 @@ public class RecommendationServiceImpl implements RecommendationService {
 
 	private Map<Long, AdviceTechnique> userLastRecommendationTechnique = new HashMap<Long, AdviceTechnique>();
 
-	public Advice suggestActivity(User user) throws Exception {
+	public Advice suggestActivity(User user, long instant) throws Exception {
 		Advice advice = null;
 
 		switch(getRecommendationTechnique(user)){
 		case weka:
-			advice = wekaActivityRecommender.suggestActivity(user);
+			advice = wekaActivityRecommender.suggestActivity(user, instant);
 			advice.setTechnique(AdviceTechnique.weka.name());
 			break;
 		case wekaWithFilter:
-			advice = wekaWithFilterActivityRecommender.suggestActivity(user);
+			advice = wekaWithFilterActivityRecommender.suggestActivity(user, instant);
 			advice.setTechnique(AdviceTechnique.wekaWithFilter.name());
 			break;
 		}

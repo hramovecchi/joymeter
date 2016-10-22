@@ -5,5 +5,5 @@ import com.joymeter.entity.User;
 
 public interface RecommendationService {
 	
-	Advice suggestActivity(User user) throws Exception;
+	Advice suggestActivity(User user, long dateInMillis) throws Exception;
 }

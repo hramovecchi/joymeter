@@ -37,18 +37,18 @@ public class AdminServiceImpl implements AdminService{
 		this.wekaBaseRecommender = wbr;
 	}
 
-	public void suggestUsers(List<String> users) {
+	public void suggestUsers(List<String> users, long dateInMillis) {
 		if (users.isEmpty()){
 			List<User> userList = userRepository.getAll();
 
 			for (User user : userList) {
 				List<Session> userSessionsList = sessionRepository.getByUserId(user.getId());
-				userService.suggestActivity(user, userSessionsList.get(0).getGcmToken());
+				userService.suggestActivity(user, userSessionsList.get(0).getGcmToken(), dateInMillis);
 			}
 		} else {
 			for (String user : users){
-				List<Session> userSessionsList = sessionRepository.getByUserId(Integer.valueOf(user));
-				userService.suggestActivity(userSessionsList.get(0).getUser(), userSessionsList.get(0).getGcmToken());
+				List<Session> userSessionsList = sessionRepository.getByUserId(Long.valueOf(user));
+				userService.suggestActivity(userSessionsList.get(0).getUser(), userSessionsList.get(0).getGcmToken(), dateInMillis);
 			}
 		}
 

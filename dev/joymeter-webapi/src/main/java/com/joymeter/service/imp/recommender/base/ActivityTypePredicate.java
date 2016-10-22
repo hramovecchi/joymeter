@@ -1,17 +1,16 @@
 package com.joymeter.service.imp.recommender.base;
 
-import java.util.function.Predicate;
-
+import com.google.common.base.Predicate;
 import com.joymeter.entity.Activity;
 
-public class ActivityPredicate implements Predicate<Activity>{
+public class ActivityTypePredicate implements Predicate<Activity>{
 	private String type;
 	
-	public ActivityPredicate(String activityType){
+	public ActivityTypePredicate(String activityType){
 		type = activityType;
 	}
 
-	public boolean test(Activity input) {
+	public boolean apply(Activity input) {
 		if (input.getType().equals(type)){
 			return false;
 		}

@@ -40,10 +40,10 @@ public class UserService {
 		return updatedUser;
 	}
 
-	public void suggestActivity(User user, String gsmToken){
+	public void suggestActivity(User user, String gsmToken, long dateInMillis){
 		Advice advice = null;
 		try {
-			advice = recommendationService.suggestActivity(user);
+			advice = recommendationService.suggestActivity(user, dateInMillis);
 		} catch (Exception e) {}
 
 		notificationService.sendNotificationMessage(gsmToken, advice);

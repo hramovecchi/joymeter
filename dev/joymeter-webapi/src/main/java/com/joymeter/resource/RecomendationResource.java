@@ -5,6 +5,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,9 @@ public class RecomendationResource {
 	@RequiresAuthentication
 	public Response suggestActivity(){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
-		userService.suggestActivity(session.getUser(), session.getGcmToken());
+
+		DateTime now = DateTime.now();
+		userService.suggestActivity(session.getUser(), session.getGcmToken(), now.getMillis());
 		
 		return Response.ok("{}").build();
     }

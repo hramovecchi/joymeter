@@ -12,13 +12,14 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Iterables;
 import com.joymeter.entity.Activity;
 import com.joymeter.entity.Advice;
 import com.joymeter.entity.User;
 import com.joymeter.repository.AdviceRepository;
 import com.joymeter.service.ActivityService;
 import com.joymeter.service.DefaultAdviceActivityService;
-import com.joymeter.service.imp.recommender.base.ActivityPredicate;
+import com.joymeter.service.imp.recommender.base.ActivityTypePredicate;
 import com.joymeter.service.imp.recommender.base.ActivityType;
 import com.joymeter.service.imp.recommender.base.ActivityTypeProbability;
 import com.joymeter.service.imp.recommender.base.DayType;
@@ -46,8 +47,8 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 	@Autowired
 	DefaultAdviceActivityService defaultAdviceActService;
 
-	public Advice suggestActivity(User user) throws Exception {
-		DateTime now = DateTime.now();
+	public Advice suggestActivity(User user, long instant) throws Exception {
+		DateTime now = new DateTime(instant);
 		MomentOfDay mod = MomentOfDay.valueOf(now.getMillis());
 		DayType dt = DayType.valueOf(now.getMillis());
 
@@ -63,12 +64,12 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 		ActivityType activityType = filterByFeedback(user, listFiltered);
 		//END Feedback FILTER
 		List<Activity> activityList = activityService.getActivities(user).getActivities();
-		activityList.removeIf(new ActivityPredicate(activityType.getType()));
+		Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
 		
 		//In case there is no activity for the selected type, return a preset one
 		if (activityList.isEmpty()){
 			activityList = defaultAdviceActService.getActivities();
-			activityList.removeIf(new ActivityPredicate(activityType.getType()));
+			Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
 		}
 
 		Random r = new Random();
