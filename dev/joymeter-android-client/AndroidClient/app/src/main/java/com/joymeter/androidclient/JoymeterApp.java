@@ -50,7 +50,8 @@ public class JoymeterApp extends Application {
         SyncupActionDao syncupActionDao = daoSession.getSyncupActionDao();
         SyncupActivityDao syncupActivityDao = daoSession.getSyncupActivityDao();
 
-        activityService = new JActivityService(ActivityServiceFactory.getInstance(), eventBus, activityDao, syncupActionDao, syncupActivityDao);
+        activityService = new JActivityService(ActivityServiceFactory.getInstance(),
+                eventBus, activityDao, syncupActionDao, syncupActivityDao, context);
         eventBus.register(activityService);
 
         userService = new JUserService(UserServiceFactory.getInstance(), eventBus);
@@ -65,6 +66,7 @@ public class JoymeterApp extends Application {
         //must be logged to do this
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String sessionToken = sharedPreferences.getString(JoymeterPreferences.JOYMETER_TOKEN, null);
+
         if (sessionToken != null) {
             activityService.syncupToServer();
         }

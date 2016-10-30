@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +24,9 @@ import com.joymeter.dto.AdviceDTO;
 import com.joymeter.utils.DateUtils;
 import com.joymeter.utils.DurationUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Set;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -45,7 +50,7 @@ public class SingleActivityFragment extends Fragment {
     private RatingBar loj;
     private CheckBox share;
 
-    private  ArrayAdapter<CharSequence> typeAdapter;
+    private  ArrayAdapter<String> typeAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,11 +62,14 @@ public class SingleActivityFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Set<String> activitiesTypes = preferences.getStringSet(JoymeterPreferences.ACTIVITIES_TYPES, null);
+
         summary = (EditText)view.findViewById(R.id.summaryInput);
         spinnerTypes = (Spinner)view.findViewById(R.id.types_spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        typeAdapter = ArrayAdapter.createFromResource(this.getActivity(),
-                R.array.activities_types, android.R.layout.simple_spinner_item);
+
+        typeAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item, activitiesTypes.toArray(new String[activitiesTypes.size()]));
         // Specify the layout to use when the list of choices appears
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner

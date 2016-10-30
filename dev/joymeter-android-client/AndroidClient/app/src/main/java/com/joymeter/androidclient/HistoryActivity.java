@@ -1,7 +1,9 @@
 package com.joymeter.androidclient;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,9 +22,12 @@ import com.joymeter.events.bus.ActivityAddedEvent;
 import com.joymeter.events.bus.ActivityDeletedEvent;
 import com.joymeter.events.bus.ActivityUpdatedEvent;
 import com.joymeter.events.bus.EventsBus;
+import com.joymeter.events.bus.LoadActivitiesTypesEvent;
 import com.joymeter.service.helper.ConnectivityHelper;
 import com.joymeter.utils.ShareUtils;
 import com.squareup.otto.Subscribe;
+
+import java.util.Set;
 
 /**
  * Created by hramovecchi on 15/09/2015.
@@ -44,6 +49,11 @@ public class HistoryActivity extends FragmentActivity {
             startActivity(i);
         }
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplication());
+        Set<String> activitiesType = preferences.getStringSet(JoymeterPreferences.ACTIVITIES_TYPES, null);
+        if (activitiesType == null){
+            EventsBus.getInstance().post(new LoadActivitiesTypesEvent());
+        }
     }
 
     @Override

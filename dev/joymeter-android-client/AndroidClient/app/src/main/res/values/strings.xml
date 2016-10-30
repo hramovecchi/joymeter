@@ -12,18 +12,4 @@
     <string name="title_activity_chart">Gráfico Nivel de Felicidad</string>
     <string name="title_history_chart">Historial</string>
     <string name="suggest_button">Sugerirme una Actividad!</string>
-
-    <string-array name="activities_types">
-        <item>Amigos</item>
-        <item>Familia</item>
-        <item>Deporte</item>
-        <item>Cine/TV</item>
-        <item>Aire Libre</item>
-        <item>Shopping</item>
-        <item>Comida</item>
-        <item>Lectura</item>
-        <item>Profesional</item>
-        <item>Estudio</item>
-        <item>Ocio</item>
-    </string-array>
 </resources>

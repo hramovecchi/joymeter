@@ -1,5 +1,10 @@
 package com.joymeter.service;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import com.joymeter.androidclient.JoymeterPreferences;
 import com.joymeter.dao.SyncupAction;
 import com.joymeter.dao.SyncupActionDao;
 import com.joymeter.dao.SyncupActivity;
@@ -16,6 +21,7 @@ import com.joymeter.events.bus.ActivityUpdatedEvent;
 import com.joymeter.events.bus.AddActivityEvent;
 import com.joymeter.events.bus.DeleteActivityEvent;
 import com.joymeter.events.bus.LoadActivitiesEvent;
+import com.joymeter.events.bus.LoadActivitiesTypesEvent;
 import com.joymeter.events.bus.UpdateActivityEvent;
 import com.joymeter.rest.ActivityService;
 import com.joymeter.service.helper.ConnectivityHelper;
@@ -23,7 +29,9 @@ import com.joymeter.service.mapper.ActivityMapper;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import de.greenrobot.dao.query.Query;
@@ -46,19 +54,22 @@ public class JActivityService {
     private UserActivityDao activityDao;
     private SyncupActionDao syncupActionDao;
     private SyncupActivityDao syncupActivityDao;
+    private Context context;
 
     public JActivityService(
             ActivityService api,
             Bus bus,
             UserActivityDao activityDao,
             SyncupActionDao syncupActionDao,
-            SyncupActivityDao syncupActivityDao){
+            SyncupActivityDao syncupActivityDao,
+            Context context){
 
         this.api = api;
         this.bus = bus;
         this.activityDao = activityDao;
         this.syncupActionDao = syncupActionDao;
         this.syncupActivityDao = syncupActivityDao;
+        this.context = context;
     }
 
     @Subscribe
@@ -86,6 +97,31 @@ public class JActivityService {
             //trigger activitiesLoadedEvent
             bus.post(new ActivitiesLoadedEvent(ActivityMapper.mapFromDB(activities)));
         }
+    }
+
+    @Subscribe
+    public void onLoadActivitiesTypes(LoadActivitiesTypesEvent event){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                api.getActivitiesTypes(new Callback<List<String>>() {
+                    @Override
+                    public void success(List<String> activities, Response response) {
+                        Set<String> activitiesTypes = new HashSet<String>(activities);
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putStringSet(JoymeterPreferences.ACTIVITIES_TYPES, activitiesTypes);
+                        editor.commit();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            }
+        }).run();
     }
 
     @Subscribe

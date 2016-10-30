@@ -4,6 +4,8 @@ import com.joymeter.dto.Activities;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.dto.SyncupActions;
 
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.ResponseCallback;
 import retrofit.http.Body;
@@ -22,6 +24,9 @@ public interface ActivityService {
 
     @GET(activityPath)
     void getActivities(Callback<Activities> callback);
+
+    @GET(activityPath + "/types")
+    void getActivitiesTypes(Callback<List<String>> callback);
 
     @GET(activityPath + "/{id}")
     void getActivity(@Path("id") long id, Callback<ActivityDTO> callback);

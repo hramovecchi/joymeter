@@ -20,6 +20,8 @@ import com.joymeter.repository.AdviceRepository;
 import com.joymeter.service.ActivityService;
 import com.joymeter.service.DefaultAdviceActivityService;
 import com.joymeter.service.imp.recommender.base.ActivityTypePredicate;
+import com.joymeter.service.imp.recommender.base.ActivityDayTypePredicate;
+import com.joymeter.service.imp.recommender.base.ActivityMomentOfDayPredicate;
 import com.joymeter.service.imp.recommender.base.ActivityType;
 import com.joymeter.service.imp.recommender.base.ActivityTypeProbability;
 import com.joymeter.service.imp.recommender.base.DayType;
@@ -64,19 +66,13 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 		ActivityType activityType = filterByFeedback(user, listFiltered);
 		//END Feedback FILTER
 		List<Activity> activityList = activityService.getActivities(user).getActivities();
-		Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
-		
-		//In case there is no activity for the selected type, return a preset one
-		if (activityList.isEmpty()){
-			activityList = defaultAdviceActService.getActivities();
-			Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
-		}
+		List<Activity> activityListFiltered = filterByCriteria(activityList, activityType, dt, mod);
 
 		Random r = new Random();
-		int index = r.nextInt(activityList.size());
+		int index = r.nextInt(activityListFiltered.size());
 
 		Advice advice = new Advice();
-		advice.setSuggestedActivity(activityList.get(index));
+		advice.setSuggestedActivity(activityListFiltered.get(index));
 		return advice;
 	}
 
@@ -191,5 +187,35 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 	 */
 	private LevelOfSatisfaction[] getLevelOfSatisfactionTarget(User user) {
 		return LevelOfSatisfaction.values();
+	}
+
+	private List<Activity> filterByCriteria(List<Activity> activityList, ActivityType activityType,
+			DayType dt, MomentOfDay mod) {
+
+		Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
+
+		//In case there is no activity for the selected type, return a preset one
+		if (activityList.isEmpty()){
+			activityList = defaultAdviceActService.getActivities();
+			Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
+		} else {
+			//doing a backup
+			List<Activity> backupList = new ArrayList<Activity>(activityList.size());
+			Collections.copy(backupList, activityList);
+			//lets try filter by momentOfDay
+			Iterables.removeIf(activityList, new ActivityMomentOfDayPredicate(mod));
+
+			if (!activityList.isEmpty()){
+				List<Activity> backupList2 = new ArrayList<Activity>(activityList.size());
+				//lets try filter by dayType
+				Iterables.removeIf(activityList, new ActivityDayTypePredicate(dt));
+				if (activityList.isEmpty()){
+					return backupList2;
+				}
+			} else {
+				return backupList;
+			}
+		}
+		return activityList;
 	}
 }
