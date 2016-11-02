@@ -80,13 +80,13 @@ public class WekaActivityRecommender implements ActivityRecommender{
 			Iterables.removeIf(activityList, new ActivityTypePredicate(activityType.getType()));
 		} else {
 			//doing a backup
-			List<Activity> backupList = new ArrayList<Activity>(activityList.size());
-			Collections.copy(backupList, activityList);
+			List<Activity> backupList = new ArrayList<Activity>(activityList);
+
 			//lets try filter by momentOfDay
 			Iterables.removeIf(activityList, new ActivityMomentOfDayPredicate(mod));
 
 			if (!activityList.isEmpty()){
-				List<Activity> backupList2 = new ArrayList<Activity>(activityList.size());
+				List<Activity> backupList2 = new ArrayList<Activity>(activityList);
 				//lets try filter by dayType
 				Iterables.removeIf(activityList, new ActivityDayTypePredicate(dt));
 				if (activityList.isEmpty()){

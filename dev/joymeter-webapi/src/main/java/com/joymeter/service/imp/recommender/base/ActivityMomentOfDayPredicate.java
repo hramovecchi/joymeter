@@ -11,7 +11,7 @@ public class ActivityMomentOfDayPredicate implements Predicate<Activity>{
 	}
 
 	public boolean apply(Activity input) {
-		if (mod.name().equals(MomentOfDay.valueOf(input.getStartDate()))){
+		if (mod.equals(MomentOfDay.valueOf(input.getStartDate()))){
 			return false;
 		}
 		return true;

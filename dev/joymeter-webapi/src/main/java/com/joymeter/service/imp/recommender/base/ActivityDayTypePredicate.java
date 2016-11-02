@@ -11,7 +11,7 @@ public class ActivityDayTypePredicate implements Predicate<Activity>{
 	}
 
 	public boolean apply(Activity input) {
-		if (dt.name().equals(DayType.valueOf(input.getStartDate()))){
+		if (dt.equals(DayType.valueOf(input.getStartDate()))){
 			return false;
 		}
 		return true;
