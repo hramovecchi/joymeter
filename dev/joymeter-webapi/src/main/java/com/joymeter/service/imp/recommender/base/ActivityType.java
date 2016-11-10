@@ -3,15 +3,8 @@ package com.joymeter.service.imp.recommender.base;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum ActivityType {
-    Amigos("Amigos"),
-    Familia("Familia"),
+public enum ActivityType {    
     Deporte("Deporte"),
-    CineTV("Cine/TV"),
-    AireLibre("Aire Libre"),
-    Shopping("Shopping"),
-    Comida("Comida"),
-    Lectura("Lectura"),
     Profesional("Profesional"),
     Estudio("Estudio"),
     Ocio("Ocio");

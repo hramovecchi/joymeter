@@ -34,6 +34,14 @@ public class ActivityService {
 		return new Activities(activities);
 	}
 	
+public Activities getActivities(Integer userId) {
+		
+		List<Activity> activities = activityRepository.
+				fetchActiveActivitiesByUserId(userId);
+		
+		return new Activities(activities);
+	}
+	
 	public Activity addActivity(User owner, ActivityDTO activityDTO) {
 		Activity activity = new Activity();
 		activity = ActivityUtils.mappedToActivity(activity, activityDTO);

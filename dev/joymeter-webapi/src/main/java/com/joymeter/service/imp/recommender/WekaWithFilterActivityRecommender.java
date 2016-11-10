@@ -29,6 +29,7 @@ import com.joymeter.service.imp.recommender.base.WekaBaseRecommender;
 import com.joymeter.service.recommender.ActivityRecommender;
 
 import weka.core.Instance;
+import weka.core.Instances;
 
 @Service("wekaWithFilterActivityRecommender")
 public class WekaWithFilterActivityRecommender implements ActivityRecommender {
@@ -183,6 +184,47 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 		});
 		return distributionList;
 	}
+	
+	private List<ActivityTypeProbability> getTesteableActivitytypeDistribution(String mod, String dt, LevelOfSatisfaction[] lvlost, Instances trainingSet) throws Exception {
+		Map<ActivityType, Double> distributionMap = new HashMap<ActivityType, Double>();
+
+		for (LevelOfSatisfaction los : lvlost) {
+			Instance instance = wekaBaseRecommender.createTesteableInstance(dt, mod, los.name(), null, trainingSet);
+
+			List<ActivityTypeProbability> probDistribution = wekaBaseRecommender.getActivityTypeDistributionTesteable(trainingSet, instance);
+			for (ActivityTypeProbability typeAndProb: probDistribution) {
+				if (distributionMap.containsKey(typeAndProb.getType())) {
+					Double value = distributionMap.get(typeAndProb.getType());
+					value += typeAndProb.getProbability();
+					distributionMap.put(typeAndProb.getType(), value);
+				} else {
+					distributionMap.put(typeAndProb.getType(), typeAndProb.getProbability());
+				}
+			}
+		};
+
+		List<ActivityTypeProbability> distributionList = new ArrayList<ActivityTypeProbability>();
+		for (ActivityType type :distributionMap.keySet()) {
+			Double value = distributionMap.get(type);
+			value = value / LevelOfSatisfaction.values().length;
+			distributionMap.put(type, value);
+			distributionList.add(new ActivityTypeProbability(type, value));
+		}
+
+		Collections.sort(distributionList, new Comparator<ActivityTypeProbability>() {
+
+			public int compare(ActivityTypeProbability o1, ActivityTypeProbability o2) {
+				if (o1.getProbability() < o2.getProbability()){
+					return 1;
+				} else if (o1.getProbability() > o2.getProbability()) {
+					return -1;
+				}
+				return 0;
+			}
+		});
+		return distributionList;
+	}
+
 
 	/**
 	 * returns a Satisfaction Target for a given user
@@ -192,4 +234,52 @@ public class WekaWithFilterActivityRecommender implements ActivityRecommender {
 	private LevelOfSatisfaction[] getLevelOfSatisfactionTarget(User user) {
 		return LevelOfSatisfaction.values();
 	}
+	
+	public String suggestTesteableActivity(String dayType, String momentOfDay, Instances trainingSet, Map<ActivityType, Integer> suggestedMap, Map<ActivityType, Integer> acceptedMap) throws Exception {
+
+
+		LevelOfSatisfaction[] lvlOfSatisfactionTarget = LevelOfSatisfaction.values();
+		List<ActivityTypeProbability> sortedActivityTypeDistribution = getTesteableActivitytypeDistribution(momentOfDay, dayType, lvlOfSatisfactionTarget, trainingSet);
+
+		//BEGIN ABC
+		List<ActivityTypeProbability> listFiltered = abcFilterList(sortedActivityTypeDistribution);
+		//END ABC
+
+		//BEGIN Feedback FILTER
+		ActivityType activityType = filterByFeedback(suggestedMap, acceptedMap, listFiltered);
+		return activityType.name();
+	}
+	
+	private ActivityType filterByFeedback(Map<ActivityType, Integer> suggestedMap, Map<ActivityType, Integer> acceptedMap, List<ActivityTypeProbability> sortedActivityTypeDistribution) {
+
+		double epsilon = 0;
+		Map<ActivityType, Double> probDistribMap = new HashMap<ActivityType, Double>();
+		for (ActivityTypeProbability atp: sortedActivityTypeDistribution){
+			double suggestedByType = suggestedMap.get(atp.getType()) != 0 ? (double)suggestedMap.get(atp.getType()): (double)1;
+			double distribByTypeProb = acceptedMap.get(atp.getType())/suggestedByType;
+
+			distribByTypeProb = (distribByTypeProb * atp.getProbability()) + atp.getProbability();
+			epsilon += distribByTypeProb;
+
+			probDistribMap.put(atp.getType(), distribByTypeProb);
+		}
+
+		for (ActivityType at : probDistribMap.keySet()){
+			double value = probDistribMap.get(at) / epsilon;
+			probDistribMap.put(at, value);
+		}
+
+		double typeRandom = Math.random();
+		
+		double acumulativeValue = 0;
+		for (ActivityType at: probDistribMap.keySet()){
+			acumulativeValue += probDistribMap.get(at);
+			if (acumulativeValue >= typeRandom){
+				return at;
+			}			
+		}
+
+		return null;
+	}
+
 }

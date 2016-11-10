@@ -23,6 +23,7 @@ import com.joymeter.service.imp.recommender.base.WekaBaseRecommender;
 import com.joymeter.service.recommender.ActivityRecommender;
 
 import weka.core.Instance;
+import weka.core.Instances;
 
 @Service("wekaActivityRecommender")
 public class WekaActivityRecommender implements ActivityRecommender{
@@ -69,5 +70,23 @@ public class WekaActivityRecommender implements ActivityRecommender{
 		Advice advice = new Advice();
 		advice.setSuggestedActivity(activityList.get(index));
 		return advice;
+	}
+	
+	public String suggestTesteableActivity(String dayType, String momentOfDay, Instances trainingSet) throws Exception {
+	
+		List<ActivityType> typesToRecommend = new ArrayList<ActivityType>();
+		
+		for (LevelOfSatisfaction los: LevelOfSatisfaction.values()){
+			Instance instance = wekaBaseRecommender.createTesteableInstance(dayType, momentOfDay, los.name(), null, trainingSet);
+			
+			ActivityType activityType = wekaBaseRecommender.suggestActivity(trainingSet, instance);
+			if (!typesToRecommend.contains(activityType)){
+				typesToRecommend.add(activityType);
+			}
+		};
+		Random r = new Random();
+		int index = r.nextInt(typesToRecommend.size());
+		ActivityType activityType = typesToRecommend.get(index);
+		return activityType.name();
 	}
 }

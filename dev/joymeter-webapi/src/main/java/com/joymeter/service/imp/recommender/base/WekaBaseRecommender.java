@@ -57,7 +57,31 @@ public class WekaBaseRecommender {
 	private ActivityService activityService;
 
 	public ActivityType suggestActivity(User user, Instance instance) throws Exception {
-		Instances trainingSet = getUserInstances(user);		
+		Instances trainingSet = getUserInstances(user);	
+
+		Classifier classifier = new NaiveBayes();
+		FilteredClassifier fc = new FilteredClassifier();
+		fc.setClassifier(classifier);
+		fc.buildClassifier(trainingSet);
+
+		//Make the prediction here.
+		double predictionIndex = -1;
+		try {
+			predictionIndex = fc.classifyInstance(instance);
+		} catch (Exception e) {
+			
+		}
+
+//		Get the predicted class label from the predictionIndex.
+		String predictedType =
+			trainingSet.classAttribute().value((int) predictionIndex);
+
+		log.info("Predicted activity: "+predictedType);
+
+		return ActivityType.valueOf(predictedType);
+	}
+	
+	public ActivityType suggestActivity(Instances trainingSet, Instance instance) throws Exception {
 
 		Classifier classifier = new NaiveBayes();
 		FilteredClassifier fc = new FilteredClassifier();
@@ -112,6 +136,37 @@ public class WekaBaseRecommender {
 
 		return list;
 	}
+	
+	public List<ActivityTypeProbability> getActivityTypeDistributionTesteable(Instances trainingSet, Instance instance) throws Exception {	
+
+		Classifier classifier = new NaiveBayes();
+		FilteredClassifier fc = new FilteredClassifier();
+		fc.setClassifier(classifier);
+		fc.buildClassifier(trainingSet);
+		
+		// Get the prediction probability distribution.
+		double[] predictionDistribution = classifier.distributionForInstance(instance);
+		
+		List<ActivityTypeProbability> list = new ArrayList<ActivityTypeProbability>();
+
+		// Loop over all the prediction labels in the distribution.
+		for (int predictionDistributionIndex = 0;
+				predictionDistributionIndex < predictionDistribution.length; predictionDistributionIndex++) {
+
+			// Get this distribution index's class label.
+			String predictionDistributionIndexAsClassLabel = trainingSet.classAttribute()
+					.value(predictionDistributionIndex);
+
+			// Get the probability.
+			double predictionProbability = predictionDistribution[predictionDistributionIndex];
+			
+			list.add(new ActivityTypeProbability(
+					ActivityType.valueOf(predictionDistributionIndexAsClassLabel), predictionProbability));
+
+		}
+
+		return list;
+	}
 
 	public Instance createInstance(String dayType, String momentOfDay, String levelOfJoy, String activityType, Instances trainingSet) {
 		Instance instance = new DenseInstance(attributeList.size());
@@ -133,6 +188,32 @@ public class WekaBaseRecommender {
 
 		if (!StringUtils.isEmpty(activityType)){
 			instance.setValue(trainingSet.attribute(3), activityType);
+		}
+		return instance;
+	}
+	
+	public Instance createTesteableInstance(String dayType, String momentOfDay, String levelOfJoy, String activityType, Instances trainingSet) {
+		
+		Instance instance = new DenseInstance(attributeList.size());
+
+		if (trainingSet != null){
+			instance.setDataset(trainingSet);
+		}
+
+		if (!StringUtils.isEmpty(dayType)){
+			instance.setValue(dayTypeAttr, dayType);
+		}
+
+		if (!StringUtils.isEmpty(momentOfDay)){
+			instance.setValue(momentOfDayAttr, momentOfDay);
+		}
+
+		if (!StringUtils.isEmpty(levelOfJoy)){
+			instance.setValue(levelOfSatisfactionAttr, levelOfJoy);
+		}
+
+		if (!StringUtils.isEmpty(activityType)){
+			instance.setValue(activityTypeAttr, activityType);
 		}
 		return instance;
 	}
@@ -183,7 +264,7 @@ public class WekaBaseRecommender {
 		writer.close();
 	}
 
-	private Instances createTrainingSet(List<Activity> activities) {
+	public Instances createTrainingSet(List<Activity> activities) {
 		//Create an empty training set
 		Instances trainSet = new Instances("DataSet", attributeList, attributeList.size());
 
