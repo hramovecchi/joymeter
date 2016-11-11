@@ -43,6 +43,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 		}
 
 		advice.setUser(user);
+		advice.setDate(instant);
 		advice.getSuggestedActivity().setStartDate(instant);
 		advice.getSuggestedActivity().setEndDate(instant + ActivityUtils.durationToSuggest());
 
