@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum ActivityType {
-    Amigos("Amigos"),
-    Familia("Familia"),
+    //Amigos("Amigos"),
+    //Familia("Familia"),
     Deporte("Deporte"),
-    CineTV("Cine/TV"),
-    AireLibre("Aire Libre"),
-    Shopping("Shopping"),
-    Comida("Comida"),
-    Lectura("Lectura"),
+    //CineTV("Cine/TV"),
+    //AireLibre("Aire Libre"),
+    //Shopping("Shopping"),
+    //Comida("Comida"),
+    //Lectura("Lectura"),
     Profesional("Profesional"),
     Estudio("Estudio"),
     Ocio("Ocio");

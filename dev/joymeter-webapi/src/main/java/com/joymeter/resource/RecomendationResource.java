@@ -1,8 +1,10 @@
 package com.joymeter.resource;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.joda.time.DateTime;
@@ -27,11 +29,12 @@ public class RecomendationResource {
 	@GET
 	@Path("/me/suggest")
 	@RequiresAuthentication
-	public Response suggestActivity(){
+	public Response suggestActivity(
+			@QueryParam("timeInMillis") @DefaultValue("now") final String timeInMillis){
 		Session session = JoymeterContextHolder.get().getJoymeterSession();
 
-		DateTime now = DateTime.now();
-		userService.suggestActivity(session.getUser(), session.getGcmToken(), now.getMillis());
+		DateTime time = "now".equals(timeInMillis) ? DateTime.now() : new DateTime(Long.valueOf(timeInMillis));
+		userService.suggestActivity(session.getUser(), session.getGcmToken(), time.getMillis());
 		
 		return Response.ok("{}").build();
     }

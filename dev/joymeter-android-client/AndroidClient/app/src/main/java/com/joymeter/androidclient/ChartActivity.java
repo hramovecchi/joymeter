@@ -1,9 +1,13 @@
 package com.joymeter.androidclient;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,15 +20,20 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.joymeter.androidclient.picker.DatePickerFragment;
 import com.joymeter.dto.LevelOfJoyRow;
+import com.joymeter.events.bus.DatePickedEvent;
 import com.joymeter.events.bus.EventsBus;
 import com.joymeter.events.bus.LevelOfJoyLoadedEvent;
 import com.joymeter.events.bus.LoadLevelOfJoyEvent;
 import com.joymeter.events.bus.SuggestActivityEvent;
 import com.joymeter.events.bus.SuggestActivityLoaded;
+import com.joymeter.utils.DateUtils;
+import com.joymeter.utils.DurationUtils;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -33,6 +42,7 @@ public class ChartActivity extends Activity {
     private LineChart mChart;
     private Typeface mTf;
     private Button suggestButton;
+    private Long initialDate = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +64,17 @@ public class ChartActivity extends Activity {
             public void onClick(View view) {
                 suggestButton.setEnabled(Boolean.FALSE);
 
-                EventsBus.getInstance().post(new SuggestActivityEvent());
+                initialDate = Calendar.getInstance().getTimeInMillis();
+                Bundle args = new Bundle();
+                args.putLong("date", initialDate);
+
+                if (JoymeterPreferences.SUGGEST_DATE_ENABLE) {
+                    DialogFragment dateFragment = new DatePickerFragment();
+                    dateFragment.setArguments(args);
+                    dateFragment.show(getActivity().getFragmentManager(), "datePicker");
+                } else {
+                    EventsBus.getInstance().post(new SuggestActivityEvent(initialDate.longValue()));
+                }
             }
         });
 
@@ -161,6 +181,10 @@ public class ChartActivity extends Activity {
         super.onDestroy();
     }
 
+    private Activity getActivity(){
+        return this;
+    }
+
     @Subscribe
     public void onLevelOfJoyLoaded(LevelOfJoyLoadedEvent event){
         List<LevelOfJoyRow> history = event.getHistory();
@@ -173,5 +197,10 @@ public class ChartActivity extends Activity {
     @Subscribe
     public void onSuggestActivityLoaded(SuggestActivityLoaded event){
         suggestButton.setEnabled(Boolean.TRUE);
+    }
+
+    @Subscribe
+    public void onDatePicked(DatePickedEvent event){
+        EventsBus.getInstance().post(new SuggestActivityEvent(event.getTimeInMillis()));
     }
 }

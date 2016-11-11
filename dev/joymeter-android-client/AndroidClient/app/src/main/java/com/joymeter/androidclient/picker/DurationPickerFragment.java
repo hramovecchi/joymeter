@@ -11,6 +11,9 @@ import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import com.joymeter.androidclient.picker.dialog.DurationPickerDialog;
+import com.joymeter.events.bus.DatePickedEvent;
+import com.joymeter.events.bus.DurationPickedEvent;
+import com.joymeter.events.bus.EventsBus;
 
 import java.util.Calendar;
 
@@ -30,18 +33,12 @@ public class DurationPickerFragment extends DialogFragment
         int minute = setDuration.getInt("minutes");
 
         TimePickerDialog durationPicker =  new DurationPickerDialog(getActivity(), this, hour, minute);
-        durationPicker.setTitle("Duration:");
+        durationPicker.setTitle("Duración:");
 
         return durationPicker;
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("HOURS_PICKED", hourOfDay);
-        resultIntent.putExtra("MINUTES_PICKED", minute);
-
-        Fragment f = getTargetFragment();
-        f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
+        EventsBus.getInstance().post(new DurationPickedEvent(hourOfDay, minute));
     }
 }

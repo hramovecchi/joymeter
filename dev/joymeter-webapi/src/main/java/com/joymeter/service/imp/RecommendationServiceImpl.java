@@ -42,11 +42,9 @@ public class RecommendationServiceImpl implements RecommendationService {
 			break;
 		}
 
-		long now = DateTime.now().getMillis();
-
 		advice.setUser(user);
-		advice.getSuggestedActivity().setStartDate(now);
-		advice.getSuggestedActivity().setEndDate(now + ActivityUtils.durationToSuggest());
+		advice.getSuggestedActivity().setStartDate(instant);
+		advice.getSuggestedActivity().setEndDate(instant + ActivityUtils.durationToSuggest());
 
 		adviceRepository.save(advice);
 

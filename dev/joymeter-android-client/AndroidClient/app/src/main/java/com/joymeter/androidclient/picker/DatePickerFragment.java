@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
+import com.joymeter.events.bus.DatePickedEvent;
+import com.joymeter.events.bus.EventsBus;
+
 import java.util.Calendar;
 
 /**
@@ -59,10 +62,7 @@ public class DatePickerFragment extends DialogFragment
             if (resultCode == Activity.RESULT_OK) {
                 Long date = data.getLongExtra("DATE_AND_TIME_PICKED", 0L);
 
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("DATE_PICKED", date);
-                Fragment f = getTargetFragment();
-                f.onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, resultIntent);
+                EventsBus.getInstance().post(new DatePickedEvent(date.longValue()));
             }
         }
     }

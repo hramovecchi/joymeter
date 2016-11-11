@@ -38,7 +38,7 @@ public class JRecommendationService {
 
     @Subscribe
     public void onSuggestActivity(SuggestActivityEvent event){
-        api.suggestActivity(new ResponseCallback() {
+        api.suggestActivity(event.getDatePicked(), new ResponseCallback() {
             @Override
             public void success(Response response) {
                 bus.post(new SuggestActivityLoaded());

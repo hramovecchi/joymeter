@@ -23,7 +23,7 @@
         },
         {
             "id":-3,
-            "type": "Aire Libre",
+            "type": "Ocio",
             "summary": "pesca",
             "description": "pesca en una laguna",
             "classified": false,
@@ -56,8 +56,8 @@
         },
         {
             "id":-6,
-            "type": "Aire Libre",
-            "summary": "en la plata",
+            "type": "Ocio",
+            "summary": "en la playa",
             "description": "en la playa",
             "classified": false,
             "deleted": false,
@@ -67,7 +67,7 @@
         },
         {
             "id":-7,
-            "type": "Aire Libre",
+            "type": "Ocio",
             "summary": "Mates",
             "description": "mateando en la plaza",
             "classified": false,
@@ -78,7 +78,7 @@
         },
         {
             "id":-8,
-            "type": "Lectura",
+            "type": "Ocio",
             "summary": "Leyendo",
             "description": "Leyendo un libro",
             "classified": false,
@@ -89,7 +89,7 @@
         },
         {
             "id":-9,
-            "type": "Cine/TV",
+            "type": "Ocio",
             "summary": "pelicula",
             "description": "viendo una pelicula",
             "classified": false,
@@ -100,7 +100,7 @@
         },
         {
             "id":-10,
-            "type": "Amigos",
+            "type": "Ocio",
             "summary": "juego de mesa",
             "description": "jugando a un juego de mesa con amigos",
             "classified": false,
@@ -111,7 +111,7 @@
         },
         {
             "id":-11,
-            "type": "Comida",
+            "type": "Ocio",
             "summary": "tomando un cafe",
             "description": "tomando un cafe",
             "classified": false,
@@ -122,7 +122,7 @@
         },
         {
             "id":-12,
-            "type": "Cine/TV",
+            "type": "Ocio",
             "summary": "viendo la television",
             "description": "viendo la television",
             "classified": false,
@@ -133,7 +133,7 @@
         },
         {
             "id":-13,
-            "type": "Shopping",
+            "type": "Ocio",
             "summary": "tarde de compras",
             "description": "buscando ropa por el centro",
             "classified": false,
@@ -144,7 +144,7 @@
         },
         {
             "id":-14,
-            "type": "Comida",
+            "type": "Ocio",
             "summary": "cocinando",
             "description": "cocinando para comer algo luego",
             "classified": false,
@@ -188,7 +188,7 @@
         },
         {
             "id":-18,
-            "type": "Familia",
+            "type": "Ocio",
             "summary": "visitando a la familia",
             "description": "visitando a la familia",
             "classified": false,

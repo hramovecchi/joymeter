@@ -17,4 +17,6 @@ public class JoymeterPreferences {
     public static final int LOJ_WINDOW_SIZE = 10;
     public static final String JOYMETER_ADVICE = "joymeterAdvice";
     public static final String ACTIVITIES_TYPES = "activitiesType";
+
+    public static final Boolean SUGGEST_DATE_ENABLE = Boolean.FALSE;
 }

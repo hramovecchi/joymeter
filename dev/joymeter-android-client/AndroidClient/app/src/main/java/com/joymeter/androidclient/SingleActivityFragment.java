@@ -21,8 +21,13 @@ import com.joymeter.androidclient.picker.DatePickerFragment;
 import com.joymeter.androidclient.picker.DurationPickerFragment;
 import com.joymeter.dto.ActivityDTO;
 import com.joymeter.dto.AdviceDTO;
+import com.joymeter.events.bus.DatePickedEvent;
+import com.joymeter.events.bus.DurationPickedEvent;
+import com.joymeter.events.bus.EventsBus;
+import com.joymeter.events.bus.SuggestActivityEvent;
 import com.joymeter.utils.DateUtils;
 import com.joymeter.utils.DurationUtils;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,9 +37,6 @@ import java.util.Set;
  * A placeholder fragment containing a simple view.
  */
 public class SingleActivityFragment extends Fragment {
-
-    private static final int PICK_DATE = 1;
-    private static final int PICK_DURATION = 2;
 
     private Long initialDate = null;
     private int hoursDuration = 0;
@@ -55,6 +57,8 @@ public class SingleActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        EventsBus.getInstance().register(this);
         return inflater.inflate(R.layout.fragment_single, container, false);
     }
 
@@ -127,7 +131,6 @@ public class SingleActivityFragment extends Fragment {
 
                 DialogFragment dateFragment = new DatePickerFragment();
                 dateFragment.setArguments(args);
-                dateFragment.setTargetFragment(getSingleActivityFragment(), PICK_DATE);
                 dateFragment.show(getActivity().getFragmentManager(), "datePicker");
             }
         });
@@ -141,10 +144,15 @@ public class SingleActivityFragment extends Fragment {
 
                 DialogFragment durationFragment = new DurationPickerFragment();
                 durationFragment.setArguments(args);
-                durationFragment.setTargetFragment(getSingleActivityFragment(), PICK_DURATION);
                 durationFragment.show(getActivity().getFragmentManager(), "durationPicker");
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        EventsBus.getInstance().unregister(this);
+        super.onDestroy();
     }
 
     public ActivityDTO getActivityDTO(){
@@ -164,23 +172,16 @@ public class SingleActivityFragment extends Fragment {
         return activity;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_DATE) {
-            if (resultCode == Activity.RESULT_OK) {
-                initialDate = data.getLongExtra("DATE_PICKED", 0L);
-                initial.setText(DateUtils.getInstance().getFormatedDate(initialDate));
-            }
-        } else  if (requestCode == PICK_DURATION) {
-            if (resultCode == Activity.RESULT_OK) {
-                hoursDuration = data.getIntExtra("HOURS_PICKED", 0);
-                minutesDuration = data.getIntExtra("MINUTES_PICKED", 0);
-                duration.setText(DurationUtils.getInstance().getDuration(hoursDuration, minutesDuration));
-            }
-        }
+    @Subscribe
+    public void onDatePicked(DatePickedEvent event){
+        initialDate = event.getTimeInMillis();
+        initial.setText(DateUtils.getInstance().getFormatedDate(initialDate));
     }
 
-    public Fragment getSingleActivityFragment(){
-        return this;
+    @Subscribe
+    public void onDurationPicked(DurationPickedEvent event){
+        hoursDuration = event.getHours();
+        minutesDuration = event.getMinutes();
+        duration.setText(DurationUtils.getInstance().getDuration(hoursDuration, minutesDuration));
     }
 }
